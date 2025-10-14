@@ -1,0 +1,159 @@
+/* Definições das Cores */
+:root {
+    --primary-color: #001191; /* Azul Marinho (RGB 0, 17, 145) */
+    --secondary-color: #22B14C; /* Verde Vibrante (RGB 34, 177, 76) */
+    --light-text: #ffffff;
+    --dark-text: #333333;
+    --light-bg: #f4f4f4;
+    --dark-bg: #000c6d; /* Um tom de azul mais escuro que a primária para o fundo */
+    --font-family: 'Montserrat', sans-serif;
+}
+
+/* Base e Tipografia */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-family);
+    line-height: 1.6;
+    color: var(--dark-text);
+}
+
+.container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 0;
+}
+
+h1, h2, h3, h4 {
+    margin-bottom: 15px;
+    font-weight: 700;
+    color: var(--primary-color);
+}
+
+h3 {
+    font-size: 1.8em;
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+p {
+    margin-bottom: 15px;
+}
+
+/* Seções */
+.section {
+    padding: 60px 0;
+}
+
+.dark-bg {
+    background-color: var(--dark-bg);
+    color: var(--light-text);
+}
+.dark-bg h3, .dark-bg h4 {
+    color: var(--secondary-color);
+}
+
+.light-bg {
+    background-color: var(--light-bg);
+}
+
+/* 1. HERO SECTION (Header) */
+.hero {
+    background-color: var(--primary-color);
+    color: var(--light-text);
+    text-align: center;
+    padding: 100px 0;
+}
+
+.hero h1 {
+    font-size: 3em;
+    color: var(--light-text);
+    margin-bottom: 5px;
+}
+
+.hero h2 {
+    font-size: 1.5em;
+    font-weight: 400;
+    color: var(--secondary-color);
+    margin-bottom: 25px;
+}
+
+/* Botões */
+.btn {
+    display: inline-block;
+    padding: 12px 25px;
+    text-decoration: none;
+    font-weight: 600;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.primary-btn {
+    background-color: var(--secondary-color);
+    color: var(--dark-text);
+}
+
+.primary-btn:hover {
+    background-color: #1a8f3b; /* Tom mais escuro do verde */
+}
+
+/* 2. COMO FUNCIONA */
+.step-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    text-align: center;
+}
+
+.step {
+    flex: 1;
+    padding: 20px;
+    background: var(--dark-bg);
+    border: 1px solid var(--secondary-color);
+    border-radius: 8px;
+}
+
+.step h4 {
+    color: var(--secondary-color);
+    margin-bottom: 10px;
+}
+
+/* 3. VANTAGENS */
+.vantagem-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    text-align: center;
+}
+
+.vantagem-item {
+    padding: 20px;
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Rodapé */
+footer {
+    background: var(--dark-text);
+    color: var(--light-text);
+    text-align: center;
+    padding: 20px 0;
+    font-size: 0.9em;
+}
+
+/* Responsividade Básica */
+@media (max-width: 768px) {
+    .step-container {
+        flex-direction: column;
+    }
+
+    .hero h1 {
+        font-size: 2.5em;
+    }
+}
