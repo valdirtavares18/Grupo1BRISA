@@ -1,21 +1,22 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { eventService } from '@/services/event.service'
+import { organizationService } from '@/services/organization.service'
+import { verifyToken } from '@/lib/auth'
 
 export async function GET(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
-    const event = await eventService.getEventById(params.id)
+    const organization = await organizationService.getOrganizationById(params.id)
 
-    if (!event) {
+    if (!organization) {
       return NextResponse.json(
-        { error: 'Evento não encontrado' },
+        { error: 'Organização não encontrada' },
         { status: 404 }
       )
     }
 
-    return NextResponse.json(event)
+    return NextResponse.json(organization)
   } catch (error: any) {
     return NextResponse.json(
       { error: error.message },
@@ -35,17 +36,16 @@ export async function PUT(
       return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
     }
 
+    const payload = verifyToken(token)
+    if (!payload || payload.role !== 'SUPER_ADMIN') {
+      return NextResponse.json({ error: 'Acesso negado' }, { status: 403 })
+    }
+
     const body = await request.json()
     
-    const updateData: any = {}
-    if (body.title) updateData.title = body.title
-    if (body.description !== undefined) updateData.description = body.description
-    if (body.startDate) updateData.startDate = new Date(body.startDate)
-    if (body.endDate) updateData.endDate = new Date(body.endDate)
-
-    const event = await eventService.updateEvent(params.id, updateData)
+    const organization = await organizationService.updateOrganization(params.id, body)
     
-    return NextResponse.json(event)
+    return NextResponse.json(organization)
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 400 })
   }
@@ -70,13 +70,13 @@ export async function DELETE(
     }
 
     const payload = verifyToken(token)
-    if (!payload || (payload.role !== 'ORG_ADMIN' && payload.role !== 'SUPER_ADMIN')) {
+    if (!payload || payload.role !== 'SUPER_ADMIN') {
       return NextResponse.json({ error: 'Acesso negado' }, { status: 403 })
     }
 
-    await eventService.deleteEvent(params.id)
+    await organizationService.deleteOrganization(params.id)
     
-    return NextResponse.json({ message: 'Evento excluído com sucesso' })
+    return NextResponse.json({ message: 'Organização excluída com sucesso' })
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 400 })
   }

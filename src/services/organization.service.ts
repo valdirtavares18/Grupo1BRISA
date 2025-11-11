@@ -151,6 +151,106 @@ export class OrganizationService {
     return organizations
   }
 
+  async updateOrganization(organizationId: string, data: {
+    name?: string
+    slug?: string
+    isActive?: boolean
+    theme?: {
+      primaryColor?: string
+      logoUrl?: string
+      backgroundStyle?: string
+    }
+  }) {
+    const updates = []
+    const values = []
+
+    if (data.name) {
+      updates.push('name = ?')
+      values.push(data.name)
+    }
+
+    if (data.slug) {
+      // Validar formato do slug
+      const slugRegex = /^[a-z0-9-]+$/
+      if (!slugRegex.test(data.slug)) {
+        throw new Error('O slug deve conter apenas letras minúsculas, números e hífens')
+      }
+
+      // Verificar se o slug já existe (exceto para a própria organização)
+      const existing = await query(
+        'SELECT * FROM "Organization" WHERE slug = ? AND id != ?',
+        [data.slug, organizationId]
+      )
+
+      if (existing.rows.length > 0) {
+        throw new Error('Já existe uma organização com este slug')
+      }
+
+      updates.push('slug = ?')
+      values.push(data.slug)
+    }
+
+    if (data.isActive !== undefined) {
+      updates.push('"isActive" = ?')
+      values.push(data.isActive ? 1 : 0)
+    }
+
+    if (updates.length > 0) {
+      values.push(organizationId)
+      await query(
+        `UPDATE "Organization" SET ${updates.join(', ')} WHERE id = ?`,
+        values
+      )
+    }
+
+    // Atualizar tema se fornecido
+    if (data.theme) {
+      await this.updateTheme(organizationId, data.theme)
+    }
+
+    return this.getOrganizationById(organizationId)
+  }
+
+  async deleteOrganization(organizationId: string) {
+    // Deletar tema
+    await query(
+      'DELETE FROM "organization_themes" WHERE "organizationId" = ?',
+      [organizationId]
+    )
+
+    // Deletar eventos e presenças vinculadas
+    const events = await query(
+      'SELECT id FROM "Event" WHERE "organizationId" = ?',
+      [organizationId]
+    )
+
+    for (const event of events.rows) {
+      await query(
+        'DELETE FROM presence_logs WHERE "eventId" = ?',
+        [event.id]
+      )
+    }
+
+    await query(
+      'DELETE FROM "Event" WHERE "organizationId" = ?',
+      [organizationId]
+    )
+
+    // Deletar usuários da organização
+    await query(
+      'DELETE FROM platform_users WHERE "organizationId" = ?',
+      [organizationId]
+    )
+
+    // Deletar a organização
+    await query(
+      'DELETE FROM "Organization" WHERE id = ?',
+      [organizationId]
+    )
+
+    return { success: true }
+  }
+
   async updateTheme(
     organizationId: string,
     theme: {
