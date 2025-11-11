@@ -23,15 +23,21 @@ export async function POST(request: NextRequest) {
     console.log('✅ [API Login] Login bem-sucedido:', result.user.role)
 
     const response = NextResponse.json(result)
+    
+    console.log('🔵 [API Login] Definindo cookie token...')
+    console.log('🔵 [API Login] Token a ser salvo:', result.token?.substring(0, 30) + '...')
+    console.log('🔵 [API Login] NODE_ENV:', process.env.NODE_ENV)
+    
     response.cookies.set('token', result.token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
+      secure: false,
       sameSite: 'lax',
+      path: '/',
       maxAge: 60 * 60 * 24 * 7,
     })
     
-    console.log('🔵 [API Login] Cookie definido com sucesso')
-    console.log('🔵 [API Login] Token:', result.token?.substring(0, 30) + '...')
+    console.log('🔵 [API Login] Cookie definido')
+    console.log('🔵 [API Login] Set-Cookie header:', response.headers.get('set-cookie'))
 
     return response
   } catch (error: any) {

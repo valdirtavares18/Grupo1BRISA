@@ -2,7 +2,7 @@
 
 import { QRCodeSVG } from 'react-qr-code'
 import { Card, CardContent, Button } from '@/components/atoms'
-import { Download } from 'lucide-react'
+import { Download, QrCode } from 'lucide-react'
 import { useRef } from 'react'
 
 interface QRCodeViewerProps {
@@ -22,11 +22,18 @@ export function QRCodeViewer({ url, eventTitle }: QRCodeViewerProps) {
     const ctx = canvas.getContext('2d')
     const img = new Image()
 
-    canvas.width = 512
-    canvas.height = 512
+    canvas.width = 1024
+    canvas.height = 1024
 
     img.onload = () => {
-      ctx?.drawImage(img, 0, 0)
+      if (!ctx) return
+      
+      ctx.fillStyle = '#FFFFFF'
+      ctx.fillRect(0, 0, canvas.width, canvas.height)
+      
+      const padding = 100
+      ctx.drawImage(img, padding, padding, canvas.width - padding * 2, canvas.height - padding * 2)
+      
       const pngFile = canvas.toDataURL('image/png')
       const downloadLink = document.createElement('a')
       downloadLink.download = `qr-code-${eventTitle.replace(/\s+/g, '-').toLowerCase()}.png`
@@ -34,35 +41,46 @@ export function QRCodeViewer({ url, eventTitle }: QRCodeViewerProps) {
       downloadLink.click()
     }
 
-    img.src = 'data:image/svg+xml;base64,' + btoa(svgData)
+    img.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgData)))
   }
 
   return (
-    <Card>
-      <CardContent className="p-6">
-        <div className="flex flex-col items-center space-y-4">
-          <div ref={qrRef} className="p-4 bg-white rounded-lg">
-            <QRCodeSVG
-              value={url}
-              size={256}
-              level="H"
-              includeMargin
-            />
-          </div>
-          <div className="text-center">
-            <p className="text-sm text-muted-foreground mb-2">
-              {eventTitle}
-            </p>
-            <p className="text-xs text-muted-foreground break-all max-w-xs">
-              {url}
-            </p>
-          </div>
-          <Button onClick={downloadQR} className="w-full">
-            <Download className="mr-2 h-4 w-4" />
-            Baixar QR Code
-          </Button>
+    <div className="space-y-4">
+      <div 
+        ref={qrRef} 
+        className="p-6 lg:p-8 bg-white rounded-2xl border-2 border-dashed border-gray-300 flex items-center justify-center"
+      >
+        <QRCodeSVG
+          value={url}
+          size={256}
+          level="H"
+          includeMargin
+          className="max-w-full h-auto"
+        />
+      </div>
+      
+      <div className="text-center space-y-2">
+        <p className="font-semibold text-sm">{eventTitle}</p>
+        <p className="text-xs text-muted-foreground break-all px-4">
+          {url}
+        </p>
+      </div>
+      
+      <Button onClick={downloadQR} className="w-full" size="lg">
+        <Download className="mr-2 h-5 w-5" />
+        Baixar QR Code (PNG)
+      </Button>
+      
+      <div className="grid grid-cols-2 gap-3">
+        <div className="text-center p-3 rounded-lg bg-gray-50">
+          <p className="text-xs text-muted-foreground">Tamanho</p>
+          <p className="font-semibold text-sm">1024x1024px</p>
         </div>
-      </CardContent>
-    </Card>
+        <div className="text-center p-3 rounded-lg bg-gray-50">
+          <p className="text-xs text-muted-foreground">Formato</p>
+          <p className="font-semibold text-sm">PNG</p>
+        </div>
+      </div>
+    </div>
   )
 }
