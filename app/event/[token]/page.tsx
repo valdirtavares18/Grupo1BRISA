@@ -4,7 +4,7 @@ import { notFound } from 'next/navigation'
 import { headers } from 'next/headers'
 import { Card, CardContent, CardHeader, CardTitle, Button } from '@/components/atoms'
 import Link from 'next/link'
-import { Calendar, Clock, MapPin, Building2, UserPlus, CheckCircle2, Info } from 'lucide-react'
+import { Calendar, Clock, MapPin, Building2, UserPlus, CheckCircle2, Info, AlertCircle } from 'lucide-react'
 
 interface PageProps {
   params: { token: string }
@@ -17,39 +17,107 @@ export default async function EventPage({ params }: PageProps) {
     notFound()
   }
 
+  const now = new Date()
+  const startDate = new Date(event.startDate)
+  const endDate = new Date(event.endDate)
+  const isPastEvent = endDate < now
+  const isBeforeEvent = startDate > now
+  const isActiveEvent = startDate <= now && endDate >= now
+
   const headersList = headers()
   const ipAddress = headersList.get('x-forwarded-for') || 
                     headersList.get('x-real-ip') || 
                     'unknown'
   const userAgent = headersList.get('user-agent') || 'unknown'
 
-  const initialScanToken = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+  let presenceResult = { success: false, message: '', alreadyRegistered: false }
 
-  await presenceService.logPresence({
-    eventId: event.id,
-    endUserId: undefined,
-    ipAddress,
-    userAgent,
-    initialScanToken,
-  })
+  // Apenas tentar registrar presença se o evento estiver ativo
+  if (isActiveEvent) {
+    try {
+      const initialScanToken = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
 
-  const isPastEvent = new Date(event.endDate) < new Date()
-  const startDate = new Date(event.startDate)
-  const endDate = new Date(event.endDate)
+      await presenceService.logPresence({
+        eventId: event.id,
+        endUserId: undefined,
+        ipAddress,
+        userAgent,
+        initialScanToken,
+      })
+
+      presenceResult = { success: true, message: 'Presença registrada com sucesso!', alreadyRegistered: false }
+    } catch (error: any) {
+      if (error.message.includes('já registrou presença')) {
+        presenceResult = { success: false, message: 'Você já está cadastrado neste evento', alreadyRegistered: true }
+      } else {
+        presenceResult = { success: false, message: error.message, alreadyRegistered: false }
+      }
+    }
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary via-[#003366] to-primary p-4">
       <div className="max-w-2xl mx-auto py-8 lg:py-16">
-        {/* Success Message */}
-        <div className="mb-6 p-4 rounded-xl bg-green-500/20 backdrop-blur-sm border border-green-500/30 flex items-start gap-3">
-          <CheckCircle2 className="w-6 h-6 text-green-400 flex-shrink-0 mt-0.5" />
-          <div className="text-white">
-            <p className="font-semibold">Presença registrada!</p>
-            <p className="text-sm text-white/80 mt-1">
-              Sua presença foi capturada com sucesso. Faça login para vincular seus dados.
-            </p>
+        {/* Status Messages */}
+        {isBeforeEvent && (
+          <div className="mb-6 p-4 rounded-xl bg-yellow-500/20 backdrop-blur-sm border border-yellow-500/30 flex items-start gap-3">
+            <Clock className="w-6 h-6 text-yellow-400 flex-shrink-0 mt-0.5" />
+            <div className="text-white">
+              <p className="font-semibold">Evento ainda não começou</p>
+              <p className="text-sm text-white/80 mt-1">
+                Volte no horário programado para registrar sua presença.
+              </p>
+            </div>
           </div>
-        </div>
+        )}
+
+        {isPastEvent && (
+          <div className="mb-6 p-4 rounded-xl bg-red-500/20 backdrop-blur-sm border border-red-500/30 flex items-start gap-3">
+            <AlertCircle className="w-6 h-6 text-red-400 flex-shrink-0 mt-0.5" />
+            <div className="text-white">
+              <p className="font-semibold">Evento encerrado</p>
+              <p className="text-sm text-white/80 mt-1">
+                O registro de presença não está mais disponível.
+              </p>
+            </div>
+          </div>
+        )}
+
+        {isActiveEvent && presenceResult.success && (
+          <div className="mb-6 p-4 rounded-xl bg-green-500/20 backdrop-blur-sm border border-green-500/30 flex items-start gap-3">
+            <CheckCircle2 className="w-6 h-6 text-green-400 flex-shrink-0 mt-0.5" />
+            <div className="text-white">
+              <p className="font-semibold">Presença registrada!</p>
+              <p className="text-sm text-white/80 mt-1">
+                Sua presença foi capturada com sucesso. Faça login para vincular seus dados.
+              </p>
+            </div>
+          </div>
+        )}
+
+        {isActiveEvent && !presenceResult.success && presenceResult.alreadyRegistered && (
+          <div className="mb-6 p-4 rounded-xl bg-blue-500/20 backdrop-blur-sm border border-blue-500/30 flex items-start gap-3">
+            <Info className="w-6 h-6 text-blue-400 flex-shrink-0 mt-0.5" />
+            <div className="text-white">
+              <p className="font-semibold">Você já está cadastrado!</p>
+              <p className="text-sm text-white/80 mt-1">
+                Sua presença neste evento já foi registrada anteriormente.
+              </p>
+            </div>
+          </div>
+        )}
+
+        {isActiveEvent && !presenceResult.success && !presenceResult.alreadyRegistered && presenceResult.message && (
+          <div className="mb-6 p-4 rounded-xl bg-red-500/20 backdrop-blur-sm border border-red-500/30 flex items-start gap-3">
+            <AlertCircle className="w-6 h-6 text-red-400 flex-shrink-0 mt-0.5" />
+            <div className="text-white">
+              <p className="font-semibold">Erro ao registrar presença</p>
+              <p className="text-sm text-white/80 mt-1">
+                {presenceResult.message}
+              </p>
+            </div>
+          </div>
+        )}
 
         <Card className="shadow-2xl border-0 overflow-hidden">
           {/* Event Header with gradient */}

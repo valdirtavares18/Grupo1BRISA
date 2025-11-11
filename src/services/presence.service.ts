@@ -8,6 +8,42 @@ export class PresenceService {
     userAgent?: string
     initialScanToken: string
   }) {
+    // Buscar informações do evento
+    const eventResult = await query(
+      'SELECT * FROM "Event" WHERE id = ?',
+      [data.eventId]
+    )
+
+    if (eventResult.rows.length === 0) {
+      throw new Error('Evento não encontrado')
+    }
+
+    const event = eventResult.rows[0]
+    const now = new Date()
+    const startDate = new Date(event.startDate)
+    const endDate = new Date(event.endDate)
+
+    // Validar se o evento está dentro do horário programado
+    if (now < startDate) {
+      throw new Error('Este evento ainda não começou. Aguarde o horário de início.')
+    }
+
+    if (now > endDate) {
+      throw new Error('Este evento já foi encerrado. O registro de presença não está mais disponível.')
+    }
+
+    // Verificar presença duplicada se tiver endUserId
+    if (data.endUserId) {
+      const existingPresence = await query(
+        'SELECT * FROM "presence_logs" WHERE "eventId" = ? AND "endUserId" = ?',
+        [data.eventId, data.endUserId]
+      )
+
+      if (existingPresence.rows.length > 0) {
+        throw new Error('Você já registrou presença neste evento')
+      }
+    }
+
     const id = require('crypto').randomUUID()
 
     await query(

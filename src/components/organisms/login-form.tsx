@@ -91,6 +91,12 @@ export function LoginForm() {
             </div>
           </FormField>
 
+          <div className="text-right">
+            <Link href="/forgot-password" className="text-sm text-primary hover:underline">
+              Esqueci minha senha
+            </Link>
+          </div>
+
           <Button type="submit" className="w-full" size="lg" disabled={loading}>
             {loading ? (
               <>

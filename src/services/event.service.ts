@@ -8,6 +8,26 @@ export class EventService {
     startDate: Date
     endDate: Date
   }) {
+    // Validar que a data de início não é anterior à data atual
+    const now = new Date()
+    if (data.startDate < now) {
+      throw new Error('A data do evento não pode ser anterior à data atual')
+    }
+
+    // Validar que a data de término é posterior à de início
+    if (data.endDate <= data.startDate) {
+      throw new Error('A data de término deve ser posterior à data de início')
+    }
+
+    // Validar campos obrigatórios
+    if (!data.title || data.title.trim() === '') {
+      throw new Error('O título do evento é obrigatório')
+    }
+
+    if (!data.organizationId) {
+      throw new Error('A organização é obrigatória')
+    }
+
     const qrCodeToken = require('crypto').randomUUID()
     const id = require('crypto').randomUUID()
 

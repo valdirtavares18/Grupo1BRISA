@@ -10,6 +10,27 @@ export class OrganizationService {
       backgroundStyle?: string
     }
   }) {
+    // Validar campos obrigatórios
+    if (!data.name || data.name.trim() === '') {
+      throw new Error('O nome da organização é obrigatório')
+    }
+
+    if (!data.slug || data.slug.trim() === '') {
+      throw new Error('O slug da organização é obrigatório')
+    }
+
+    // Validar formato do slug
+    const slugRegex = /^[a-z0-9-]+$/
+    if (!slugRegex.test(data.slug)) {
+      throw new Error('O slug deve conter apenas letras minúsculas, números e hífens')
+    }
+
+    // Validar slugs reservados
+    const reservedSlugs = ['admin', 'login', 'register', 'api', 'dashboard', 'event', 'platform']
+    if (reservedSlugs.includes(data.slug)) {
+      throw new Error('Este slug está reservado pelo sistema')
+    }
+
     const existing = await query(
       'SELECT * FROM "Organization" WHERE slug = ?',
       [data.slug]

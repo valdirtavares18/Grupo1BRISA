@@ -5,7 +5,8 @@ import { QRCodeViewer } from '@/components/organisms/qr-code-viewer'
 import { Card, CardContent, CardHeader, CardTitle, Badge } from '@/components/atoms'
 import { PageHeader } from '@/components/molecules'
 import Link from 'next/link'
-import { Calendar, Clock, Users, QrCode, Eye, Download, ArrowLeft } from 'lucide-react'
+import { Calendar, Clock, Users, QrCode, Eye, Download, ArrowLeft, Edit } from 'lucide-react'
+import { Button } from '@/components/atoms'
 
 interface PageProps {
   params: { id: string }
@@ -27,7 +28,7 @@ export default async function EventDetailsPage({ params }: PageProps) {
   const isUpcoming = startDate > now
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+    <div className="min-h-screen bg-gradient-to-br from-violet-50 via-purple-50 to-fuchsia-50">
       <Navbar userRole="ADMIN ORGANIZAÇÃO" />
       
       <div className="container mx-auto px-4 py-6 lg:py-8">
@@ -126,13 +127,30 @@ export default async function EventDetailsPage({ params }: PageProps) {
                         </p>
                       </div>
                     </div>
-                    <Link href={`/dashboard/organization/events/${event.id}/presences`}>
-                      <div className="px-3 py-2 rounded-lg bg-green-600 text-white hover:bg-green-700 transition flex items-center gap-2 text-sm font-semibold">
-                        <Eye className="w-4 h-4" />
-                        <span className="hidden sm:inline">Ver Presenças</span>
-                      </div>
-                    </Link>
+                    <div className="flex gap-2">
+                      <Link href={`/dashboard/organization/events/${event.id}/presences`}>
+                        <div className="px-3 py-2 rounded-lg bg-green-600 text-white hover:bg-green-700 transition flex items-center gap-2 text-sm font-semibold">
+                          <Eye className="w-4 h-4" />
+                          <span className="hidden sm:inline">Ver Presenças</span>
+                        </div>
+                      </Link>
+                    </div>
                   </div>
+                </div>
+
+                <div className="flex flex-col sm:flex-row gap-3 mt-6">
+                  <Link href={`/dashboard/organization/events/${event.id}/edit`} className="flex-1">
+                    <Button variant="outline" className="w-full">
+                      <Edit className="w-4 h-4 mr-2" />
+                      Editar Evento
+                    </Button>
+                  </Link>
+                  <a href={`/api/events/${event.id}/export`} className="flex-1">
+                    <Button variant="outline" className="w-full">
+                      <Download className="w-4 h-4 mr-2" />
+                      Exportar CSV
+                    </Button>
+                  </a>
                 </div>
               </CardContent>
             </Card>

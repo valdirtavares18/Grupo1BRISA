@@ -25,8 +25,18 @@ export function CreateEventForm() {
     setLoading(true)
 
     try {
+      const now = new Date()
+      now.setHours(0, 0, 0, 0)
+      
       const startDate = new Date(`${formData.startDate}T${formData.startTime}`)
       const endDate = new Date(`${formData.endDate}T${formData.endTime}`)
+
+      const eventDate = new Date(formData.startDate)
+      eventDate.setHours(0, 0, 0, 0)
+
+      if (eventDate < now) {
+        throw new Error('A data do evento deve ser igual ou posterior à data atual')
+      }
 
       if (endDate <= startDate) {
         throw new Error('A data de término deve ser posterior à data de início')

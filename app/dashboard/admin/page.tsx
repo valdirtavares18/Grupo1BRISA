@@ -11,7 +11,7 @@ export default async function AdminDashboardPage() {
   const totalEvents = organizations.reduce((sum, org) => sum + (org._count?.events || 0), 0)
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
       <Navbar userRole="SUPER ADMIN" userName="Administrador" />
       
       <div className="container mx-auto px-4 py-6 lg:py-8">

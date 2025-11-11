@@ -10,11 +10,6 @@ export default function HomePage() {
         <div className="max-w-6xl mx-auto">
           {/* Header */}
           <div className="text-center space-y-6 mb-16">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 text-white text-sm">
-              <Shield className="w-4 h-4" />
-              <span>Conforme LGPD</span>
-            </div>
-            
             <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white leading-tight">
               Gestão de Presença
               <span className="block bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent">
@@ -35,7 +30,7 @@ export default function HomePage() {
                 </Button>
               </Link>
               <Link href="/register" className="w-full sm:w-auto">
-                <Button size="lg" variant="outline" className="w-full sm:w-auto border-white text-white hover:bg-white/10">
+                <Button size="lg" className="w-full sm:w-auto bg-white text-primary hover:bg-white/90 shadow-xl">
                   Criar Conta
                 </Button>
               </Link>

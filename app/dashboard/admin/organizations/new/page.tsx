@@ -6,7 +6,7 @@ import Link from 'next/link'
 
 export default function NewOrganizationPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+    <div className="min-h-screen bg-gradient-to-br from-rose-50 via-pink-50 to-fuchsia-50">
       <Navbar userRole="SUPER ADMIN" />
       
       <div className="container mx-auto px-4 py-6 lg:py-8 max-w-3xl">

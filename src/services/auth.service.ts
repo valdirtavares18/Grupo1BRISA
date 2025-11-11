@@ -4,28 +4,20 @@ import { validateCPF } from '@/lib/utils'
 
 export class AuthService {
   async loginPlatformUser(email: string, password: string) {
-    console.log('🔵 [AuthService] Login iniciado para:', email)
-    
-    console.log('🔷 [AuthService] Buscando usuário no banco...')
     const result = await query(
       'SELECT * FROM platform_users WHERE email = $1',
       [email]
     )
 
     const user = result.rows[0]
-    console.log('🔷 [AuthService] Usuário encontrado:', user ? 'Sim - ' + user.email : 'Não')
     
     if (!user || !user.isActive) {
-      console.log('❌ [AuthService] Usuário não existe ou está inativo')
       throw new Error('Credenciais inválidas')
     }
 
-    console.log('🔷 [AuthService] Verificando senha...')
     const validPassword = await comparePassword(password, user.passwordHash)
-    console.log('🔷 [AuthService] Senha válida:', validPassword)
     
     if (!validPassword) {
-      console.log('❌ [AuthService] Senha incorreta')
       throw new Error('Credenciais inválidas')
     }
 
@@ -50,8 +42,12 @@ export class AuthService {
   async registerEndUser(cpf: string, password: string) {
     const cleanCpf = cpf.replace(/[^\d]/g, '')
 
+    if (cleanCpf.length !== 11) {
+      throw new Error('CPF deve ter exatamente 11 dígitos')
+    }
+
     if (!validateCPF(cleanCpf)) {
-      throw new Error('CPF inválido')
+      throw new Error('CPF inválido. Verifique os dígitos e tente novamente')
     }
 
     const existing = await query('SELECT * FROM end_users WHERE cpf = $1', [cleanCpf])

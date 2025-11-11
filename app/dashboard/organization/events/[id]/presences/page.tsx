@@ -24,7 +24,7 @@ export default async function EventPresencesPage({ params }: PageProps) {
   ])
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50">
       <Navbar userRole="ADMIN ORGANIZAÇÃO" />
       
       <div className="container mx-auto px-4 py-6 lg:py-8">
@@ -39,6 +39,15 @@ export default async function EventPresencesPage({ params }: PageProps) {
         <PageHeader
           title={`Presenças - ${event.title}`}
           description={`${stats.total} registro(s) de presença capturados`}
+          action={
+            <a href={`/api/events/${params.id}/export`}>
+              <div className="bg-green-600 text-white px-4 py-2 sm:px-6 sm:py-3 rounded-xl hover:bg-green-700 transition shadow-lg hover:shadow-xl flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+                <span className="hidden sm:inline">Exportar CSV</span>
+                <span className="sm:hidden">CSV</span>
+              </div>
+            </a>
+          }
         />
 
         {/* Stats Grid */}
