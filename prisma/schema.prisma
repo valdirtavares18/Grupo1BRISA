@@ -1,0 +1,129 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  SUPER_ADMIN
+  ORG_ADMIN
+}
+
+enum ConsentDataType {
+  WHATSAPP_MARKETING
+  EMAIL_MARKETING
+  TRACKING_PURPOSE
+  DATA_SHARING
+}
+
+model Organization {
+  id        String   @id @default(uuid())
+  name      String
+  slug      String   @unique
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  theme         OrganizationTheme?
+  platformUsers PlatformUser[]
+  events        Event[]
+
+  @@index([slug])
+}
+
+model OrganizationTheme {
+  id             String      @id @default(uuid())
+  organizationId String      @unique
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  primaryColor   String      @default("#001F3F")
+  logoUrl        String?
+  backgroundStyle String?    @db.Text
+  createdAt      DateTime    @default(now())
+
+  @@map("organization_themes")
+}
+
+model PlatformUser {
+  id             String      @id @default(uuid())
+  organizationId String?
+  email          String      @unique
+  passwordHash   String
+  role           UserRole
+  isActive       Boolean     @default(true)
+  createdAt      DateTime    @default(now())
+
+  organization   Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId])
+  @@map("platform_users")
+}
+
+model EndUser {
+  id              String        @id @default(uuid())
+  cpf             String        @unique
+  passwordHash    String
+  fullName        String?
+  phone           String?
+  email           String?
+  profilePhotoUrl String?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  presenceLogs    PresenceLog[]
+  consents        UserConsent[]
+
+  @@index([cpf])
+  @@map("end_users")
+}
+
+model Event {
+  id           String       @id @default(uuid())
+  organizationId String
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  title        String
+  description  String?      @db.Text
+  startDate    DateTime
+  endDate      DateTime
+  qrCodeToken  String       @unique
+  createdAt    DateTime     @default(now())
+
+  presenceLogs PresenceLog[]
+
+  @@index([organizationId])
+  @@index([startDate])
+}
+
+model PresenceLog {
+  id                String   @id @default(uuid())
+  eventId           String
+  endUserId         String?
+  accessTimestamp   DateTime @default(now())
+  ipAddress         String?
+  userAgent         String?  @db.Text
+  initialScanToken  String?
+
+  event    Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  endUser  EndUser? @relation(fields: [endUserId], references: [id], onDelete: SetNull)
+
+  @@index([eventId])
+  @@index([endUserId])
+  @@index([accessTimestamp])
+  @@map("presence_logs")
+}
+
+model UserConsent {
+  id               String          @id @default(uuid())
+  endUserId        String
+  dataType         ConsentDataType
+  isGiven          Boolean
+  consentTimestamp DateTime        @default(now())
+
+  endUser          EndUser         @relation(fields: [endUserId], references: [id], onDelete: Cascade)
+
+  @@unique([endUserId, dataType])
+  @@index([endUserId])
+  @@map("user_consents")
+}
