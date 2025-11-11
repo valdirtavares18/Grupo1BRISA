@@ -57,6 +57,41 @@ export class OrganizationService {
     return this.getOrganizationBySlug(data.slug)
   }
 
+  async getOrganizationById(id: string) {
+    const result = await query(
+      'SELECT * FROM "Organization" WHERE id = ?',
+      [id]
+    )
+
+    if (result.rows.length === 0) return null
+
+    const org = result.rows[0]
+    
+    const theme = await query(
+      'SELECT * FROM "organization_themes" WHERE "organizationId" = ?',
+      [org.id]
+    )
+
+    const eventCount = await query(
+      'SELECT COUNT(*) as count FROM "Event" WHERE "organizationId" = ?',
+      [org.id]
+    )
+
+    const userCount = await query(
+      'SELECT COUNT(*) as count FROM platform_users WHERE "organizationId" = ?',
+      [org.id]
+    )
+
+    return {
+      ...org,
+      theme: theme.rows[0] || null,
+      _count: {
+        events: eventCount.rows[0].count || 0,
+        platformUsers: userCount.rows[0].count || 0
+      }
+    }
+  }
+
   async getOrganizationBySlug(slug: string) {
     const result = await query(
       'SELECT * FROM "Organization" WHERE slug = ?',
