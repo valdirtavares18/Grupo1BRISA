@@ -1,15 +1,16 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Card, CardContent, CardHeader, CardTitle, Badge } from '@/components/atoms'
+import { Card, CardContent, CardHeader, CardTitle, Badge, Button } from '@/components/atoms'
 import { Navbar } from '@/components/organisms/navbar'
 import { PageHeader } from '@/components/molecules'
-import { Calendar, Building2, Clock, ArrowLeft } from 'lucide-react'
+import { Calendar, Building2, Clock, ArrowLeft, Download } from 'lucide-react'
 import Link from 'next/link'
 
 export default function UserHistoryPage() {
   const [history, setHistory] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
+  const [downloadingId, setDownloadingId] = useState<string | null>(null)
 
   useEffect(() => {
     fetchHistory()
@@ -29,6 +30,34 @@ export default function UserHistoryPage() {
       console.error('Erro ao carregar histórico:', err)
     } finally {
       setLoading(false)
+    }
+  }
+
+  const handleDownloadCertificate = async (presenceId: string, eventTitle: string) => {
+    setDownloadingId(presenceId)
+    try {
+      const res = await fetch(`/api/user/presences/${presenceId}/certificate`, {
+        credentials: 'include'
+      })
+
+      if (!res.ok) {
+        throw new Error('Erro ao gerar comprovante')
+      }
+
+      const blob = await res.blob()
+      const url = window.URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `Comprovante_${eventTitle.replace(/[^a-zA-Z0-9]/g, '_')}.pdf`
+      document.body.appendChild(a)
+      a.click()
+      document.body.removeChild(a)
+      window.URL.revokeObjectURL(url)
+    } catch (err) {
+      console.error('Erro ao baixar comprovante:', err)
+      alert('Erro ao gerar comprovante. Tente novamente.')
+    } finally {
+      setDownloadingId(null)
     }
   }
 
@@ -76,37 +105,61 @@ export default function UserHistoryPage() {
               return (
                 <Card key={index} className="border-0 shadow-lg hover:shadow-xl transition-all">
                   <CardContent className="p-6">
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                      <div className="flex-1">
-                        <h3 className="font-bold text-lg mb-2">{item.eventTitle}</h3>
-                        
-                        <div className="flex flex-wrap gap-3 text-sm text-muted-foreground">
-                          <div className="flex items-center gap-2">
-                            <Building2 className="w-4 h-4" />
-                            <span>{item.organizationName}</span>
-                          </div>
+                    <div className="flex flex-col gap-4">
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <div className="flex-1">
+                          <h3 className="font-bold text-lg mb-2">{item.eventTitle}</h3>
                           
-                          <div className="flex items-center gap-2">
-                            <Calendar className="w-4 h-4" />
-                            <span>{eventDate.toLocaleDateString('pt-BR')}</span>
+                          <div className="flex flex-wrap gap-3 text-sm text-muted-foreground">
+                            <div className="flex items-center gap-2">
+                              <Building2 className="w-4 h-4" />
+                              <span>{item.organizationName}</span>
+                            </div>
+                            
+                            <div className="flex items-center gap-2">
+                              <Calendar className="w-4 h-4" />
+                              <span>{eventDate.toLocaleDateString('pt-BR')}</span>
+                            </div>
+                            
+                            <div className="flex items-center gap-2">
+                              <Clock className="w-4 h-4" />
+                              <span>Registrado em {accessDate.toLocaleString('pt-BR')}</span>
+                            </div>
                           </div>
-                          
-                          <div className="flex items-center gap-2">
-                            <Clock className="w-4 h-4" />
-                            <span>Registrado em {accessDate.toLocaleString('pt-BR')}</span>
-                          </div>
+
+                          {item.eventDescription && (
+                            <p className="text-sm text-muted-foreground mt-2 line-clamp-2">
+                              {item.eventDescription}
+                            </p>
+                          )}
                         </div>
 
-                        {item.eventDescription && (
-                          <p className="text-sm text-muted-foreground mt-2 line-clamp-2">
-                            {item.eventDescription}
-                          </p>
-                        )}
+                        <Badge className="w-fit bg-green-500 hover:bg-green-600">
+                          Presente
+                        </Badge>
                       </div>
 
-                      <Badge className="w-fit bg-green-500 hover:bg-green-600">
-                        Presente
-                      </Badge>
+                      <div className="flex justify-end pt-2 border-t">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleDownloadCertificate(item.id, item.eventTitle)}
+                          disabled={downloadingId === item.id}
+                          className="gap-2"
+                        >
+                          {downloadingId === item.id ? (
+                            <>
+                              <div className="w-4 h-4 border-2 border-primary/20 border-t-primary rounded-full animate-spin" />
+                              <span>Gerando...</span>
+                            </>
+                          ) : (
+                            <>
+                              <Download className="w-4 h-4" />
+                              <span>Baixar Comprovante</span>
+                            </>
+                          )}
+                        </Button>
+                      </div>
                     </div>
                   </CardContent>
                 </Card>

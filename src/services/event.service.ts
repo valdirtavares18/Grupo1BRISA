@@ -168,6 +168,35 @@ export class EventService {
   async deleteEvent(eventId: string) {
     await query('DELETE FROM "Event" WHERE id = ?', [eventId])
   }
+
+  async duplicateEvent(eventId: string) {
+    // Buscar evento original
+    const originalEvent = await this.getEventById(eventId)
+    
+    if (!originalEvent) {
+      throw new Error('Evento não encontrado')
+    }
+
+    // Criar novo evento com dados do original
+    const now = new Date()
+    const startDate = new Date(originalEvent.startDate)
+    const endDate = new Date(originalEvent.endDate)
+    
+    // Ajustar datas para serem futuras (adicionar 7 dias)
+    const newStartDate = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000)
+    const duration = endDate.getTime() - startDate.getTime()
+    const newEndDate = new Date(newStartDate.getTime() + duration)
+
+    const newEvent = await this.createEvent({
+      organizationId: originalEvent.organizationId,
+      title: `${originalEvent.title} (Cópia)`,
+      description: originalEvent.description,
+      startDate: newStartDate,
+      endDate: newEndDate
+    })
+
+    return newEvent
+  }
 }
 
 export const eventService = new EventService()

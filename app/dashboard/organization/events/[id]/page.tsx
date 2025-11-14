@@ -2,6 +2,8 @@ import { eventService } from '@/services/event.service'
 import { notFound } from 'next/navigation'
 import { Navbar } from '@/components/organisms/navbar'
 import { QRCodeViewer } from '@/components/organisms/qr-code-viewer'
+import { CloseEventButton } from '@/components/organisms/close-event-button'
+import { DuplicateEventButton } from '@/components/organisms/duplicate-event-button'
 import { Card, CardContent, CardHeader, CardTitle, Badge } from '@/components/atoms'
 import { PageHeader } from '@/components/molecules'
 import Link from 'next/link'
@@ -138,19 +140,27 @@ export default async function EventDetailsPage({ params }: PageProps) {
                   </div>
                 </div>
 
-                <div className="flex flex-col sm:flex-row gap-3 mt-6">
-                  <Link href={`/dashboard/organization/events/${event.id}/edit`} className="flex-1">
-                    <Button variant="outline" className="w-full">
-                      <Edit className="w-4 h-4 mr-2" />
-                      Editar Evento
-                    </Button>
-                  </Link>
-                  <a href={`/api/events/${event.id}/export`} className="flex-1">
-                    <Button variant="outline" className="w-full">
-                      <Download className="w-4 h-4 mr-2" />
-                      Exportar CSV
-                    </Button>
-                  </a>
+                <div className="flex flex-col gap-3 mt-6">
+                  <div className="flex flex-col sm:flex-row gap-3">
+                    <Link href={`/dashboard/organization/events/${event.id}/edit`} className="flex-1">
+                      <Button variant="outline" className="w-full">
+                        <Edit className="w-4 h-4 mr-2" />
+                        Editar Evento
+                      </Button>
+                    </Link>
+                    <a href={`/api/events/${event.id}/export`} className="flex-1">
+                      <Button variant="outline" className="w-full">
+                        <Download className="w-4 h-4 mr-2" />
+                        Exportar CSV
+                      </Button>
+                    </a>
+                  </div>
+                  <DuplicateEventButton eventId={event.id} />
+                  <CloseEventButton 
+                    eventId={event.id} 
+                    eventTitle={event.title}
+                    isClosed={event.manuallyEnded === 1}
+                  />
                 </div>
               </CardContent>
             </Card>

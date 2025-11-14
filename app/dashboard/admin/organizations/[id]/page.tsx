@@ -1,6 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle, Badge, Button } from '@/components/atoms'
 import { PageHeader } from '@/components/molecules'
 import { Navbar } from '@/components/organisms/navbar'
+import { DeleteOrganizationButton } from '@/components/organisms/delete-organization-button'
 import { organizationService } from '@/services/organization.service'
 import { eventService } from '@/services/event.service'
 import { notFound } from 'next/navigation'
@@ -122,6 +123,21 @@ export default async function OrganizationDetailsPage({ params }: PageProps) {
                   </div>
                 </div>
               )}
+
+              {/* Botões de Ação */}
+              <div className="border-t pt-6 mt-6 space-y-3">
+                <Link href={`/dashboard/admin/organizations/${organization.id}/edit`}>
+                  <Button variant="outline" className="w-full">
+                    <Edit className="w-4 h-4 mr-2" />
+                    Editar Organização
+                  </Button>
+                </Link>
+
+                <DeleteOrganizationButton 
+                  organizationId={organization.id}
+                  organizationName={organization.name}
+                />
+              </div>
             </CardContent>
           </Card>
 

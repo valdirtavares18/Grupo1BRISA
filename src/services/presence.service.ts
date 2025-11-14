@@ -23,6 +23,11 @@ export class PresenceService {
     const startDate = new Date(event.startDate)
     const endDate = new Date(event.endDate)
 
+    // Verificar se foi encerrado manualmente
+    if (event.manuallyEnded === 1) {
+      throw new Error('Este evento foi encerrado. O registro de presença não está mais disponível.')
+    }
+
     // Validar se o evento está dentro do horário programado
     if (now < startDate) {
       throw new Error('Este evento ainda não começou. Aguarde o horário de início.')
