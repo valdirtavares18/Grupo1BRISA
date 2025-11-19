@@ -1,9 +1,8 @@
 'use client'
 
-import { Building2, LogOut, Menu, X } from 'lucide-react'
-import Link from 'next/link'
+import { LogOut, Menu, X } from 'lucide-react'
 import { useState } from 'react'
-import { Button } from '@/components/atoms'
+import { Button, Logo } from '@/components/atoms'
 import { useRouter } from 'next/navigation'
 
 interface NavbarProps {
@@ -25,12 +24,7 @@ export function Navbar({ userRole, userName }: NavbarProps) {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link href="/dashboard" className="flex items-center gap-2 font-bold text-lg text-primary hover:opacity-80 transition">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center">
-              <Building2 className="w-5 h-5 text-white" />
-            </div>
-            <span className="hidden sm:block">Presença Eventos</span>
-          </Link>
+          <Logo href="/dashboard" />
 
           {/* Desktop Menu */}
           <div className="hidden md:flex items-center gap-4">

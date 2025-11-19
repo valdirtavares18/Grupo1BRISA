@@ -1,10 +1,12 @@
 import { eventService } from '@/services/event.service'
 import { presenceService } from '@/services/presence.service'
 import { notFound } from 'next/navigation'
-import { headers } from 'next/headers'
+import { headers, cookies } from 'next/headers'
 import { Card, CardContent, CardHeader, CardTitle, Button } from '@/components/atoms'
+import { RegisterClient } from './register-client'
 import Link from 'next/link'
 import { Calendar, Clock, MapPin, Building2, UserPlus, CheckCircle2, Info, AlertCircle } from 'lucide-react'
+import { verifyToken } from '@/lib/auth'
 
 interface PageProps {
   params: { token: string }
@@ -33,9 +35,9 @@ export default async function EventPage({ params }: PageProps) {
   let presenceResult = { success: false, message: '', alreadyRegistered: false }
 
   // Apenas tentar registrar presença se o evento estiver ativo
-  if (isActiveEvent) {
+  if (isActiveEvent && !isLoggedIn) {
     try {
-      const initialScanToken = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+      initialScanToken = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
 
       await presenceService.logPresence({
         eventId: event.id,
@@ -199,7 +201,7 @@ export default async function EventPage({ params }: PageProps) {
             </div>
 
             {/* Actions */}
-            {!isPastEvent && (
+            {!isPastEvent && !isLoggedIn && (
               <div className="space-y-3">
                 <Link href="/login" className="block">
                   <Button className="w-full" size="lg">
@@ -214,6 +216,16 @@ export default async function EventPage({ params }: PageProps) {
                   </Button>
                 </Link>
               </div>
+            )}
+
+            {/* Register Form */}
+            {!isPastEvent && !isLoggedIn && presenceResult.success && initialScanToken && (
+              <RegisterClient
+                eventId={event.id}
+                organizationId={event.organizationId}
+                initialScanToken={initialScanToken}
+                isLoggedIn={isLoggedIn}
+              />
             )}
 
             {/* Organization */}

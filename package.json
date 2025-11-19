@@ -1,5 +1,5 @@
 {
-  "name": "presenca-eventos",
+  "name": "fluxo-presente",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -24,11 +24,13 @@
     "@radix-ui/react-toast": "^1.1.5",
     "@types/better-sqlite3": "^7.6.13",
     "@types/pg": "^8.15.6",
+    "axios": "^1.6.0",
     "bcryptjs": "^2.4.3",
     "better-sqlite3": "^12.4.1",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
     "date-fns": "^3.6.0",
+    "html5-qrcode": "^2.3.8",
     "jsonwebtoken": "^9.0.2",
     "jspdf": "^3.0.3",
     "lucide-react": "^0.303.0",

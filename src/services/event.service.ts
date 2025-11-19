@@ -7,6 +7,13 @@ export class EventService {
     description?: string
     startDate: Date
     endDate: Date
+    address?: string
+    city?: string
+    state?: string
+    zipCode?: string
+    latitude?: number
+    longitude?: number
+    eventType?: string
   }) {
     // Validar que a data de início não é anterior à data atual
     const now = new Date()
@@ -32,8 +39,23 @@ export class EventService {
     const id = require('crypto').randomUUID()
 
     await query(
-      'INSERT INTO "Event" (id, "organizationId", title, description, "startDate", "endDate", "qrCodeToken") VALUES (?, ?, ?, ?, ?, ?, ?)',
-      [id, data.organizationId, data.title, data.description || null, data.startDate.toISOString(), data.endDate.toISOString(), qrCodeToken]
+      'INSERT INTO "Event" (id, "organizationId", title, description, "startDate", "endDate", "qrCodeToken", address, city, state, "zipCode", latitude, longitude, "eventType") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+      [
+        id,
+        data.organizationId,
+        data.title,
+        data.description || null,
+        data.startDate.toISOString(),
+        data.endDate.toISOString(),
+        qrCodeToken,
+        data.address || null,
+        data.city || null,
+        data.state || null,
+        data.zipCode || null,
+        data.latitude || null,
+        data.longitude || null,
+        data.eventType || null,
+      ]
     )
 
     const result = await query(

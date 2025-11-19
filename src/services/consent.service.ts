@@ -53,6 +53,10 @@ export class ConsentService {
       [endUserId]
     )
   }
+
+  async saveConsent(endUserId: string, dataType: string, isGiven: boolean) {
+    return this.createOrUpdateConsent(endUserId, dataType, isGiven)
+  }
 }
 
 export const consentService = new ConsentService()

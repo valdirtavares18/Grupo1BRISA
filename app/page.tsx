@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { Button } from '@/components/atoms'
+import { Button, Logo } from '@/components/atoms'
 import { ArrowRight, QrCode, Users, Shield, TrendingUp, Check } from 'lucide-react'
 
 export default function HomePage() {
@@ -8,12 +8,17 @@ export default function HomePage() {
       {/* Hero Section */}
       <div className="container mx-auto px-4 py-8 sm:py-16 lg:py-24">
         <div className="max-w-6xl mx-auto">
+          {/* Logo */}
+          <div className="flex justify-center mb-12">
+            <Logo className="scale-125 sm:scale-150" />
+          </div>
+
           {/* Header */}
           <div className="text-center space-y-6 mb-16">
-            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white leading-tight">
-              Gestão de Presença
-              <span className="block bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent">
-                em Eventos
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight">
+              Sistema de Gestão de
+              <span className="block bg-gradient-to-r from-[#00D4FF] to-[#00B8E6] bg-clip-text text-transparent mt-2">
+                Presença em Eventos
               </span>
             </h1>
             
@@ -99,9 +104,12 @@ export default function HomePage() {
       {/* Footer */}
       <div className="border-t border-white/10">
         <div className="container mx-auto px-4 py-6">
-          <p className="text-center text-white/60 text-sm">
-            © 2025 Presença Eventos. Todos os direitos reservados.
-          </p>
+          <div className="flex flex-col items-center gap-4">
+            <Logo showText={true} className="opacity-60" />
+            <p className="text-center text-white/60 text-sm">
+              © 2025 FLUXO PRESENTE. Todos os direitos reservados.
+            </p>
+          </div>
         </div>
       </div>
     </div>

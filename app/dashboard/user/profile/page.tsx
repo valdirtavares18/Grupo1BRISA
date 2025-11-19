@@ -1,12 +1,13 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Card, CardContent, CardHeader, CardTitle, Button, Input } from '@/components/atoms'
+import { Card, CardContent, CardHeader, CardTitle, Button, Input, Avatar, AvatarImage, AvatarFallback } from '@/components/atoms'
 import { Navbar } from '@/components/organisms/navbar'
 import { FormField } from '@/components/molecules'
-import { User, Mail, Phone, Camera, Save, AlertCircle, CheckCircle2, ArrowLeft, Trash2 } from 'lucide-react'
+import { User, Mail, Phone, Camera, Save, AlertCircle, CheckCircle2, ArrowLeft, Trash2, MapPin, FileText, Loader2 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { formatCPF } from '@/lib/utils'
 
 export default function UserProfilePage() {
   const router = useRouter()
@@ -18,8 +19,16 @@ export default function UserProfilePage() {
     fullName: '',
     email: '',
     phone: '',
-    cpf: ''
+    cpf: '',
+    zipCode: '',
+    address: '',
+    city: '',
+    state: '',
+    biography: '',
+    profilePhotoUrl: '',
   })
+  const [loadingCep, setLoadingCep] = useState(false)
+  const [uploadingPhoto, setUploadingPhoto] = useState(false)
 
   useEffect(() => {
     fetchProfile()
@@ -37,7 +46,13 @@ export default function UserProfilePage() {
           fullName: data.fullName || '',
           email: data.email || '',
           phone: data.phone || '',
-          cpf: data.cpf || ''
+          cpf: data.cpf || '',
+          zipCode: data.zipCode || '',
+          address: data.address || '',
+          city: data.city || '',
+          state: data.state || '',
+          biography: data.biography || '',
+          profilePhotoUrl: data.profilePhotoUrl || '',
         })
       }
     } catch (err) {
@@ -59,7 +74,10 @@ export default function UserProfilePage() {
         body: JSON.stringify({
           fullName: formData.fullName || null,
           email: formData.email || null,
-          phone: formData.phone || null
+          phone: formData.phone || null,
+          zipCode: formData.zipCode || null,
+          biography: formData.biography || null,
+          profilePhotoUrl: formData.profilePhotoUrl || null,
         })
       })
 
@@ -75,6 +93,84 @@ export default function UserProfilePage() {
       setError(err.message)
     } finally {
       setLoading(false)
+    }
+  }
+
+  const handleCepChange = async (cep: string) => {
+    const cleanCep = cep.replace(/\D/g, '')
+    setFormData({ ...formData, zipCode: cleanCep })
+
+    if (cleanCep.length === 8) {
+      setLoadingCep(true)
+      try {
+        const res = await fetch(`/api/viacep?cep=${cleanCep}`)
+        if (res.ok) {
+          const data = await res.json()
+          if (data) {
+            setFormData({
+              ...formData,
+              zipCode: data.zipCode,
+              address: data.address,
+              city: data.city,
+              state: data.state,
+            })
+          }
+        }
+      } catch (err) {
+        console.error('Erro ao buscar CEP:', err)
+      } finally {
+        setLoadingCep(false)
+      }
+    }
+  }
+
+  const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    if (file.size > 5 * 1024 * 1024) {
+      setError('A imagem deve ter no máximo 5MB')
+      return
+    }
+
+    if (!file.type.startsWith('image/')) {
+      setError('Por favor, selecione uma imagem válida')
+      return
+    }
+
+    setUploadingPhoto(true)
+    setError('')
+
+    try {
+      // Converter para base64 (para simplificar, em produção usar upload para S3 ou similar)
+      const reader = new FileReader()
+      reader.onloadend = async () => {
+        const base64 = reader.result as string
+
+        // Salvar como URL base64 (em produção, fazer upload para storage)
+        setFormData({ ...formData, profilePhotoUrl: base64 })
+
+        // Atualizar no backend
+        const res = await fetch('/api/user/profile', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({
+            ...formData,
+            profilePhotoUrl: base64,
+          }),
+        })
+
+        if (res.ok) {
+          setSuccess('Foto atualizada com sucesso!')
+          setTimeout(() => setSuccess(''), 3000)
+        }
+      }
+      reader.readAsDataURL(file)
+    } catch (err: any) {
+      setError(err.message || 'Erro ao fazer upload da foto')
+    } finally {
+      setUploadingPhoto(false)
     }
   }
 
@@ -145,10 +241,55 @@ export default function UserProfilePage() {
                 </div>
               )}
 
+              {/* Foto de Perfil */}
+              <div className="mb-6 flex flex-col items-center gap-4 pb-6 border-b">
+                <Avatar className="w-24 h-24">
+                  {formData.profilePhotoUrl ? (
+                    <AvatarImage src={formData.profilePhotoUrl} alt={formData.fullName || 'Usuário'} />
+                  ) : null}
+                  <AvatarFallback className="text-2xl bg-primary/20 text-primary">
+                    {formData.fullName ? formData.fullName.charAt(0).toUpperCase() : 'U'}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="text-center">
+                  <label htmlFor="photo-upload" className="cursor-pointer">
+                    <input
+                      id="photo-upload"
+                      type="file"
+                      accept="image/*"
+                      onChange={handlePhotoUpload}
+                      className="hidden"
+                      disabled={uploadingPhoto}
+                    />
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      disabled={uploadingPhoto}
+                    >
+                      {uploadingPhoto ? (
+                        <>
+                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                          Enviando...
+                        </>
+                      ) : (
+                        <>
+                          <Camera className="w-4 h-4 mr-2" />
+                          {formData.profilePhotoUrl ? 'Alterar Foto' : 'Adicionar Foto'}
+                        </>
+                      )}
+                    </Button>
+                  </label>
+                  <p className="text-xs text-muted-foreground mt-2">
+                    Máximo 5MB. Formatos: JPG, PNG
+                  </p>
+                </div>
+              </div>
+
               <form onSubmit={handleSubmit} className="space-y-4">
                 <FormField label="CPF">
                   <Input
-                    value={formData.cpf}
+                    value={formatCPF(formData.cpf)}
                     disabled
                     className="bg-gray-50"
                   />
@@ -193,6 +334,77 @@ export default function UserProfilePage() {
                       className="pl-10"
                     />
                   </div>
+                </FormField>
+
+                <FormField label="CEP">
+                  <div className="relative">
+                    <MapPin className="w-5 h-5 text-muted-foreground absolute left-3 top-1/2 -translate-y-1/2" />
+                    <Input
+                      value={formData.zipCode}
+                      onChange={(e) => handleCepChange(e.target.value)}
+                      placeholder="00000-000"
+                      disabled={loading || loadingCep}
+                      className="pl-10"
+                      maxLength={9}
+                    />
+                    {loadingCep && (
+                      <Loader2 className="w-4 h-4 text-muted-foreground absolute right-3 top-1/2 -translate-y-1/2 animate-spin" />
+                    )}
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Digite o CEP para preencher automaticamente o endereço
+                  </p>
+                </FormField>
+
+                {formData.address && (
+                  <FormField label="Endereço">
+                    <Input
+                      value={formData.address}
+                      onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                      placeholder="Rua, número, complemento"
+                      disabled={loading}
+                    />
+                  </FormField>
+                )}
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {formData.city && (
+                    <FormField label="Cidade">
+                      <Input
+                        value={formData.city}
+                        onChange={(e) => setFormData({ ...formData, city: e.target.value })}
+                        disabled={loading}
+                      />
+                    </FormField>
+                  )}
+
+                  {formData.state && (
+                    <FormField label="Estado">
+                      <Input
+                        value={formData.state}
+                        onChange={(e) => setFormData({ ...formData, state: e.target.value })}
+                        disabled={loading}
+                        maxLength={2}
+                      />
+                    </FormField>
+                  )}
+                </div>
+
+                <FormField label="Biografia">
+                  <div className="relative">
+                    <FileText className="w-5 h-5 text-muted-foreground absolute left-3 top-3" />
+                    <textarea
+                      value={formData.biography}
+                      onChange={(e) => setFormData({ ...formData, biography: e.target.value })}
+                      placeholder="Conte um pouco sobre você..."
+                      disabled={loading}
+                      className="w-full min-h-[100px] px-10 py-3 rounded-lg border border-input bg-background text-sm resize-none focus:outline-none focus:ring-2 focus:ring-primary"
+                      maxLength={500}
+                    />
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    {formData.biography.length}/500 caracteres
+                  </p>
                 </FormField>
 
                 <Button type="submit" className="w-full" disabled={loading}>

@@ -1,10 +1,10 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { Card, CardContent, Button, Input } from '@/components/atoms'
 import { FormField } from '@/components/molecules'
-import { Calendar, Clock, FileText, AlertCircle } from 'lucide-react'
+import { Calendar, Clock, FileText, AlertCircle, MapPin, Tag } from 'lucide-react'
 
 export function CreateEventForm() {
   const router = useRouter()
@@ -17,7 +17,29 @@ export function CreateEventForm() {
     startTime: '',
     endDate: '',
     endTime: '',
+    address: '',
+    city: '',
+    state: '',
+    zipCode: '',
+    eventType: '',
   })
+  const [eventTypes, setEventTypes] = useState<string[]>([])
+
+  useEffect(() => {
+    fetchEventTypes()
+  }, [])
+
+  const fetchEventTypes = async () => {
+    try {
+      const res = await fetch('/api/events/types')
+      if (res.ok) {
+        const data = await res.json()
+        setEventTypes(data)
+      }
+    } catch (err) {
+      console.error('Erro ao buscar tipos de eventos:', err)
+    }
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -51,6 +73,11 @@ export function CreateEventForm() {
           description: formData.description || null,
           startDate: startDate.toISOString(),
           endDate: endDate.toISOString(),
+          address: formData.address || null,
+          city: formData.city || null,
+          state: formData.state ? formData.state.toUpperCase() : null,
+          zipCode: formData.zipCode.replace(/\D/g, '') || null,
+          eventType: formData.eventType || null,
         }),
       })
 
@@ -160,6 +187,94 @@ export function CreateEventForm() {
               </div>
             </div>
           </div>
+
+          <div className="border-t pt-6 space-y-4">
+            <h3 className="font-semibold flex items-center gap-2">
+              <MapPin className="w-4 h-4" />
+              Localização
+            </h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <FormField label="CEP">
+                <Input
+                  type="text"
+                  placeholder="00000-000"
+                  value={formData.zipCode}
+                  onChange={(e) => {
+                    const value = e.target.value.replace(/\D/g, '')
+                    if (value.length <= 8) {
+                      const formatted = value.length > 5 ? `${value.substring(0, 5)}-${value.substring(5)}` : value
+                      setFormData({ ...formData, zipCode: formatted })
+                    }
+                  }}
+                  maxLength={9}
+                  disabled={loading}
+                />
+              </FormField>
+
+              <FormField label="Estado">
+                <Input
+                  type="text"
+                  placeholder="Ex: SP, RJ"
+                  value={formData.state}
+                  onChange={(e) => setFormData({ ...formData, state: e.target.value.toUpperCase() })}
+                  maxLength={2}
+                  disabled={loading}
+                />
+              </FormField>
+
+              <FormField label="Cidade">
+                <Input
+                  type="text"
+                  placeholder="Nome da cidade"
+                  value={formData.city}
+                  onChange={(e) => setFormData({ ...formData, city: e.target.value })}
+                  disabled={loading}
+                />
+              </FormField>
+
+              <FormField label="Endereço">
+                <Input
+                  type="text"
+                  placeholder="Rua, número, complemento"
+                  value={formData.address}
+                  onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                  disabled={loading}
+                />
+              </FormField>
+            </div>
+          </div>
+
+          <FormField label="Tipo de Evento">
+            <div className="relative">
+              <Tag className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+              <select
+                value={formData.eventType}
+                onChange={(e) => setFormData({ ...formData, eventType: e.target.value })}
+                className="w-full pl-10 pr-3 py-2 rounded-lg border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                disabled={loading}
+              >
+                <option value="">Selecione o tipo (opcional)</option>
+                {eventTypes.map((type) => (
+                  <option key={type} value={type}>
+                    {type}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <p className="text-xs text-muted-foreground mt-1">
+              Você também pode digitar um novo tipo
+            </p>
+            {formData.eventType && !eventTypes.includes(formData.eventType) && (
+              <Input
+                type="text"
+                placeholder="Digite o tipo de evento"
+                value={formData.eventType}
+                onChange={(e) => setFormData({ ...formData, eventType: e.target.value })}
+                disabled={loading}
+                className="mt-2"
+              />
+            )}
+          </FormField>
 
           <div className="flex flex-col sm:flex-row gap-3 pt-4">
             <Button

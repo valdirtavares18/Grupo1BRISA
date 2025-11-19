@@ -2,11 +2,12 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/atoms'
 import { PageHeader } from '@/components/molecules'
 import { Navbar } from '@/components/organisms/navbar'
 import { eventService } from '@/services/event.service'
+import { endUserService } from '@/services/end-user.service'
 import { verifyToken } from '@/lib/auth'
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
-import { Calendar, Plus, Users, MapPin, Clock, Eye, TrendingUp } from 'lucide-react'
+import { Calendar, Plus, Users, MapPin, Clock, Eye, TrendingUp, UserCheck, MessageSquare } from 'lucide-react'
 
 export default async function OrganizationDashboardPage() {
   const cookieStore = cookies()
@@ -22,7 +23,10 @@ export default async function OrganizationDashboardPage() {
     redirect('/login')
   }
 
-  const events = await eventService.getEventsByOrganization(payload.organizationId)
+  const [events, userStats] = await Promise.all([
+    eventService.getEventsByOrganization(payload.organizationId),
+    endUserService.getEndUserStatsByOrganization(payload.organizationId),
+  ])
   
   const now = new Date()
   const upcomingEvents = events.filter(e => new Date(e.startDate) > now)
@@ -40,13 +44,27 @@ export default async function OrganizationDashboardPage() {
           title="Seus Eventos"
           description="Gerencie e acompanhe todos os seus eventos"
           action={
-            <Link href="/dashboard/organization/events/new">
-              <div className="bg-primary text-white px-4 py-2 sm:px-6 sm:py-3 rounded-xl hover:bg-primary/90 transition shadow-lg hover:shadow-xl flex items-center gap-2">
-                <Plus className="w-5 h-5" />
-                <span className="hidden sm:inline">Novo Evento</span>
-                <span className="sm:hidden">Novo</span>
-              </div>
-            </Link>
+            <div className="flex flex-col sm:flex-row gap-2">
+              <Link href="/dashboard/organization/feed">
+                <div className="bg-pink-600 text-white px-4 py-2 sm:px-6 sm:py-3 rounded-xl hover:bg-pink-700 transition shadow-lg hover:shadow-xl flex items-center gap-2">
+                  <MessageSquare className="w-5 h-5" />
+                  <span className="hidden sm:inline">Feed</span>
+                </div>
+              </Link>
+              <Link href="/dashboard/organization/users">
+                <div className="bg-purple-600 text-white px-4 py-2 sm:px-6 sm:py-3 rounded-xl hover:bg-purple-700 transition shadow-lg hover:shadow-xl flex items-center gap-2">
+                  <UserCheck className="w-5 h-5" />
+                  <span className="hidden sm:inline">Usuários</span>
+                </div>
+              </Link>
+              <Link href="/dashboard/organization/events/new">
+                <div className="bg-primary text-white px-4 py-2 sm:px-6 sm:py-3 rounded-xl hover:bg-primary/90 transition shadow-lg hover:shadow-xl flex items-center gap-2">
+                  <Plus className="w-5 h-5" />
+                  <span className="hidden sm:inline">Novo Evento</span>
+                  <span className="sm:hidden">Novo</span>
+                </div>
+              </Link>
+            </div>
           }
         />
 
@@ -100,6 +118,26 @@ export default async function OrganizationDashboardPage() {
             </CardContent>
           </Card>
         </div>
+
+        {/* Users Summary Card */}
+        <Card className="border-0 shadow-lg mb-8">
+          <CardContent className="p-6">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+              <div>
+                <h3 className="text-lg font-semibold mb-1">Usuários Finais</h3>
+                <p className="text-sm text-muted-foreground">
+                  {userStats.total} {userStats.total === 1 ? 'participante único' : 'participantes únicos'} nos seus eventos
+                </p>
+              </div>
+              <Link href="/dashboard/organization/users">
+                <div className="inline-flex items-center gap-2 bg-purple-600 text-white px-6 py-3 rounded-xl hover:bg-purple-700 transition shadow-lg hover:shadow-xl">
+                  <UserCheck className="w-5 h-5" />
+                  Ver Todos os Usuários
+                </div>
+              </Link>
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Events List */}
         {events.length === 0 ? (

@@ -8,6 +8,8 @@ export class UserService {
     phone?: string
     email?: string
     profilePhotoUrl?: string
+    zipCode?: string
+    biography?: string
   }) {
     // Validar email se fornecido
     if (data.email && !validateEmail(data.email)) {
@@ -47,6 +49,16 @@ export class UserService {
     if (data.profilePhotoUrl !== undefined) {
       updates.push('"profilePhotoUrl" = ?')
       values.push(data.profilePhotoUrl)
+    }
+
+    if (data.zipCode !== undefined) {
+      updates.push('"zipCode" = ?')
+      values.push(data.zipCode)
+    }
+
+    if (data.biography !== undefined) {
+      updates.push('biography = ?')
+      values.push(data.biography)
     }
 
     if (updates.length > 0) {

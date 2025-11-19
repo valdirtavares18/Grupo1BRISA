@@ -1,11 +1,15 @@
 import Link from 'next/link'
-import { Button } from '@/components/atoms'
+import { Button, Logo } from '@/components/atoms'
 import { Home, AlertTriangle } from 'lucide-react'
 
 export default function NotFound() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary to-primary/80 p-4">
       <div className="text-center space-y-6 max-w-md">
+        <div className="flex justify-center mb-6">
+          <Logo className="opacity-80" />
+        </div>
+        
         <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-white/10 backdrop-blur-sm mb-4">
           <AlertTriangle className="w-10 h-10 text-white" />
         </div>

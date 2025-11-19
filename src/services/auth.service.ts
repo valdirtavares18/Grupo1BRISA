@@ -5,7 +5,7 @@ import { validateCPF } from '@/lib/utils'
 export class AuthService {
   async loginPlatformUser(email: string, password: string) {
     const result = await query(
-      'SELECT * FROM platform_users WHERE email = $1',
+      'SELECT * FROM platform_users WHERE email = ?',
       [email]
     )
 
@@ -50,7 +50,7 @@ export class AuthService {
       throw new Error('CPF inválido. Verifique os dígitos e tente novamente')
     }
 
-    const existing = await query('SELECT * FROM end_users WHERE cpf = $1', [cleanCpf])
+    const existing = await query('SELECT * FROM end_users WHERE cpf = ?', [cleanCpf])
 
     if (existing.rows[0]) {
       throw new Error('Este CPF já está cadastrado')
@@ -61,10 +61,16 @@ export class AuthService {
     }
 
     const passwordHash = await hashPassword(password)
+    const id = require('crypto').randomUUID()
+
+    await query(
+      'INSERT INTO end_users (id, cpf, "passwordHash") VALUES (?, ?)',
+      [id, cleanCpf, passwordHash]
+    )
 
     const result = await query(
-      'INSERT INTO end_users (id, cpf, "passwordHash") VALUES (gen_random_uuid()::text, $1, $2) RETURNING *',
-      [cleanCpf, passwordHash]
+      'SELECT * FROM end_users WHERE id = ?',
+      [id]
     )
     const user = result.rows[0]
 
@@ -86,7 +92,7 @@ export class AuthService {
   async loginEndUser(cpf: string, password: string) {
     const cleanCpf = cpf.replace(/[^\d]/g, '')
 
-    const result = await query('SELECT * FROM end_users WHERE cpf = $1', [cleanCpf])
+    const result = await query('SELECT * FROM end_users WHERE cpf = ?', [cleanCpf])
     const user = result.rows[0]
 
     if (!user) {
@@ -110,6 +116,118 @@ export class AuthService {
         id: user.id,
         cpf: user.cpf,
         fullName: user.fullName,
+      },
+    }
+  }
+
+  async registerEndUserWithPhone(data: {
+    cpf: string
+    phone: string
+    password: string
+    acceptTerms: boolean
+    acceptNotifications: boolean
+    eventId?: string
+    initialScanToken?: string
+    organizationId?: string
+  }) {
+    const cleanCpf = data.cpf.replace(/[^\d]/g, '')
+    const cleanPhone = data.phone.replace(/\D/g, '')
+
+    if (cleanCpf.length !== 11) {
+      throw new Error('CPF deve ter exatamente 11 dígitos')
+    }
+
+    if (!validateCPF(cleanCpf)) {
+      throw new Error('CPF inválido. Verifique os dígitos e tente novamente')
+    }
+
+    if (cleanPhone.length < 10) {
+      throw new Error('Telefone inválido')
+    }
+
+    if (data.password.length < 6) {
+      throw new Error('A senha deve ter no mínimo 6 caracteres')
+    }
+
+    if (!data.acceptTerms) {
+      throw new Error('Você deve aceitar os termos de uso')
+    }
+
+    // Verificar se telefone já foi verificado
+    const phoneVerified = await query(
+      'SELECT * FROM phone_verifications WHERE phone = ? AND verified = 1 ORDER BY createdAt DESC LIMIT 1',
+      [cleanPhone]
+    )
+
+    if (phoneVerified.rows.length === 0) {
+      throw new Error('Telefone não verificado. Verifique seu número primeiro.')
+    }
+
+    // Verificar se CPF já existe
+    const existing = await query('SELECT * FROM end_users WHERE cpf = ?', [cleanCpf])
+
+    if (existing.rows[0]) {
+      throw new Error('Este CPF já está cadastrado')
+    }
+
+    // Verificar se telefone já está em uso
+    const existingPhone = await query('SELECT * FROM end_users WHERE phone = ?', [cleanPhone])
+
+    if (existingPhone.rows[0]) {
+      throw new Error('Este telefone já está cadastrado')
+    }
+
+    const passwordHash = await hashPassword(data.password)
+    const id = require('crypto').randomUUID()
+
+    // Criar usuário
+    await query(
+      'INSERT INTO end_users (id, cpf, "passwordHash", phone, "phoneVerified") VALUES (?, ?, ?, ?, ?)',
+      [id, cleanCpf, passwordHash, cleanPhone, 1]
+    )
+
+    // Salvar consentimentos
+    const consentService = (await import('@/services/consent.service')).consentService
+
+    // Consentimento de termos de uso
+    await consentService.saveConsent(id, 'TRACKING_PURPOSE', data.acceptTerms)
+
+    // Consentimento de notificações da organização
+    if (data.organizationId && data.acceptNotifications) {
+      await consentService.saveConsent(id, 'EMAIL_MARKETING', true)
+      await consentService.saveConsent(id, 'WHATSAPP_MARKETING', true)
+    }
+
+    // Associar presença se tiver initialScanToken
+    if (data.initialScanToken && data.eventId) {
+      try {
+        const presenceService = (await import('@/services/presence.service')).presenceService
+        const presenceResult = await query(
+          'SELECT id FROM presence_logs WHERE "initialScanToken" = ? AND "eventId" = ? LIMIT 1',
+          [data.initialScanToken, data.eventId]
+        )
+
+        if (presenceResult.rows.length > 0) {
+          await presenceService.updatePresenceWithUser(presenceResult.rows[0].id, id)
+        }
+      } catch (error) {
+        console.error('Erro ao associar presença:', error)
+        // Não falhar o registro se não conseguir associar presença
+      }
+    }
+
+    const token = generateToken({
+      userId: id,
+      email: cleanCpf,
+      role: 'END_USER',
+    })
+
+    return {
+      token,
+      user: {
+        id,
+        cpf: cleanCpf,
+        phone: cleanPhone,
       },
     }
   }

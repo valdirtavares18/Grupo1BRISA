@@ -1,4 +1,4 @@
-# 🎯 Sistema de Presença em Eventos - White Label
+# 🎯 FLUXO PRESENTE - Sistema de Gestão de Presença
 
 Plataforma SaaS white-label completa para gestão e registro de presença em eventos com conformidade LGPD.
 
