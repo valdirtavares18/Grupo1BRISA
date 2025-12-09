@@ -67,6 +67,7 @@ CREATE TABLE IF NOT EXISTS "Event" (
   latitude REAL,
   longitude REAL,
   "eventType" TEXT,
+  reward TEXT,
   "createdAt" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY ("organizationId") REFERENCES "Organization"(id) ON DELETE CASCADE
 );
@@ -79,6 +80,7 @@ CREATE TABLE IF NOT EXISTS "presence_logs" (
   "ipAddress" TEXT,
   "userAgent" TEXT,
   "initialScanToken" TEXT,
+  "profile" TEXT,
   FOREIGN KEY ("eventId") REFERENCES "Event"(id) ON DELETE CASCADE,
   FOREIGN KEY ("endUserId") REFERENCES "end_users"(id) ON DELETE SET NULL
 );

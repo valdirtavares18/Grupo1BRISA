@@ -1,4 +1,5 @@
 import { query } from '@/lib/db-sqlite'
+import { randomUUID } from 'crypto'
 
 export class EventService {
   async createEvent(data: {
@@ -14,15 +15,28 @@ export class EventService {
     latitude?: number
     longitude?: number
     eventType?: string
+    reward?: string
   }) {
+    // Garantir que as datas são objetos Date válidos
+    const startDate = data.startDate instanceof Date ? data.startDate : new Date(data.startDate)
+    const endDate = data.endDate instanceof Date ? data.endDate : new Date(data.endDate)
+    
+    // Validar que as datas são válidas
+    if (isNaN(startDate.getTime())) {
+      throw new Error('Data de início inválida')
+    }
+    if (isNaN(endDate.getTime())) {
+      throw new Error('Data de término inválida')
+    }
+    
     // Validar que a data de início não é anterior à data atual
     const now = new Date()
-    if (data.startDate < now) {
+    if (startDate < now) {
       throw new Error('A data do evento não pode ser anterior à data atual')
     }
 
     // Validar que a data de término é posterior à de início
-    if (data.endDate <= data.startDate) {
+    if (endDate <= startDate) {
       throw new Error('A data de término deve ser posterior à data de início')
     }
 
@@ -35,18 +49,18 @@ export class EventService {
       throw new Error('A organização é obrigatória')
     }
 
-    const qrCodeToken = require('crypto').randomUUID()
-    const id = require('crypto').randomUUID()
+    const qrCodeToken = randomUUID()
+    const id = randomUUID()
 
     await query(
-      'INSERT INTO "Event" (id, "organizationId", title, description, "startDate", "endDate", "qrCodeToken", address, city, state, "zipCode", latitude, longitude, "eventType") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+      'INSERT INTO "Event" (id, "organizationId", title, description, "startDate", "endDate", "qrCodeToken", address, city, state, "zipCode", latitude, longitude, "eventType", reward) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
       [
         id,
         data.organizationId,
         data.title,
         data.description || null,
-        data.startDate.toISOString(),
-        data.endDate.toISOString(),
+        startDate.toISOString(),
+        endDate.toISOString(),
         qrCodeToken,
         data.address || null,
         data.city || null,
@@ -55,6 +69,7 @@ export class EventService {
         data.latitude || null,
         data.longitude || null,
         data.eventType || null,
+        data.reward || null,
       ]
     )
 
@@ -170,18 +185,60 @@ export class EventService {
     description?: string
     startDate?: Date
     endDate?: Date
+    address?: string | null
+    city?: string | null
+    state?: string | null
+    zipCode?: string | null
+    eventType?: string | null
+    reward?: string | null
   }) {
-    if (data.title) {
-      await query('UPDATE "Event" SET title = ? WHERE id = ?', [data.title, eventId])
+    const updates: string[] = []
+    const values: any[] = []
+
+    if (data.title !== undefined) {
+      updates.push('title = ?')
+      values.push(data.title)
     }
     if (data.description !== undefined) {
-      await query('UPDATE "Event" SET description = ? WHERE id = ?', [data.description, eventId])
+      updates.push('description = ?')
+      values.push(data.description || null)
     }
     if (data.startDate) {
-      await query('UPDATE "Event" SET "startDate" = ? WHERE id = ?', [data.startDate.toISOString(), eventId])
+      updates.push('"startDate" = ?')
+      values.push(data.startDate.toISOString())
     }
     if (data.endDate) {
-      await query('UPDATE "Event" SET "endDate" = ? WHERE id = ?', [data.endDate.toISOString(), eventId])
+      updates.push('"endDate" = ?')
+      values.push(data.endDate.toISOString())
+    }
+    if (data.address !== undefined) {
+      updates.push('address = ?')
+      values.push(data.address || null)
+    }
+    if (data.city !== undefined) {
+      updates.push('city = ?')
+      values.push(data.city || null)
+    }
+    if (data.state !== undefined) {
+      updates.push('state = ?')
+      values.push(data.state || null)
+    }
+    if (data.zipCode !== undefined) {
+      updates.push('"zipCode" = ?')
+      values.push(data.zipCode || null)
+    }
+    if (data.eventType !== undefined) {
+      updates.push('"eventType" = ?')
+      values.push(data.eventType || null)
+    }
+    if (data.reward !== undefined) {
+      updates.push('reward = ?')
+      values.push(data.reward || null)
+    }
+
+    if (updates.length > 0) {
+      values.push(eventId)
+      await query(`UPDATE "Event" SET ${updates.join(', ')} WHERE id = ?`, values)
     }
 
     return this.getEventById(eventId)

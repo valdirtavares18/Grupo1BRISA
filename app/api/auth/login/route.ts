@@ -18,9 +18,24 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    console.log('🔄 [API Login] Chamando authService.loginPlatformUser...')
-    const result = await authService.loginPlatformUser(email, password)
-    console.log('✅ [API Login] Login bem-sucedido:', result.user.role)
+    // Tentar primeiro como platform user (email), depois como end user (CPF)
+    let result
+    try {
+      console.log('🔄 [API Login] Tentando login como platform user...')
+      result = await authService.loginPlatformUser(email, password)
+      console.log('✅ [API Login] Login bem-sucedido como platform user:', result.user.role)
+    } catch (platformError: any) {
+      // Se falhar, tenta como end user (CPF)
+      console.log('🔄 [API Login] Login como platform user falhou, tentando como end user (CPF)...')
+      try {
+        result = await authService.loginEndUser(email, password)
+        console.log('✅ [API Login] Login bem-sucedido como end user')
+      } catch (endUserError: any) {
+        // Se ambos falharem, retorna erro
+        console.log('❌ [API Login] Login falhou tanto como platform user quanto end user')
+        throw new Error('Credenciais inválidas')
+      }
+    }
 
     const response = NextResponse.json(result)
     

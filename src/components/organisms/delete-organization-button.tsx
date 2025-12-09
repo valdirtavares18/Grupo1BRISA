@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Button } from '@/components/atoms'
+import { Button, Card, CardContent } from '@/components/atoms'
 import { Trash2 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 
@@ -40,58 +40,60 @@ export function DeleteOrganizationButton({ organizationId, organizationName }: D
     <>
       <Button 
         variant="destructive" 
-        className="w-full"
+        className="w-full h-16 text-lg font-semibold"
         onClick={() => setShowConfirm(true)}
         disabled={loading}
       >
-        <Trash2 className="w-4 h-4 mr-2" />
+        <Trash2 className="w-6 h-6 mr-3" />
         Excluir Organização
       </Button>
 
       {showConfirm && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg p-6 max-w-md w-full">
-            <h3 className="text-lg font-bold mb-2 text-red-600">⚠️ Atenção!</h3>
-            <p className="text-muted-foreground mb-4">
-              Tem certeza que deseja excluir a organização <strong>{organizationName}</strong>?
-            </p>
-            <div className="bg-red-50 border border-red-200 rounded-lg p-3 mb-6">
-              <p className="text-sm text-red-900">
-                <strong>Esta ação é irreversível!</strong> Todos os dados relacionados serão excluídos:
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-6">
+          <Card className="max-w-2xl w-full">
+            <CardContent className="p-8">
+              <h3 className="text-2xl font-bold mb-4 text-red-600">⚠️ Atenção!</h3>
+              <p className="text-lg text-white/90 mb-6">
+                Tem certeza que deseja excluir a organização <strong className="text-white">{organizationName}</strong>?
               </p>
-              <ul className="text-xs text-red-800 mt-2 ml-4 space-y-1">
-                <li>• Todos os eventos da organização</li>
-                <li>• Todos os registros de presença</li>
-                <li>• Todos os usuários administradores</li>
-                <li>• Tema e configurações</li>
-              </ul>
-            </div>
-            <div className="flex gap-3">
-              <Button
-                variant="outline"
-                className="flex-1"
-                onClick={() => setShowConfirm(false)}
-                disabled={loading}
-              >
-                Cancelar
-              </Button>
-              <Button
-                variant="destructive"
-                className="flex-1"
-                onClick={handleDelete}
-                disabled={loading}
-              >
-                {loading ? (
-                  <>
-                    <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin mr-2" />
-                    Excluindo...
-                  </>
-                ) : (
-                  'Confirmar Exclusão'
-                )}
-              </Button>
-            </div>
-          </div>
+              <div className="bg-red-500/20 border-2 border-red-400/50 rounded-xl p-5 mb-8">
+                <p className="text-base text-red-200 font-semibold mb-3">
+                  <strong>Esta ação é irreversível!</strong> Todos os dados relacionados serão excluídos:
+                </p>
+                <ul className="text-sm text-red-100 mt-2 ml-4 space-y-2">
+                  <li>• Todos os eventos da organização</li>
+                  <li>• Todos os registros de presença</li>
+                  <li>• Todos os usuários administradores</li>
+                  <li>• Tema e configurações</li>
+                </ul>
+              </div>
+              <div className="flex gap-4">
+                <Button
+                  variant="outline"
+                  className="flex-1 h-14 text-lg border-2 border-white/40 text-white hover:bg-white/25 bg-white/15 font-semibold"
+                  onClick={() => setShowConfirm(false)}
+                  disabled={loading}
+                >
+                  Cancelar
+                </Button>
+                <Button
+                  variant="destructive"
+                  className="flex-1 h-14 text-lg font-semibold"
+                  onClick={handleDelete}
+                  disabled={loading}
+                >
+                  {loading ? (
+                    <>
+                      <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin mr-2" />
+                      Excluindo...
+                    </>
+                  ) : (
+                    'Confirmar Exclusão'
+                  )}
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
         </div>
       )}
     </>

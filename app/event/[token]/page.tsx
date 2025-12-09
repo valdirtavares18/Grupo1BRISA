@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation'
 import { headers, cookies } from 'next/headers'
 import { Card, CardContent, CardHeader, CardTitle, Button } from '@/components/atoms'
 import { RegisterClient } from './register-client'
+import { ProfileSelectorClient } from './profile-selector-client'
 import Link from 'next/link'
 import { Calendar, Clock, MapPin, Building2, UserPlus, CheckCircle2, Info, AlertCircle } from 'lucide-react'
 import { verifyToken } from '@/lib/auth'
@@ -32,33 +33,53 @@ export default async function EventPage({ params }: PageProps) {
                     'unknown'
   const userAgent = headersList.get('user-agent') || 'unknown'
 
-  let presenceResult = { success: false, message: '', alreadyRegistered: false }
+  // Verificar se usuário está logado
+  const cookieStore = cookies()
+  const token = cookieStore.get('token')?.value
+  let isLoggedIn = false
+  let loggedInUserId: string | undefined = undefined
+  
+  if (token) {
+    const payload = verifyToken(token)
+    if (payload && payload.role === 'END_USER') {
+      isLoggedIn = true
+      loggedInUserId = payload.userId
+    }
+  }
 
-  // Apenas tentar registrar presença se o evento estiver ativo
-  if (isActiveEvent && !isLoggedIn) {
+  let presenceResult = { success: false, message: '', alreadyRegistered: false, presenceLogId: null as string | null }
+  let initialScanToken: string | undefined = undefined
+
+  // Registrar presença se o evento estiver ativo
+  if (isActiveEvent) {
     try {
       initialScanToken = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
 
-      await presenceService.logPresence({
+      const presenceLog = await presenceService.logPresence({
         eventId: event.id,
-        endUserId: undefined,
+        endUserId: loggedInUserId, // Se logado, vincula ao CPF automaticamente
         ipAddress,
         userAgent,
         initialScanToken,
       })
 
-      presenceResult = { success: true, message: 'Presença registrada com sucesso!', alreadyRegistered: false }
+      presenceResult = { 
+        success: true, 
+        message: 'Presença registrada! Escolha seu perfil no evento.', 
+        alreadyRegistered: false,
+        presenceLogId: presenceLog.id
+      }
     } catch (error: any) {
       if (error.message.includes('já registrou presença')) {
-        presenceResult = { success: false, message: 'Você já está cadastrado neste evento', alreadyRegistered: true }
+        presenceResult = { success: false, message: 'Você já está cadastrado neste evento', alreadyRegistered: true, presenceLogId: null }
       } else {
-        presenceResult = { success: false, message: error.message, alreadyRegistered: false }
+        presenceResult = { success: false, message: error.message, alreadyRegistered: false, presenceLogId: null }
       }
     }
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary via-[#003366] to-primary p-4">
+    <div className="min-h-screen bg-gradient-to-br from-primary via-blue-800 to-primary p-4">
       <div className="max-w-2xl mx-auto py-8 lg:py-16">
         {/* Status Messages */}
         {isBeforeEvent && (
@@ -188,6 +209,24 @@ export default async function EventPage({ params }: PageProps) {
               </div>
             </div>
 
+            {/* Reward Box */}
+            {event.reward && (
+              <div className="p-4 rounded-xl bg-gradient-to-r from-yellow-50 to-orange-50 border-2 border-yellow-300 shadow-lg">
+                <div className="flex items-start gap-3">
+                  <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center flex-shrink-0 shadow-md">
+                    <span className="text-white font-bold text-2xl">🎁</span>
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-base font-bold text-yellow-900 mb-1">Sua Recompensa</p>
+                    <p className="text-yellow-800 text-lg">{event.reward}</p>
+                    <p className="text-xs text-yellow-700 mt-2 opacity-80">
+                      Escaneie o QR Code e registre sua presença para garantir sua recompensa!
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* Info Box */}
             <div className="p-4 rounded-xl bg-blue-50 border border-blue-200 flex items-start gap-3">
               <Info className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
@@ -201,7 +240,7 @@ export default async function EventPage({ params }: PageProps) {
             </div>
 
             {/* Actions */}
-            {!isPastEvent && !isLoggedIn && (
+            {!isPastEvent && !isLoggedIn && !presenceResult.success && (
               <div className="space-y-3">
                 <Link href="/login" className="block">
                   <Button className="w-full" size="lg">
@@ -218,8 +257,38 @@ export default async function EventPage({ params }: PageProps) {
               </div>
             )}
 
+            {/* Profile Selector - Mostrar após scan bem-sucedido */}
+            {!isPastEvent && presenceResult.success && presenceResult.presenceLogId && (
+              <div className="mt-6">
+                <ProfileSelectorClient
+                  presenceLogId={presenceResult.presenceLogId}
+                  eventId={event.id}
+                  onSuccess={() => {
+                    // Recarregar página após sucesso
+                    if (typeof window !== 'undefined') {
+                      window.location.reload()
+                    }
+                  }}
+                />
+              </div>
+            )}
+
+            {!isPastEvent && isLoggedIn && presenceResult.success && !presenceResult.presenceLogId && (
+              <div className="p-4 rounded-xl bg-green-50 border border-green-200">
+                <div className="flex items-center gap-3">
+                  <CheckCircle2 className="w-6 h-6 text-green-600 flex-shrink-0" />
+                  <div>
+                    <p className="font-semibold text-green-900">Presença registrada!</p>
+                    <p className="text-sm text-green-700 mt-1">
+                      Sua presença foi registrada e vinculada ao seu CPF.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* Register Form */}
-            {!isPastEvent && !isLoggedIn && presenceResult.success && initialScanToken && (
+            {!isPastEvent && !isLoggedIn && presenceResult.success && initialScanToken && !presenceResult.presenceLogId && (
               <RegisterClient
                 eventId={event.id}
                 organizationId={event.organizationId}

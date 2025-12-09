@@ -1,4 +1,5 @@
 import { query } from '@/lib/db-sqlite'
+import { randomUUID } from 'crypto'
 
 export class SMSService {
   /**
@@ -29,7 +30,7 @@ export class SMSService {
       const expiresAt = new Date(Date.now() + 15 * 60 * 1000)
 
       // Salvar no banco
-      const id = require('crypto').randomUUID()
+      const id = randomUUID()
 
       // Deletar códigos antigos não verificados
       await query(
@@ -43,31 +44,58 @@ export class SMSService {
         [id, cleanPhone, code, 0, expiresAt.toISOString()]
       )
 
-      // Em desenvolvimento: retornar código no console e na resposta
-      // Em produção: integrar com Twilio, Zenvia ou outro serviço SMS
-      if (process.env.NODE_ENV === 'development') {
-        console.log(`📱 [SMS DEV] Código de verificação para ${cleanPhone}: ${code}`)
-        
-        // Mock: em desenvolvimento, retornamos o código
-        return {
-          success: true,
-          code, // Apenas em desenvolvimento
-          message: 'Código enviado com sucesso (modo desenvolvimento)',
+      // Tentar enviar SMS real se Twilio estiver configurado
+      const twilioAccountSid = process.env.TWILIO_ACCOUNT_SID
+      const twilioAuthToken = process.env.TWILIO_AUTH_TOKEN
+      const twilioVerifyServiceSid = process.env.TWILIO_VERIFY_SERVICE_SID
+
+      if (twilioAccountSid && twilioAuthToken && twilioVerifyServiceSid) {
+        try {
+          // Importar Twilio dinamicamente
+          const twilio = await import('twilio')
+          const client = twilio.default(twilioAccountSid, twilioAuthToken)
+
+          // Formatar telefone para formato internacional (+55 para Brasil)
+          const formattedPhone = cleanPhone.startsWith('55') 
+            ? `+${cleanPhone}` 
+            : `+55${cleanPhone}`
+
+          // Usar Twilio Verify (melhor para códigos de verificação)
+          const verification = await client.verify.v2
+            .services(twilioVerifyServiceSid)
+            .verifications
+            .create({ to: formattedPhone, channel: 'sms' })
+
+          console.log(`📱 [SMS] Código enviado para ${formattedPhone} via Twilio Verify (SID: ${verification.sid})`)
+          
+          // Com Twilio Verify, não precisamos salvar o código manualmente
+          // O Twilio gerencia isso. Mas vamos manter o código no banco para compatibilidade
+          
+          return {
+            success: true,
+            message: 'Código enviado com sucesso para seu telefone',
+          }
+        } catch (twilioError: any) {
+          console.error('Erro ao enviar SMS via Twilio:', twilioError)
+          // Se falhar, continuar com modo mock
         }
       }
 
-      // TODO: Integrar com serviço SMS real (ex: Twilio)
-      // const twilio = require('twilio')
-      // const client = twilio(accountSid, authToken)
-      // await client.messages.create({
-      //   body: `Seu código de verificação FLUXO PRESENTE é: ${code}`,
-      //   from: '+1234567890',
-      //   to: `+55${cleanPhone}`
-      // })
+      // Modo desenvolvimento/mock: mostrar código no console e alert
+      if (process.env.NODE_ENV === 'development') {
+        console.log(`📱 [SMS DEV] Código de verificação para ${cleanPhone}: ${code}`)
+        
+        return {
+          success: true,
+          code, // Apenas em desenvolvimento
+          message: 'Código enviado com sucesso (modo desenvolvimento - configure Twilio para envio real)',
+        }
+      }
 
+      // Se não tiver Twilio configurado e não estiver em dev, retornar erro
       return {
-        success: true,
-        message: 'Código enviado com sucesso',
+        success: false,
+        message: 'Serviço SMS não configurado. Configure as variáveis TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN e TWILIO_PHONE_NUMBER.',
       }
     } catch (error: any) {
       console.error('Erro ao enviar código SMS:', error)
@@ -86,7 +114,58 @@ export class SMSService {
       const cleanPhone = phone.replace(/\D/g, '')
       const cleanCode = code.replace(/\D/g, '')
 
-      // Buscar código mais recente não verificado
+      // Formatar telefone para formato internacional
+      const formattedPhone = cleanPhone.startsWith('55') 
+        ? `+${cleanPhone}` 
+        : `+55${cleanPhone}`
+
+      // Tentar verificar via Twilio Verify se estiver configurado
+      const twilioAccountSid = process.env.TWILIO_ACCOUNT_SID
+      const twilioAuthToken = process.env.TWILIO_AUTH_TOKEN
+      const twilioVerifyServiceSid = process.env.TWILIO_VERIFY_SERVICE_SID
+
+      if (twilioAccountSid && twilioAuthToken && twilioVerifyServiceSid) {
+        try {
+          const twilio = await import('twilio')
+          const client = twilio.default(twilioAccountSid, twilioAuthToken)
+
+          // Verificar código via Twilio Verify
+          const verificationCheck = await client.verify.v2
+            .services(twilioVerifyServiceSid)
+            .verificationChecks
+            .create({ to: formattedPhone, code: cleanCode })
+
+          if (verificationCheck.status === 'approved') {
+            // Marcar como verificado no nosso banco também
+            const result = await query(
+              'SELECT * FROM phone_verifications WHERE phone = ? AND verified = 0 ORDER BY createdAt DESC LIMIT 1',
+              [cleanPhone]
+            )
+            
+            if (result.rows.length > 0) {
+              await query(
+                'UPDATE phone_verifications SET verified = 1 WHERE id = ?',
+                [result.rows[0].id]
+              )
+            }
+
+            return {
+              success: true,
+              message: 'Código verificado com sucesso',
+            }
+          } else {
+            return {
+              success: false,
+              message: 'Código inválido ou expirado',
+            }
+          }
+        } catch (twilioError: any) {
+          console.error('Erro ao verificar código via Twilio:', twilioError)
+          // Se falhar, tentar método manual
+        }
+      }
+
+      // Método manual (fallback ou quando Twilio não está configurado)
       const result = await query(
         'SELECT * FROM phone_verifications WHERE phone = ? AND code = ? AND verified = 0 ORDER BY createdAt DESC LIMIT 1',
         [cleanPhone, cleanCode]

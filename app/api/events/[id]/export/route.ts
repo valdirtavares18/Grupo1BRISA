@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { presenceService } from '@/services/presence.service'
+import { exportService } from '@/services/export.service'
 import { eventService } from '@/services/event.service'
 import { verifyToken } from '@/lib/auth'
+import { UserRole } from '@/types'
 
 export async function GET(
   request: NextRequest,
@@ -15,7 +16,7 @@ export async function GET(
     }
 
     const payload = verifyToken(token)
-    if (!payload || (payload.role !== 'ORG_ADMIN' && payload.role !== 'SUPER_ADMIN')) {
+    if (!payload || (payload.role !== UserRole.ORG_ADMIN && payload.role !== UserRole.SUPER_ADMIN)) {
       return NextResponse.json({ error: 'Acesso negado' }, { status: 403 })
     }
 
@@ -24,28 +25,27 @@ export async function GET(
       return NextResponse.json({ error: 'Evento não encontrado' }, { status: 404 })
     }
 
-    const presences = await presenceService.getPresenceLogsByEvent(params.id)
+    const { searchParams } = new URL(request.url)
+    const format = (searchParams.get('format') || 'csv') as 'csv' | 'xlsx' | 'json' | 'txt'
+    const profile = searchParams.get('profile') || undefined
 
-    // Gerar CSV
-    const csvHeaders = 'Data/Hora,Nome,CPF,Email,Telefone,IP,Status\n'
-    const csvRows = presences.map(p => {
-      const date = new Date(p.accessTimestamp).toLocaleString('pt-BR')
-      const name = p.endUser?.fullName || 'Anônimo'
-      const cpf = p.endUser?.cpf || '-'
-      const email = p.endUser?.email || '-'
-      const phone = p.endUser?.phone || '-'
-      const ip = p.ipAddress || '-'
-      const status = p.endUser ? 'Identificado' : 'Anônimo'
-      
-      return `"${date}","${name}","${cpf}","${email}","${phone}","${ip}","${status}"`
-    }).join('\n')
+    const exported = await exportService.exportEventData(params.id, format, profile)
 
-    const csv = csvHeaders + csvRows
+    const filename = `presencas-${event.title.replace(/\s+/g, '-')}-${new Date().toISOString().split('T')[0]}.${exported.extension}`
 
-    return new NextResponse(csv, {
+    if (format === 'xlsx') {
+      return new NextResponse(exported.content as Buffer, {
+        headers: {
+          'Content-Type': exported.mimeType,
+          'Content-Disposition': `attachment; filename="${filename}"`
+        }
+      })
+    }
+
+    return new NextResponse(exported.content as string, {
       headers: {
-        'Content-Type': 'text/csv; charset=utf-8',
-        'Content-Disposition': `attachment; filename="presencas-${event.title.replace(/\s+/g, '-')}-${new Date().toISOString().split('T')[0]}.csv"`
+        'Content-Type': exported.mimeType,
+        'Content-Disposition': `attachment; filename="${filename}"`
       }
     })
   } catch (error: any) {

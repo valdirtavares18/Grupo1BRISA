@@ -1,4 +1,5 @@
 import { query } from '@/lib/db-sqlite'
+import { randomUUID } from 'crypto'
 
 export class PresenceService {
   async logPresence(data: {
@@ -7,6 +8,7 @@ export class PresenceService {
     ipAddress?: string
     userAgent?: string
     initialScanToken: string
+    profile?: string
   }) {
     // Buscar informações do evento
     const eventResult = await query(
@@ -49,11 +51,11 @@ export class PresenceService {
       }
     }
 
-    const id = require('crypto').randomUUID()
+    const id = randomUUID()
 
     await query(
-      'INSERT INTO "presence_logs" (id, "eventId", "endUserId", "ipAddress", "userAgent", "initialScanToken") VALUES (?, ?, ?, ?, ?, ?)',
-      [id, data.eventId, data.endUserId || null, data.ipAddress || null, data.userAgent || null, data.initialScanToken]
+      'INSERT INTO "presence_logs" (id, "eventId", "endUserId", "ipAddress", "userAgent", "initialScanToken", "profile") VALUES (?, ?, ?, ?, ?, ?, ?)',
+      [id, data.eventId, data.endUserId || null, data.ipAddress || null, data.userAgent || null, data.initialScanToken, data.profile || null]
     )
 
     const result = await query(
@@ -64,11 +66,18 @@ export class PresenceService {
     return result.rows[0]
   }
 
-  async updatePresenceWithUser(logId: string, endUserId: string) {
-    await query(
-      'UPDATE "presence_logs" SET "endUserId" = ? WHERE id = ?',
-      [endUserId, logId]
-    )
+  async updatePresenceWithUser(logId: string, endUserId: string, profile?: string) {
+    if (profile) {
+      await query(
+        'UPDATE "presence_logs" SET "endUserId" = ?, "profile" = ? WHERE id = ?',
+        [endUserId, profile, logId]
+      )
+    } else {
+      await query(
+        'UPDATE "presence_logs" SET "endUserId" = ? WHERE id = ?',
+        [endUserId, logId]
+      )
+    }
 
     const result = await query(
       'SELECT * FROM "presence_logs" WHERE id = ?',

@@ -110,7 +110,7 @@ export class UserService {
   async getUserHistory(userId: string) {
     const result = await query(
       `SELECT pl.*, e.title as eventTitle, e.description as eventDescription, 
-              e.startDate, e.endDate, o.name as organizationName
+              e.startDate, e.endDate, o.name as organizationName, pl.profile
        FROM presence_logs pl
        INNER JOIN "Event" e ON pl."eventId" = e.id
        INNER JOIN "Organization" o ON e."organizationId" = o.id

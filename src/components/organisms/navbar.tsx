@@ -15,8 +15,18 @@ export function Navbar({ userRole, userName }: NavbarProps) {
   const router = useRouter()
 
   const handleLogout = async () => {
-    await fetch('/api/auth/logout', { method: 'POST' })
-    router.push('/login')
+    try {
+      await fetch('/api/auth/logout', { 
+        method: 'POST',
+        credentials: 'include',
+      })
+      router.push('/login')
+      router.refresh()
+    } catch (error) {
+      console.error('Erro ao fazer logout:', error)
+      // Força o redirect mesmo em caso de erro
+      router.push('/login')
+    }
   }
 
   return (

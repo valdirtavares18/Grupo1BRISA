@@ -4,7 +4,7 @@ import { Home, AlertTriangle } from 'lucide-react'
 
 export default function NotFound() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary to-primary/80 p-4">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary via-blue-800 to-primary p-4">
       <div className="text-center space-y-6 max-w-md">
         <div className="flex justify-center mb-6">
           <Logo className="opacity-80" />

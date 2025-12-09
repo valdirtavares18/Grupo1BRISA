@@ -39,7 +39,7 @@ export default function ScanPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary via-[#003366] to-primary p-4">
+    <div className="min-h-screen bg-gradient-to-br from-primary via-blue-800 to-primary p-4">
       <div className="max-w-2xl mx-auto py-8 lg:py-12">
         {/* Header */}
         <div className="text-center mb-8">

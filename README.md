@@ -78,6 +78,16 @@ Acesse: http://localhost:3000
 - Email: `admin@teste.com`
 - Senha: `admin123`
 
+### Admin de Organização 1 (Tech Conference 2025)
+- Email: `admin@techconf.com`
+- Senha: `org1admin123`
+
+### Admin de Organização 2 (Festival de Música)
+- Email: `admin@festival.com`
+- Senha: `org2admin123`
+
+> 💡 Para criar mais dados de teste, execute: `node seed-test-data.js`
+
 ## 📂 Estrutura do Projeto
 
 ```

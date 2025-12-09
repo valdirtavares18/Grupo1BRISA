@@ -59,6 +59,7 @@ CREATE TABLE IF NOT EXISTS "Event" (
     "latitude" REAL,
     "longitude" REAL,
     "eventType" TEXT,
+    "reward" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -69,7 +70,8 @@ CREATE TABLE IF NOT EXISTS "presence_logs" (
     "accessTimestamp" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "ipAddress" TEXT,
     "userAgent" TEXT,
-    "initialScanToken" TEXT
+    "initialScanToken" TEXT,
+    "profile" TEXT
 );
 
 CREATE TABLE IF NOT EXISTS "user_consents" (

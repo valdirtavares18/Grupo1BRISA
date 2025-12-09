@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { Card, CardContent, CardHeader, CardTitle, Button, Input, Badge } from '@/components/atoms'
-import { Logo } from '@/components/atoms'
+import { PublicLayout } from '@/components/organisms/public-layout'
 import { Search, MapPin, Calendar, Filter, X, Users, Building2 } from 'lucide-react'
 import Link from 'next/link'
 
@@ -108,26 +108,25 @@ export default function EventSearchPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
-      <div className="container mx-auto px-4 py-6 lg:py-8">
+    <PublicLayout>
+      <div className="container mx-auto px-4 py-8 lg:py-12">
         {/* Header */}
-        <div className="text-center mb-8">
-          <div className="flex justify-center mb-4">
-            <Logo className="scale-110" />
-          </div>
-          <h1 className="text-3xl sm:text-4xl font-bold mb-2">Buscar Eventos</h1>
-          <p className="text-muted-foreground">
-            Encontre eventos próximos a você
+        <div className="text-center mb-12">
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-4 text-white">
+            Buscar Eventos
+          </h1>
+          <p className="text-xl sm:text-2xl text-white/60 max-w-2xl mx-auto">
+            Encontre eventos próximos a você e faça parte da experiência
           </p>
         </div>
 
         {/* Search Form */}
-        <Card className="border-0 shadow-lg mb-6">
-          <CardContent className="p-6">
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="flex gap-2">
+        <Card className="border-0 shadow-2xl bg-white/5 backdrop-blur-sm mb-8 border border-white/10">
+          <CardContent className="p-8">
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div className="flex gap-4">
                 <div className="flex-1 relative">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-6 h-6 text-white/40" />
                   <Input
                     type="text"
                     placeholder="Buscar por cidade, estado ou CEP..."
@@ -140,10 +139,15 @@ export default function EventSearchPage() {
                         setFilters({ ...filters, city: value, zipCode: '' })
                       }
                     }}
-                    className="pl-10"
+                    className="pl-12 h-14 text-lg bg-white/10 border-white/20 text-white placeholder:text-white/40 focus:border-cyan-400/50 focus:ring-cyan-400/20"
                   />
                 </div>
-                <Button type="submit" disabled={loading} size="lg">
+                <Button 
+                  type="submit" 
+                  disabled={loading} 
+                  size="lg"
+                  className="h-14 px-8 bg-gradient-to-r from-cyan-500 to-blue-600 text-white hover:from-cyan-600 hover:to-blue-700 text-lg shadow-lg shadow-blue-500/30"
+                >
                   {loading ? (
                     <>
                       <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin mr-2" />
@@ -159,14 +163,15 @@ export default function EventSearchPage() {
               </div>
 
               {/* Filters */}
-              <div className="flex flex-wrap gap-2 items-center">
+              <div className="flex flex-wrap gap-3 items-center">
                 <Button
                   type="button"
                   variant="outline"
-                  size="sm"
+                  size="lg"
                   onClick={() => setShowFilters(!showFilters)}
+                  className="border-white/30 bg-transparent text-white hover:bg-white/10 hover:text-white"
                 >
-                  <Filter className="w-4 h-4 mr-2" />
+                  <Filter className="w-5 h-5 mr-2" />
                   Filtros
                 </Button>
 
@@ -174,49 +179,52 @@ export default function EventSearchPage() {
                   <Button
                     type="button"
                     variant="ghost"
-                    size="sm"
+                    size="lg"
                     onClick={clearFilters}
+                    className="text-white/70 hover:text-white hover:bg-white/10"
                   >
-                    <X className="w-4 h-4 mr-2" />
-                    Limpar
+                    <X className="w-5 h-5 mr-2" />
+                    Limpar Filtros
                   </Button>
                 )}
               </div>
 
               {showFilters && (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-4 border-t">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-6 border-t border-white/10">
                   <div>
-                    <label className="text-sm font-medium mb-1 block">Estado</label>
+                    <label className="text-base font-medium mb-2 block text-white">Estado</label>
                     <Input
                       type="text"
                       placeholder="Ex: SP, RJ"
                       value={filters.state}
                       onChange={(e) => setFilters({ ...filters, state: e.target.value.toUpperCase() })}
                       maxLength={2}
+                      className="bg-white/10 border-white/20 text-white placeholder:text-white/40 focus:border-cyan-400/50"
                     />
                   </div>
 
                   <div>
-                    <label className="text-sm font-medium mb-1 block">CEP</label>
+                    <label className="text-base font-medium mb-2 block text-white">CEP</label>
                     <Input
                       type="text"
                       placeholder="00000-000"
                       value={formatZipCode(filters.zipCode)}
                       onChange={(e) => setFilters({ ...filters, zipCode: e.target.value })}
                       maxLength={9}
+                      className="bg-white/10 border-white/20 text-white placeholder:text-white/40 focus:border-cyan-400/50"
                     />
                   </div>
 
                   <div>
-                    <label className="text-sm font-medium mb-1 block">Tipo de Evento</label>
+                    <label className="text-base font-medium mb-2 block text-white">Tipo de Evento</label>
                     <select
                       value={filters.eventType}
                       onChange={(e) => setFilters({ ...filters, eventType: e.target.value })}
-                      className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm"
+                      className="w-full px-4 py-3 rounded-lg border border-white/20 bg-white/10 text-white text-base focus:border-cyan-400/50 focus:outline-none focus:ring-2 focus:ring-cyan-400/20"
                     >
-                      <option value="">Todos os tipos</option>
+                      <option value="" className="bg-slate-900">Todos os tipos</option>
                       {eventTypes.map((type) => (
-                        <option key={type} value={type}>
+                        <option key={type} value={type} className="bg-slate-900">
                           {type}
                         </option>
                       ))}
@@ -230,117 +238,152 @@ export default function EventSearchPage() {
 
         {/* Results */}
         {error && (
-          <div className="mb-6 p-4 rounded-xl bg-red-50 border border-red-200 text-red-700">
-            {error}
+          <div className="mb-8 p-6 rounded-2xl bg-red-500/20 border border-red-400/30 text-red-200 backdrop-blur-sm">
+            <p className="text-lg font-medium">{error}</p>
           </div>
         )}
 
         {loading ? (
-          <div className="text-center py-12">
-            <div className="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin mx-auto mb-4" />
-            <p className="text-muted-foreground">Buscando eventos...</p>
+          <div className="text-center py-20">
+            <div className="w-16 h-16 border-4 border-white/20 border-t-cyan-400 rounded-full animate-spin mx-auto mb-6" />
+            <p className="text-xl text-white/60">Buscando eventos...</p>
           </div>
         ) : events.length === 0 ? (
-          <Card className="border-0 shadow-lg">
-            <CardContent className="p-12 text-center">
-              <Calendar className="w-16 h-16 text-muted-foreground mx-auto mb-4 opacity-50" />
-              <h3 className="text-lg font-semibold mb-2">Nenhum evento encontrado</h3>
-              <p className="text-muted-foreground">
-                Tente ajustar os filtros de busca
+          <Card className="border-0 shadow-2xl bg-white/5 backdrop-blur-sm border border-white/10">
+            <CardContent className="p-16 text-center">
+              <div className="w-20 h-20 rounded-full bg-white/10 flex items-center justify-center mx-auto mb-6">
+                <Calendar className="w-10 h-10 text-white/40" />
+              </div>
+              <h3 className="text-2xl font-bold mb-3 text-white">Nenhum evento encontrado</h3>
+              <p className="text-lg text-white/60">
+                Tente ajustar os filtros de busca ou procure por outras localizações
               </p>
             </CardContent>
           </Card>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {events.map((event) => {
-              const startDate = new Date(event.startDate)
-              const now = new Date()
-              const isUpcoming = startDate > now
-              const isActive = new Date(event.startDate) <= now && new Date(event.endDate) >= now
+          <>
+            <div className="mb-8">
+              <h2 className="text-3xl font-bold text-white mb-2">
+                {events.length} {events.length === 1 ? 'evento encontrado' : 'eventos encontrados'}
+              </h2>
+              <p className="text-white/60 text-lg">
+                Explore os eventos disponíveis e encontre o que mais combina com você
+              </p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+              {events.map((event) => {
+                const startDate = new Date(event.startDate)
+                const now = new Date()
+                const isUpcoming = startDate > now
+                const isActive = new Date(event.startDate) <= now && new Date(event.endDate) >= now
 
-              return (
-                <Card key={event.id} className="border-0 shadow-lg hover:shadow-xl transition-all group overflow-hidden">
-                  {isActive && (
-                    <div className="h-1 bg-gradient-to-r from-green-500 to-emerald-500" />
-                  )}
-                  {isUpcoming && (
-                    <div className="h-1 bg-gradient-to-r from-blue-500 to-cyan-500" />
-                  )}
+                return (
+                  <Card 
+                    key={event.id} 
+                    className="border-0 shadow-2xl bg-white/5 backdrop-blur-sm hover:bg-white/10 border border-white/10 hover:border-cyan-400/30 transition-all duration-300 group overflow-hidden"
+                  >
+                    {isActive && (
+                      <div className="h-1.5 bg-gradient-to-r from-green-400 to-emerald-500" />
+                    )}
+                    {isUpcoming && (
+                      <div className="h-1.5 bg-gradient-to-r from-cyan-400 to-blue-500" />
+                    )}
 
-                  <CardHeader>
-                    <div className="flex items-start justify-between mb-2">
-                      <CardTitle className="text-lg group-hover:text-primary transition line-clamp-2 flex-1">
-                        {event.title}
-                      </CardTitle>
-                      {isActive && (
-                        <Badge className="bg-green-500 hover:bg-green-600 ml-2 flex-shrink-0">
-                          Ativo
-                        </Badge>
+                    <CardHeader className="pb-4">
+                      <div className="flex items-start justify-between mb-3">
+                        <CardTitle className="text-xl font-bold group-hover:text-cyan-300 transition line-clamp-2 flex-1 text-white">
+                          {event.title}
+                        </CardTitle>
+                        {isActive && (
+                          <Badge className="bg-green-500 hover:bg-green-600 ml-3 flex-shrink-0 text-white border-0">
+                            Ativo
+                          </Badge>
+                        )}
+                        {isUpcoming && !isActive && (
+                          <Badge className="bg-cyan-500 hover:bg-cyan-600 ml-3 flex-shrink-0 text-white border-0">
+                            Em breve
+                          </Badge>
+                        )}
+                      </div>
+                      {event.description && (
+                        <p className="text-base text-white/60 line-clamp-2 leading-relaxed">
+                          {event.description}
+                        </p>
                       )}
-                    </div>
-                    {event.description && (
-                      <p className="text-sm text-muted-foreground line-clamp-2">
-                        {event.description}
-                      </p>
-                    )}
-                  </CardHeader>
+                    </CardHeader>
 
-                  <CardContent className="space-y-3">
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <Calendar className="w-4 h-4 flex-shrink-0" />
-                      <span>
-                        {startDate.toLocaleDateString('pt-BR')} às{' '}
-                        {startDate.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
-                      </span>
-                    </div>
-
-                    {event.city && (
-                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                        <MapPin className="w-4 h-4 flex-shrink-0" />
-                        <span className="truncate">
-                          {event.address && `${event.address}, `}
-                          {event.city}
-                          {event.state && `, ${event.state}`}
-                        </span>
+                    <CardContent className="space-y-4">
+                      <div className="flex items-center gap-3 text-base text-white/70">
+                        <div className="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center flex-shrink-0">
+                          <Calendar className="w-5 h-5 text-cyan-300" />
+                        </div>
+                        <div>
+                          <div className="font-medium">
+                            {startDate.toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' })}
+                          </div>
+                          <div className="text-sm text-white/50">
+                            às {startDate.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+                          </div>
+                        </div>
                       </div>
-                    )}
 
-                    {event.distance !== undefined && (
-                      <div className="text-xs text-muted-foreground">
-                        📍 {event.distance.toFixed(1)} km de distância
+                      {event.city && (
+                        <div className="flex items-start gap-3 text-base text-white/70">
+                          <div className="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center flex-shrink-0">
+                            <MapPin className="w-5 h-5 text-cyan-300" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <span className="block truncate">
+                              {event.address && `${event.address}, `}
+                              {event.city}
+                              {event.state && `, ${event.state}`}
+                            </span>
+                            {event.distance !== undefined && (
+                              <span className="text-sm text-white/50">
+                                📍 {event.distance.toFixed(1)} km de distância
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      )}
+
+                      {event.eventType && (
+                        <div>
+                          <Badge variant="secondary" className="bg-cyan-500/20 text-cyan-300 border-cyan-400/30">
+                            {event.eventType}
+                          </Badge>
+                        </div>
+                      )}
+
+                      <div className="flex items-center justify-between pt-4 border-t border-white/10">
+                        <div className="flex items-center gap-2 text-sm text-white/60">
+                          <Building2 className="w-4 h-4" />
+                          <span className="truncate max-w-[150px]">{event.organizationName}</span>
+                        </div>
+                        <div className="flex items-center gap-2 text-sm text-white/60">
+                          <Users className="w-4 h-4" />
+                          <span className="font-medium">{event._count?.presenceLogs || 0}</span>
+                        </div>
                       </div>
-                    )}
 
-                    {event.eventType && (
-                      <Badge variant="secondary" className="text-xs">
-                        {event.eventType}
-                      </Badge>
-                    )}
-
-                    <div className="flex items-center justify-between pt-2 border-t">
-                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                        <Building2 className="w-4 h-4" />
-                        <span className="truncate">{event.organizationName}</span>
-                      </div>
-                      <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                        <Users className="w-4 h-4" />
-                        <span>{event._count?.presenceLogs || 0}</span>
-                      </div>
-                    </div>
-
-                    <Link href={`/${event.organizationSlug}/events`} className="block">
-                      <Button variant="outline" className="w-full" size="sm">
-                        Ver Detalhes
-                      </Button>
-                    </Link>
-                  </CardContent>
-                </Card>
-              )
-            })}
-          </div>
+                      <Link href={`/${event.organizationSlug}/events`} className="block pt-2">
+                        <Button 
+                          variant="outline" 
+                          className="w-full border-cyan-400/30 bg-transparent text-white hover:bg-cyan-500/20 hover:border-cyan-400/50 hover:text-cyan-300" 
+                          size="lg"
+                        >
+                          Ver Detalhes
+                        </Button>
+                      </Link>
+                    </CardContent>
+                  </Card>
+                )
+              })}
+            </div>
+          </>
         )}
       </div>
-    </div>
+    </PublicLayout>
   )
 }
 

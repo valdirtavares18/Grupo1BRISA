@@ -56,10 +56,23 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json()
-    const event = await eventService.createEvent({
+    
+    // Converter strings de data para objetos Date
+    const eventData: any = {
       organizationId: payload.organizationId,
-      ...body,
-    })
+      title: body.title,
+      description: body.description,
+      startDate: new Date(body.startDate),
+      endDate: new Date(body.endDate),
+      address: body.address,
+      city: body.city,
+      state: body.state,
+      zipCode: body.zipCode,
+      eventType: body.eventType,
+      reward: body.reward,
+    }
+    
+    const event = await eventService.createEvent(eventData)
 
     return NextResponse.json(event, { status: 201 })
   } catch (error: any) {

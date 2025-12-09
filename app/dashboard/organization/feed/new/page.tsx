@@ -1,4 +1,3 @@
-import { Navbar } from '@/components/organisms/navbar'
 import { CreateFeedPostForm } from '@/components/organisms/create-feed-post-form'
 import { PageHeader } from '@/components/molecules'
 import { verifyToken } from '@/lib/auth'
@@ -22,13 +21,10 @@ export default async function NewFeedPostPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-pink-50 via-rose-50 to-fuchsia-50">
-      <Navbar userRole="ADMIN ORGANIZAÇÃO" userName={payload.email} />
-
-      <div className="container mx-auto px-4 py-6 lg:py-8 max-w-3xl">
+    <div className="p-4 lg:p-6 lg:py-8 max-w-3xl mx-auto">
         <Link
           href="/dashboard/organization/feed"
-          className="inline-flex items-center gap-2 text-muted-foreground hover:text-primary transition mb-6"
+          className="inline-flex items-center gap-2 text-white/80 hover:text-white transition mb-6"
         >
           <ArrowLeft className="w-4 h-4" />
           <span>Voltar para Feed</span>
@@ -40,7 +36,6 @@ export default async function NewFeedPostPage() {
         />
 
         <CreateFeedPostForm organizationId={payload.organizationId} />
-      </div>
     </div>
   )
 }

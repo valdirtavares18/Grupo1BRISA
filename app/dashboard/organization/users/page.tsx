@@ -1,6 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle, Badge, Avatar, AvatarImage, AvatarFallback } from '@/components/atoms'
 import { PageHeader } from '@/components/molecules'
-import { Navbar } from '@/components/organisms/navbar'
 import { endUserService } from '@/services/end-user.service'
 import { verifyToken } from '@/lib/auth'
 import { cookies } from 'next/headers'
@@ -28,10 +27,7 @@ export default async function OrganizationUsersPage() {
   ])
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-rose-50">
-      <Navbar userRole="ADMIN ORGANIZAÇÃO" userName={payload.email} />
-      
-      <div className="container mx-auto px-4 py-6 lg:py-8">
+    <div className="p-4 lg:p-6 lg:py-8">
         <PageHeader
           title="Usuários Finais"
           description="Visualize todos os participantes que registraram presença nos seus eventos"
@@ -56,9 +52,9 @@ export default async function OrganizationUsersPage() {
               <div className="flex flex-col">
                 <div className="flex items-center justify-between mb-2">
                   <p className="text-xs lg:text-sm font-medium text-muted-foreground">Com Nome</p>
-                  <UserCheck className="w-4 h-4 lg:w-5 lg:h-5 text-green-600" />
+                  <UserCheck className="w-4 h-4 lg:w-5 lg:h-5 text-slate-400" />
                 </div>
-                <p className="text-2xl lg:text-3xl font-bold text-green-600">{stats.withName}</p>
+                <p className="text-2xl lg:text-3xl font-bold text-slate-900">{stats.withName}</p>
               </div>
             </CardContent>
           </Card>
@@ -178,7 +174,6 @@ export default async function OrganizationUsersPage() {
             )}
           </CardContent>
         </Card>
-      </div>
     </div>
   )
 }

@@ -2,12 +2,21 @@ const Database = require('better-sqlite3')
 const bcrypt = require('bcryptjs')
 const db = new Database('presenca.db')
 
-console.log('Ìº± Inserindo dados de teste...\n')
+console.log('üå± Inserindo dados de teste...\n')
 
 async function seed() {
   try {
+    // 0. Criar/Verificar SUPER_ADMIN
+    console.log('üîê Criando/Verificando SUPER_ADMIN...')
+    const superAdminHash = await bcrypt.hash('admin123', 10)
+    db.exec(`
+      INSERT OR REPLACE INTO "platform_users" (id, email, "passwordHash", role, "isActive", "createdAt") VALUES 
+        ('super-admin-1', 'admin@teste.com', '${superAdminHash}', 'SUPER_ADMIN', 1, CURRENT_TIMESTAMP);
+    `)
+    console.log('‚úÖ SUPER_ADMIN criado/atualizado\n')
+    
     // 1. Criar organiza√ß√µes
-    console.log('Ì≥¶ Criando organiza√ß√µes...')
+    console.log('üè¢ Criando organiza√ß√µes...')
     const org1Id = 'org-exemplo-1'
     const org2Id = 'org-exemplo-2'
     
@@ -25,7 +34,7 @@ async function seed() {
     console.log('‚úÖ Organiza√ß√µes criadas\n')
 
     // 2. Criar admins
-    console.log('Ì±®‚ÄçÌ≤º Criando admins...')
+    console.log('üë§ Criando admins...')
     const adminOrg1Hash = await bcrypt.hash('org1admin123', 10)
     const adminOrg2Hash = await bcrypt.hash('org2admin123', 10)
     
@@ -37,7 +46,7 @@ async function seed() {
     console.log('‚úÖ Admins criados\n')
 
     // 3. Criar usu√°rios finais
-    console.log('Ì±§ Criando usu√°rios finais...')
+    console.log('üë• Criando usu√°rios finais...')
     const user1Hash = await bcrypt.hash('user123', 10)
     const user2Hash = await bcrypt.hash('user123', 10)
     
@@ -49,7 +58,7 @@ async function seed() {
     console.log('‚úÖ Usu√°rios criados\n')
 
     // 4. Criar eventos
-    console.log('Ì≥Ö Criando eventos...')
+    console.log('üéâ Criando eventos...')
     const now = new Date()
     const tomorrow = new Date(now.getTime() + 24 * 60 * 60 * 1000)
     const nextWeek = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000)
@@ -80,7 +89,7 @@ async function seed() {
     console.log('‚úÖ Presen√ßas registradas\n')
 
     // 6. Criar feed
-    console.log('Ì≥∞ Criando posts no feed...')
+    console.log('üì∞ Criando posts no feed...')
     db.exec(`
       INSERT OR IGNORE INTO "organization_feeds" (id, "organizationId", title, content, published, "createdAt", "updatedAt") VALUES
         ('feed-1', '${org1Id}', 'Workshop de React', 'N√£o perca nosso workshop completo!', 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
@@ -88,20 +97,23 @@ async function seed() {
     `)
     console.log('‚úÖ Feed criado\n')
 
-    console.log('Ìæâ Dados de teste criados!\n')
-    console.log('Ì≥ã CREDENCIAIS:\n')
-    console.log('Super Admin:')
-    console.log('  Email: admin@teste.com')
-    console.log('  Senha: admin123\n')
-    console.log('Admin Org 1 (Tech Conference):')
-    console.log('  Email: admin@techconf.com')
-    console.log('  Senha: org1admin123\n')
-    console.log('Admin Org 2 (Festival):')
-    console.log('  Email: admin@festival.com')
-    console.log('  Senha: org2admin123\n')
-    console.log('Usu√°rios Finais:')
-    console.log('  CPF: 12345678901 | Senha: user123')
-    console.log('  CPF: 98765432100 | Senha: user123\n')
+    console.log('‚úÖ Dados de teste criados!\n')
+    console.log('='.repeat(60))
+    console.log('üîê CREDENCIAIS DE TESTE:')
+    console.log('='.repeat(60))
+    console.log('\nüëë SUPER ADMIN (Acesso Total):')
+    console.log('   Email: admin@teste.com')
+    console.log('   Senha: admin123\n')
+    console.log('üë§ ADMIN ORG 1 (Tech Conference 2025):')
+    console.log('   Email: admin@techconf.com')
+    console.log('   Senha: org1admin123\n')
+    console.log('üë§ ADMIN ORG 2 (Festival de M√∫sica):')
+    console.log('   Email: admin@festival.com')
+    console.log('   Senha: org2admin123\n')
+    console.log('üë• USU√ÅRIOS FINAIS (Login com CPF):')
+    console.log('   CPF: 12345678901 | Senha: user123')
+    console.log('   CPF: 98765432100 | Senha: user123\n')
+    console.log('='.repeat(60))
 
     db.close()
   } catch (error) {

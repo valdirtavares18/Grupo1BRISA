@@ -2,7 +2,6 @@
 
 import { useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle, Button, Input } from '@/components/atoms'
-import { Navbar } from '@/components/organisms/navbar'
 import { FormField } from '@/components/molecules'
 import { Lock, AlertCircle, CheckCircle2, ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
@@ -61,13 +60,10 @@ export default function ChangePasswordPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50">
-      <Navbar userRole="USUÁRIO" />
-      
-      <div className="container mx-auto px-4 py-6 lg:py-8 max-w-2xl">
+    <div className="p-4 lg:p-6 lg:py-8 max-w-2xl mx-auto">
         <Link 
           href="/dashboard/user"
-          className="inline-flex items-center gap-2 text-muted-foreground hover:text-primary transition mb-6"
+          className="inline-flex items-center gap-2 text-white/80 hover:text-white transition mb-6"
         >
           <ArrowLeft className="w-4 h-4" />
           <span>Voltar</span>
@@ -94,9 +90,9 @@ export default function ChangePasswordPage() {
             )}
 
             {success && (
-              <div className="mb-4 p-3 rounded-lg bg-green-50 border border-green-200 flex items-start gap-2">
-                <CheckCircle2 className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
-                <p className="text-sm text-green-900">{success}</p>
+              <div className="mb-4 p-3 rounded-lg bg-slate-50 border border-slate-200 flex items-start gap-2">
+                <CheckCircle2 className="w-5 h-5 text-slate-600 flex-shrink-0 mt-0.5" />
+                <p className="text-sm text-slate-900">{success}</p>
               </div>
             )}
 
@@ -159,7 +155,6 @@ export default function ChangePasswordPage() {
             </form>
           </CardContent>
         </Card>
-      </div>
     </div>
   )
 }

@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react'
 import { Card, CardContent, CardHeader, CardTitle, Button, Input, Avatar, AvatarImage, AvatarFallback } from '@/components/atoms'
-import { Navbar } from '@/components/organisms/navbar'
 import { FormField } from '@/components/molecules'
 import { User, Mail, Phone, Camera, Save, AlertCircle, CheckCircle2, ArrowLeft, Trash2, MapPin, FileText, Loader2 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
@@ -201,21 +200,18 @@ export default function UserProfilePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50">
-      <Navbar userRole="USUÁRIO" />
-      
-      <div className="container mx-auto px-4 py-6 lg:py-8 max-w-3xl">
+    <div className="p-4 lg:p-6 lg:py-8 max-w-3xl mx-auto">
         <Link 
           href="/dashboard/user"
-          className="inline-flex items-center gap-2 text-muted-foreground hover:text-primary transition mb-6"
+          className="inline-flex items-center gap-2 text-white/80 hover:text-white transition mb-6"
         >
           <ArrowLeft className="w-4 h-4" />
           <span>Voltar</span>
         </Link>
 
         <div className="mb-6">
-          <h1 className="text-3xl font-bold mb-2">Meu Perfil</h1>
-          <p className="text-muted-foreground">Gerencie suas informações pessoais</p>
+          <h1 className="text-3xl font-bold mb-2 text-white">Meu Perfil</h1>
+          <p className="text-white/80">Gerencie suas informações pessoais</p>
         </div>
 
         <div className="space-y-6">
@@ -235,9 +231,9 @@ export default function UserProfilePage() {
               )}
 
               {success && (
-                <div className="mb-4 p-3 rounded-lg bg-green-50 border border-green-200 flex items-start gap-2">
-                  <CheckCircle2 className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
-                  <p className="text-sm text-green-900">{success}</p>
+                <div className="mb-4 p-3 rounded-lg bg-slate-50 border border-slate-200 flex items-start gap-2">
+                  <CheckCircle2 className="w-5 h-5 text-slate-600 flex-shrink-0 mt-0.5" />
+                  <p className="text-sm text-slate-900">{success}</p>
                 </div>
               )}
 
@@ -445,7 +441,6 @@ export default function UserProfilePage() {
             </CardContent>
           </Card>
         </div>
-      </div>
     </div>
   )
 }

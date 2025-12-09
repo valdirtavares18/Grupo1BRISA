@@ -27,7 +27,7 @@ export async function GET(
         e."startDate",
         e."endDate",
         o.name as organizationName,
-        eu.name as userName,
+        eu."fullName" as userName,
         eu.cpf
       FROM presence_logs pl
       JOIN "Event" e ON pl."eventId" = e.id
@@ -123,7 +123,7 @@ export async function GET(
     yPosition += 12
 
     // Horário de registro
-    const registeredAt = new Date(presence.timestamp).toLocaleString('pt-BR', {
+    const registeredAt = new Date(presence.accessTimestamp).toLocaleString('pt-BR', {
       dateStyle: 'short',
       timeStyle: 'short'
     })
@@ -151,15 +151,31 @@ export async function GET(
     doc.text(`Gerado em ${new Date().toLocaleString('pt-BR')}`, pageWidth / 2, footerY + 5, { align: 'center' })
 
     // Gerar PDF como buffer
-    const pdfBuffer = Buffer.from(doc.output('arraybuffer'))
+    try {
+      // jsPDF output('arraybuffer') retorna um ArrayBuffer
+      const pdfArrayBuffer = doc.output('arraybuffer') as ArrayBuffer
+      // Converter ArrayBuffer para Buffer via Uint8Array
+      const pdfBuffer = Buffer.from(new Uint8Array(pdfArrayBuffer))
 
-    // Retornar PDF
-    return new NextResponse(pdfBuffer, {
-      headers: {
-        'Content-Type': 'application/pdf',
-        'Content-Disposition': `attachment; filename="Comprovante_${presence.eventTitle.replace(/[^a-zA-Z0-9]/g, '_')}.pdf"`,
-      },
-    })
+      // Preparar nome do arquivo
+      const safeFileName = presence.eventTitle
+        .replace(/[^a-zA-Z0-9\s]/g, '_')
+        .replace(/\s+/g, '_')
+        .substring(0, 50) // Limitar tamanho
+      const fileName = `Comprovante_${safeFileName}.pdf`
+      
+      // Retornar PDF com headers corretos
+      return new NextResponse(pdfBuffer, {
+        headers: {
+          'Content-Type': 'application/pdf',
+          'Content-Disposition': `attachment; filename="${fileName}"; filename*=UTF-8''${encodeURIComponent(fileName)}`,
+          'Content-Length': pdfBuffer.length.toString(),
+        },
+      })
+    } catch (pdfError: any) {
+      console.error('Erro específico ao gerar buffer do PDF:', pdfError)
+      throw new Error(`Erro ao gerar buffer do PDF: ${pdfError.message}`)
+    }
   } catch (error: any) {
     console.error('Erro ao gerar comprovante:', error)
     return NextResponse.json(

@@ -1,7 +1,6 @@
 import { eventService } from '@/services/event.service'
 import { presenceService } from '@/services/presence.service'
 import { notFound } from 'next/navigation'
-import { Navbar } from '@/components/organisms/navbar'
 import { Card, CardContent, CardHeader, CardTitle, Badge } from '@/components/atoms'
 import { PageHeader } from '@/components/molecules'
 import { User, Calendar, Users, UserCheck, UserX, ArrowLeft, Clock } from 'lucide-react'
@@ -24,13 +23,10 @@ export default async function EventPresencesPage({ params }: PageProps) {
   ])
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50">
-      <Navbar userRole="ADMIN ORGANIZAÇÃO" />
-      
-      <div className="container mx-auto px-4 py-6 lg:py-8">
+    <div className="p-4 lg:p-6 lg:py-8">
         <Link 
           href={`/dashboard/organization/events/${params.id}`}
-          className="inline-flex items-center gap-2 text-muted-foreground hover:text-primary transition mb-6"
+          className="inline-flex items-center gap-2 text-white/80 hover:text-white transition mb-6"
         >
           <ArrowLeft className="w-4 h-4" />
           <span>Voltar para o evento</span>
@@ -41,7 +37,7 @@ export default async function EventPresencesPage({ params }: PageProps) {
           description={`${stats.total} registro(s) de presença capturados`}
           action={
             <a href={`/api/events/${params.id}/export`}>
-              <div className="bg-green-600 text-white px-4 py-2 sm:px-6 sm:py-3 rounded-xl hover:bg-green-700 transition shadow-lg hover:shadow-xl flex items-center gap-2">
+              <div className="bg-gradient-to-r from-yellow-500 to-orange-600 text-white px-4 py-2 sm:px-6 sm:py-3 rounded-lg hover:from-yellow-600 hover:to-orange-700 transition flex items-center gap-2 font-medium">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
                 <span className="hidden sm:inline">Exportar CSV</span>
                 <span className="sm:hidden">CSV</span>
@@ -71,10 +67,10 @@ export default async function EventPresencesPage({ params }: PageProps) {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-muted-foreground mb-2">Identificados</p>
-                  <p className="text-3xl lg:text-4xl font-bold text-green-600">{stats.identified}</p>
+                  <p className="text-3xl lg:text-4xl font-bold text-slate-900">{stats.identified}</p>
                 </div>
-                <div className="w-12 h-12 rounded-xl bg-green-50 flex items-center justify-center">
-                  <UserCheck className="w-6 h-6 text-green-600" />
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center">
+                  <UserCheck className="w-6 h-6 text-white" />
                 </div>
               </div>
             </CardContent>
@@ -164,7 +160,6 @@ export default async function EventPresencesPage({ params }: PageProps) {
             )}
           </CardContent>
         </Card>
-      </div>
     </div>
   )
 }

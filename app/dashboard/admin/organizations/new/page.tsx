@@ -1,18 +1,14 @@
 import { CreateOrganizationForm } from '@/components/organisms/create-organization-form'
 import { PageHeader } from '@/components/molecules'
-import { Navbar } from '@/components/organisms/navbar'
 import { ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
 
 export default function NewOrganizationPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-rose-50 via-pink-50 to-fuchsia-50">
-      <Navbar userRole="SUPER ADMIN" />
-      
-      <div className="container mx-auto px-4 py-6 lg:py-8 max-w-3xl">
+    <div className="p-6 lg:p-8 lg:py-10 max-w-4xl mx-auto">
         <Link 
           href="/dashboard/admin"
-          className="inline-flex items-center gap-2 text-muted-foreground hover:text-primary transition mb-6"
+          className="inline-flex items-center gap-2 text-white/80 hover:text-white transition mb-6"
         >
           <ArrowLeft className="w-4 h-4" />
           <span>Voltar para dashboard</span>
@@ -23,7 +19,6 @@ export default function NewOrganizationPage() {
           description="Crie uma nova organização white-label na plataforma"
         />
         <CreateOrganizationForm />
-      </div>
     </div>
   )
 }

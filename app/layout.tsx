@@ -5,7 +5,7 @@ import '../src/lib/variables.css'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'FLUXO PRESENTE - Sistema de Gestão de Presença',
+  title: 'ToAKi - Sistema de Gestão de Presença',
   description: 'Plataforma white-label completa para captação de dados de público com conformidade LGPD e relatórios em tempo real',
 }
 

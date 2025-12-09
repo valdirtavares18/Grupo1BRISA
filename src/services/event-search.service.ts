@@ -1,4 +1,5 @@
 import { query } from '@/lib/db-sqlite'
+import { randomUUID } from 'crypto'
 
 interface EventSearchFilters {
   city?: string
@@ -173,10 +174,55 @@ export class EventSearchService {
    * Busca todos os tipos de eventos disponíveis
    */
   async getEventTypes() {
-    const result = await query(
-      'SELECT DISTINCT "eventType" FROM "Event" WHERE "eventType" IS NOT NULL AND "eventType" != "" ORDER BY "eventType"'
+    try {
+      // Buscar da tabela event_types primeiro
+      const result = await query(
+        'SELECT name FROM "event_types" ORDER BY name'
+      )
+      
+      if (result.rows.length > 0) {
+        return result.rows.map((row: any) => row.name)
+      }
+
+      // Fallback: buscar dos eventos existentes
+      const fallbackResult = await query(
+        'SELECT DISTINCT "eventType" FROM "Event" WHERE "eventType" IS NOT NULL AND "eventType" != "" ORDER BY "eventType"'
+      )
+      return fallbackResult.rows.map((row: any) => row.eventType).filter(Boolean)
+    } catch (error) {
+      console.error('Erro ao buscar tipos de eventos:', error)
+      return []
+    }
+  }
+
+  /**
+   * Cria um novo tipo de evento
+   */
+  async createEventType(name: string) {
+    if (!name || name.trim() === '') {
+      throw new Error('Nome do tipo de evento é obrigatório')
+    }
+
+    const cleanName = name.trim()
+
+    // Verificar se já existe
+    const existing = await query(
+      'SELECT * FROM "event_types" WHERE name = ?',
+      [cleanName]
     )
-    return result.rows.map((row: any) => row.eventType)
+
+    if (existing.rows.length > 0) {
+      throw new Error('Este tipo de evento já existe')
+    }
+
+    const id = randomUUID()
+
+    await query(
+      'INSERT INTO "event_types" (id, name) VALUES (?, ?)',
+      [id, cleanName]
+    )
+
+    return { id, name: cleanName }
   }
 }
 

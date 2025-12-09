@@ -1,6 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/atoms'
 import { PageHeader } from '@/components/molecules'
-import { Navbar } from '@/components/organisms/navbar'
 import { eventService } from '@/services/event.service'
 import { endUserService } from '@/services/end-user.service'
 import { verifyToken } from '@/lib/auth'
@@ -36,29 +35,26 @@ export default async function OrganizationDashboardPage() {
   const totalPresences = events.reduce((sum, event) => sum + (event._count?.presenceLogs || 0), 0)
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-cyan-50 via-blue-50 to-indigo-50">
-      <Navbar userRole="ADMIN ORGANIZAÇÃO" userName={payload.email} />
-      
-      <div className="container mx-auto px-4 py-6 lg:py-8">
+    <div className="p-4 lg:p-6 lg:py-8">
         <PageHeader
           title="Seus Eventos"
           description="Gerencie e acompanhe todos os seus eventos"
           action={
             <div className="flex flex-col sm:flex-row gap-2">
               <Link href="/dashboard/organization/feed">
-                <div className="bg-pink-600 text-white px-4 py-2 sm:px-6 sm:py-3 rounded-xl hover:bg-pink-700 transition shadow-lg hover:shadow-xl flex items-center gap-2">
+                <div className="border border-white/30 bg-white/10 text-white px-4 py-2 sm:px-6 sm:py-3 rounded-lg hover:bg-white/20 transition flex items-center gap-2 font-medium">
                   <MessageSquare className="w-5 h-5" />
                   <span className="hidden sm:inline">Feed</span>
                 </div>
               </Link>
               <Link href="/dashboard/organization/users">
-                <div className="bg-purple-600 text-white px-4 py-2 sm:px-6 sm:py-3 rounded-xl hover:bg-purple-700 transition shadow-lg hover:shadow-xl flex items-center gap-2">
+                <div className="border border-white/30 bg-white/10 text-white px-4 py-2 sm:px-6 sm:py-3 rounded-lg hover:bg-white/20 transition flex items-center gap-2 font-medium">
                   <UserCheck className="w-5 h-5" />
                   <span className="hidden sm:inline">Usuários</span>
                 </div>
               </Link>
               <Link href="/dashboard/organization/events/new">
-                <div className="bg-primary text-white px-4 py-2 sm:px-6 sm:py-3 rounded-xl hover:bg-primary/90 transition shadow-lg hover:shadow-xl flex items-center gap-2">
+                <div className="bg-gradient-to-r from-yellow-500 to-orange-600 text-white px-4 py-2 sm:px-6 sm:py-3 rounded-lg hover:from-yellow-600 hover:to-orange-700 transition flex items-center gap-2 font-medium">
                   <Plus className="w-5 h-5" />
                   <span className="hidden sm:inline">Novo Evento</span>
                   <span className="sm:hidden">Novo</span>
@@ -70,67 +66,75 @@ export default async function OrganizationDashboardPage() {
 
         {/* Stats Grid */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-6 mb-8">
-          <Card className="border-0 shadow-lg">
+          <Card className="hover:bg-white/15 hover:shadow-2xl transition-all">
             <CardContent className="p-4 lg:p-6">
               <div className="flex flex-col">
                 <div className="flex items-center justify-between mb-2">
-                  <p className="text-xs lg:text-sm font-medium text-muted-foreground">Total</p>
-                  <Calendar className="w-4 h-4 lg:w-5 lg:h-5 text-primary" />
+                  <p className="text-xs lg:text-sm font-medium text-white/70">Total</p>
+                  <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center">
+                    <Calendar className="w-5 h-5 text-white" />
+                  </div>
                 </div>
-                <p className="text-2xl lg:text-3xl font-bold">{events.length}</p>
+                <p className="text-2xl lg:text-3xl font-bold text-white">{events.length}</p>
               </div>
             </CardContent>
           </Card>
 
-          <Card className="border-0 shadow-lg">
+          <Card className="hover:bg-white/15 hover:shadow-2xl transition-all">
             <CardContent className="p-4 lg:p-6">
               <div className="flex flex-col">
                 <div className="flex items-center justify-between mb-2">
-                  <p className="text-xs lg:text-sm font-medium text-muted-foreground">Ativos</p>
-                  <TrendingUp className="w-4 h-4 lg:w-5 lg:h-5 text-green-600" />
+                  <p className="text-xs lg:text-sm font-medium text-white/70">Ativos</p>
+                  <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center">
+                    <TrendingUp className="w-5 h-5 text-white" />
+                  </div>
                 </div>
-                <p className="text-2xl lg:text-3xl font-bold text-green-600">{activeEvents.length}</p>
+                <p className="text-2xl lg:text-3xl font-bold text-white">{activeEvents.length}</p>
               </div>
             </CardContent>
           </Card>
 
-          <Card className="border-0 shadow-lg">
+          <Card className="hover:bg-white/15 hover:shadow-2xl transition-all">
             <CardContent className="p-4 lg:p-6">
               <div className="flex flex-col">
                 <div className="flex items-center justify-between mb-2">
-                  <p className="text-xs lg:text-sm font-medium text-muted-foreground">Próximos</p>
-                  <Clock className="w-4 h-4 lg:w-5 lg:h-5 text-blue-600" />
+                  <p className="text-xs lg:text-sm font-medium text-white/70">Próximos</p>
+                  <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center">
+                    <Clock className="w-5 h-5 text-white" />
+                  </div>
                 </div>
-                <p className="text-2xl lg:text-3xl font-bold text-blue-600">{upcomingEvents.length}</p>
+                <p className="text-2xl lg:text-3xl font-bold text-white">{upcomingEvents.length}</p>
               </div>
             </CardContent>
           </Card>
 
-          <Card className="border-0 shadow-lg">
+          <Card className="hover:bg-white/15 hover:shadow-2xl transition-all">
             <CardContent className="p-4 lg:p-6">
               <div className="flex flex-col">
                 <div className="flex items-center justify-between mb-2">
-                  <p className="text-xs lg:text-sm font-medium text-muted-foreground">Presenças</p>
-                  <Users className="w-4 h-4 lg:w-5 lg:h-5 text-purple-600" />
+                  <p className="text-xs lg:text-sm font-medium text-white/70">Presenças</p>
+                  <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center">
+                    <Users className="w-5 h-5 text-white" />
+                  </div>
                 </div>
-                <p className="text-2xl lg:text-3xl font-bold text-purple-600">{totalPresences}</p>
+                <p className="text-2xl lg:text-3xl font-bold text-white">{totalPresences}</p>
               </div>
             </CardContent>
           </Card>
         </div>
 
         {/* Users Summary Card */}
-        <Card className="border-0 shadow-lg mb-8">
+        <Card className="mb-8 hover:bg-white/15 hover:shadow-2xl transition-all">
           <CardContent className="p-6">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
               <div>
-                <h3 className="text-lg font-semibold mb-1">Usuários Finais</h3>
-                <p className="text-sm text-muted-foreground">
+                <h3 className="text-lg font-semibold mb-1 text-white">Usuários Finais</h3>
+                <p className="text-sm text-white/80">
                   {userStats.total} {userStats.total === 1 ? 'participante único' : 'participantes únicos'} nos seus eventos
                 </p>
               </div>
               <Link href="/dashboard/organization/users">
-                <div className="inline-flex items-center gap-2 bg-purple-600 text-white px-6 py-3 rounded-xl hover:bg-purple-700 transition shadow-lg hover:shadow-xl">
+                <div className="inline-flex items-center gap-2 border border-white/30 bg-white/10 text-white px-6 py-3 rounded-lg hover:bg-white/20 transition font-medium">
                   <UserCheck className="w-5 h-5" />
                   Ver Todos os Usuários
                 </div>
@@ -141,15 +145,15 @@ export default async function OrganizationDashboardPage() {
 
         {/* Events List */}
         {events.length === 0 ? (
-          <Card className="border-0 shadow-lg">
+          <Card>
             <CardContent className="p-8 lg:p-12 text-center">
-              <Calendar className="w-16 h-16 text-muted-foreground mx-auto mb-4 opacity-50" />
-              <h3 className="text-lg font-semibold mb-2">Nenhum evento cadastrado</h3>
-              <p className="text-muted-foreground mb-6">
+              <Calendar className="w-16 h-16 text-white/40 mx-auto mb-4" />
+              <h3 className="text-lg font-semibold mb-2 text-white">Nenhum evento cadastrado</h3>
+              <p className="text-white/80 mb-6">
                 Crie seu primeiro evento e comece a captar dados do seu público
               </p>
               <Link href="/dashboard/organization/events/new">
-                <div className="inline-flex items-center gap-2 bg-primary text-white px-6 py-3 rounded-xl hover:bg-primary/90 transition">
+                <div className="inline-flex items-center gap-2 bg-gradient-to-r from-yellow-500 to-orange-600 text-white px-6 py-3 rounded-lg hover:from-yellow-600 hover:to-orange-700 transition font-medium">
                   <Plus className="w-5 h-5" />
                   Criar Primeiro Evento
                 </div>
@@ -165,29 +169,20 @@ export default async function OrganizationDashboardPage() {
               const isUpcoming = startDate > now
 
               return (
-                <Card key={event.id} className="border-0 shadow-lg hover:shadow-xl transition-all group overflow-hidden">
-                  {isActive && (
-                    <div className="h-1 bg-gradient-to-r from-green-500 to-emerald-500" />
-                  )}
-                  {isUpcoming && (
-                    <div className="h-1 bg-gradient-to-r from-blue-500 to-cyan-500" />
-                  )}
-                  {!isActive && !isUpcoming && (
-                    <div className="h-1 bg-gradient-to-r from-gray-400 to-gray-500" />
-                  )}
+                <Card key={event.id} className="hover:bg-white/15 hover:shadow-2xl transition-all group overflow-hidden">
                   
                   <CardHeader>
                     <div className="flex items-start justify-between mb-2">
-                      <CardTitle className="text-lg group-hover:text-primary transition line-clamp-2">
+                      <CardTitle className="text-lg text-white line-clamp-2">
                         {event.title}
                       </CardTitle>
                       {isActive && (
-                        <span className="flex-shrink-0 px-2 py-1 rounded-full bg-green-100 text-green-700 text-xs font-semibold">
+                        <span className="flex-shrink-0 px-2 py-1 rounded-full bg-white/20 text-white text-xs font-semibold border border-white/30">
                           Ativo
                         </span>
                       )}
                       {isUpcoming && (
-                        <span className="flex-shrink-0 px-2 py-1 rounded-full bg-blue-100 text-blue-700 text-xs font-semibold">
+                        <span className="flex-shrink-0 px-2 py-1 rounded-full bg-white/10 text-white/80 text-xs font-semibold border border-white/20">
                           Próximo
                         </span>
                       )}
@@ -195,21 +190,21 @@ export default async function OrganizationDashboardPage() {
                   </CardHeader>
                   
                   <CardContent className="space-y-3">
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <Calendar className="w-4 h-4 flex-shrink-0" />
+                    <div className="flex items-center gap-2 text-sm text-white/80">
+                      <Calendar className="w-4 h-4 flex-shrink-0 text-white/60" />
                       <span className="truncate">
                         {new Date(event.startDate).toLocaleDateString('pt-BR')}
                       </span>
                     </div>
 
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <Users className="w-4 h-4 flex-shrink-0" />
+                    <div className="flex items-center gap-2 text-sm text-white/80">
+                      <Users className="w-4 h-4 flex-shrink-0 text-white/60" />
                       <span>{event._count?.presenceLogs || 0} presença(s)</span>
                     </div>
 
                     <Link
                       href={`/dashboard/organization/events/${event.id}`}
-                      className="flex items-center justify-center gap-2 w-full mt-4 px-4 py-2 rounded-lg bg-primary/10 text-primary hover:bg-primary hover:text-white transition-all font-semibold"
+                      className="flex items-center justify-center gap-2 w-full mt-4 px-4 py-2 rounded-lg bg-gradient-to-r from-yellow-500 to-orange-600 text-white hover:from-yellow-600 hover:to-orange-700 transition-all font-semibold"
                     >
                       <Eye className="w-4 h-4" />
                       Ver Detalhes
@@ -220,7 +215,6 @@ export default async function OrganizationDashboardPage() {
             })}
           </div>
         )}
-      </div>
     </div>
   )
 }

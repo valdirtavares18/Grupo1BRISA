@@ -38,10 +38,16 @@ export async function PUT(
     const body = await request.json()
     
     const updateData: any = {}
-    if (body.title) updateData.title = body.title
+    if (body.title !== undefined) updateData.title = body.title
     if (body.description !== undefined) updateData.description = body.description
     if (body.startDate) updateData.startDate = new Date(body.startDate)
     if (body.endDate) updateData.endDate = new Date(body.endDate)
+    if (body.address !== undefined) updateData.address = body.address
+    if (body.city !== undefined) updateData.city = body.city
+    if (body.state !== undefined) updateData.state = body.state
+    if (body.zipCode !== undefined) updateData.zipCode = body.zipCode ? body.zipCode.replace(/\D/g, '') : null
+    if (body.eventType !== undefined) updateData.eventType = body.eventType
+    if (body.reward !== undefined) updateData.reward = body.reward
 
     const event = await eventService.updateEvent(params.id, updateData)
     

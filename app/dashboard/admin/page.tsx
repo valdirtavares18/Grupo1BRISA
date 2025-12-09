@@ -1,91 +1,104 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/atoms'
+import { Card, CardContent, CardHeader, CardTitle, Button } from '@/components/atoms'
 import { PageHeader } from '@/components/molecules'
-import { Navbar } from '@/components/organisms/navbar'
 import { organizationService } from '@/services/organization.service'
+import { verifyToken } from '@/lib/auth'
+import { cookies } from 'next/headers'
+import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { Building2, Plus, Calendar, Users, TrendingUp, Eye } from 'lucide-react'
 
 export default async function AdminDashboardPage() {
+  const cookieStore = cookies()
+  const token = cookieStore.get('token')?.value
+
+  if (!token) {
+    redirect('/login')
+  }
+
+  const payload = verifyToken(token)
+
+  if (!payload || payload.role !== 'SUPER_ADMIN') {
+    redirect('/login')
+  }
+
   const organizations = await organizationService.getAllOrganizations()
 
   const totalEvents = organizations.reduce((sum, org) => sum + (org._count?.events || 0), 0)
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
-      <Navbar userRole="SUPER ADMIN" userName="Administrador" />
-      
-      <div className="container mx-auto px-4 py-6 lg:py-8">
-        <PageHeader
-          title="Dashboard Administrador"
-          description="Gerencie todas as organizações da plataforma"
-          action={
-            <Link href="/dashboard/admin/organizations/new">
-              <div className="bg-primary text-white px-4 py-2 sm:px-6 sm:py-3 rounded-xl hover:bg-primary/90 transition shadow-lg hover:shadow-xl flex items-center gap-2">
-                <Plus className="w-5 h-5" />
-                <span className="hidden sm:inline">Nova Organização</span>
-                <span className="sm:hidden">Nova</span>
-              </div>
-            </Link>
-          }
-        />
+    <div className="p-6 lg:p-10 lg:py-12 max-w-7xl mx-auto">
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 mb-10">
+          <div>
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-3 text-white">Dashboard Administrador</h1>
+            <p className="text-xl text-white/90">Gerencie todas as organizações da plataforma</p>
+          </div>
+          <Link href="/dashboard/admin/organizations/new" className="inline-flex">
+            <Button size="lg" className="bg-gradient-to-r from-yellow-500 to-orange-600 text-white hover:from-yellow-600 hover:to-orange-700 shadow-xl shadow-orange-500/30 flex items-center gap-3 text-lg px-8 py-7 h-auto">
+              <Plus className="w-6 h-6" />
+              <span className="hidden sm:inline">Nova Organização</span>
+              <span className="sm:hidden">Nova</span>
+            </Button>
+          </Link>
+        </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 mb-8">
-          <Card className="border-0 shadow-lg">
-            <CardContent className="p-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+          <Card className="hover:bg-white/15 hover:shadow-2xl transition-all group">
+            <CardContent className="p-7">
               <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">Organizações</p>
-                  <p className="text-3xl font-bold text-primary mt-2">{organizations.length}</p>
+                <div className="flex-1">
+                  <p className="text-base font-medium text-white/80 mb-2">Organizações</p>
+                  <p className="text-5xl font-bold text-white">{organizations.length}</p>
                 </div>
-                <div className="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center">
-                  <Building2 className="w-6 h-6 text-primary" />
+                <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center shadow-lg shadow-orange-500/30 group-hover:scale-110 transition-transform">
+                  <Building2 className="w-8 h-8 text-white" />
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          <Card className="border-0 shadow-lg">
-            <CardContent className="p-6">
+          <Card className="hover:bg-white/15 hover:shadow-2xl transition-all group">
+            <CardContent className="p-7">
               <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">Total de Eventos</p>
-                  <p className="text-3xl font-bold text-green-600 mt-2">{totalEvents}</p>
+                <div className="flex-1">
+                  <p className="text-base font-medium text-white/80 mb-2">Total de Eventos</p>
+                  <p className="text-5xl font-bold text-white">{totalEvents}</p>
                 </div>
-                <div className="w-12 h-12 rounded-xl bg-green-50 flex items-center justify-center">
-                  <Calendar className="w-6 h-6 text-green-600" />
+                <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center shadow-lg shadow-orange-500/30 group-hover:scale-110 transition-transform">
+                  <Calendar className="w-8 h-8 text-white" />
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          <Card className="border-0 shadow-lg">
-            <CardContent className="p-6">
+          <Card className="hover:bg-white/15 hover:shadow-2xl transition-all group">
+            <CardContent className="p-7">
               <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">Organizações Ativas</p>
-                  <p className="text-3xl font-bold text-purple-600 mt-2">
+                <div className="flex-1">
+                  <p className="text-base font-medium text-white/80 mb-2">Organizações Ativas</p>
+                  <p className="text-5xl font-bold text-white">
                     {organizations.filter(o => o.isActive).length}
                   </p>
                 </div>
-                <div className="w-12 h-12 rounded-xl bg-purple-50 flex items-center justify-center">
-                  <TrendingUp className="w-6 h-6 text-purple-600" />
+                <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center shadow-lg shadow-orange-500/30 group-hover:scale-110 transition-transform">
+                  <TrendingUp className="w-8 h-8 text-white" />
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          <Card className="border-0 shadow-lg">
-            <CardContent className="p-6">
+          <Card className="hover:bg-white/15 hover:shadow-2xl transition-all group">
+            <CardContent className="p-7">
               <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">Usuários Admin</p>
-                  <p className="text-3xl font-bold text-orange-600 mt-2">
+                <div className="flex-1">
+                  <p className="text-base font-medium text-white/80 mb-2">Usuários Admin</p>
+                  <p className="text-5xl font-bold text-white">
                     {organizations.reduce((sum, org) => sum + (org._count?.platformUsers || 0), 0)}
                   </p>
                 </div>
-                <div className="w-12 h-12 rounded-xl bg-orange-50 flex items-center justify-center">
-                  <Users className="w-6 h-6 text-orange-600" />
+                <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center shadow-lg shadow-orange-500/30 group-hover:scale-110 transition-transform">
+                  <Users className="w-8 h-8 text-white" />
                 </div>
               </div>
             </CardContent>
@@ -94,67 +107,72 @@ export default async function AdminDashboardPage() {
 
         {/* Organizations Grid */}
         <div>
-          <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
-            <Building2 className="w-5 h-5" />
-            Organizações
-          </h2>
+          <div className="flex items-center justify-between mb-8">
+            <h2 className="text-3xl font-bold text-white">
+              Organizações
+            </h2>
+            <p className="text-lg text-white/70 hidden sm:block">
+              {organizations.length} {organizations.length === 1 ? 'organização' : 'organizações'}
+            </p>
+          </div>
           
           {organizations.length === 0 ? (
-            <Card className="border-0 shadow-lg">
-              <CardContent className="p-12 text-center">
-                <Building2 className="w-16 h-16 text-muted-foreground mx-auto mb-4 opacity-50" />
-                <h3 className="text-lg font-semibold mb-2">Nenhuma organização cadastrada</h3>
-                <p className="text-muted-foreground mb-6">
+            <Card>
+              <CardContent className="p-20 text-center">
+                <div className="w-24 h-24 rounded-full bg-white/15 flex items-center justify-center mx-auto mb-8">
+                  <Building2 className="w-12 h-12 text-white/70" />
+                </div>
+                <h3 className="text-3xl font-bold mb-4 text-white">Nenhuma organização cadastrada</h3>
+                <p className="text-xl text-white/80 mb-10">
                   Comece criando sua primeira organização
                 </p>
-                <Link href="/dashboard/admin/organizations/new">
-                  <Button>
-                    <Plus className="w-4 h-4 mr-2" />
+                <Button size="lg" className="bg-gradient-to-r from-yellow-500 to-orange-600 text-white hover:from-yellow-600 hover:to-orange-700 shadow-xl shadow-orange-500/30 px-8 py-7 h-auto text-lg" asChild>
+                  <Link href="/dashboard/admin/organizations/new">
+                    <Plus className="w-6 h-6 mr-2" />
                     Nova Organização
-                  </Button>
-                </Link>
+                  </Link>
+                </Button>
               </CardContent>
             </Card>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
               {organizations.map((org) => (
-                <Card key={org.id} className="border-0 shadow-lg hover:shadow-xl transition-all group">
-                  <CardHeader className="pb-4">
+                <Card key={org.id} className="hover:bg-white/15 hover:shadow-2xl transition-all group">
+                  <CardHeader className="pb-5 pt-7">
                     <div className="flex items-start justify-between">
-                      <div className="flex-1">
-                        <CardTitle className="text-lg group-hover:text-primary transition">
+                      <div className="flex-1 min-w-0">
+                        <CardTitle className="text-2xl font-bold mb-3 text-white line-clamp-2 group-hover:text-yellow-300 transition-colors">
                           {org.name}
                         </CardTitle>
-                        <code className="text-xs text-muted-foreground mt-1 block">
+                        <code className="text-sm text-white/70 font-mono bg-white/15 px-3 py-1.5 rounded-lg inline-block border border-white/25">
                           {org.slug}
                         </code>
                       </div>
-                      <div className={`w-2 h-2 rounded-full ${org.isActive ? 'bg-green-500' : 'bg-gray-300'}`} />
                     </div>
                   </CardHeader>
-                  <CardContent className="space-y-3">
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="flex items-center gap-2 text-muted-foreground">
-                        <Calendar className="w-4 h-4" />
+                  <CardContent className="space-y-5 pb-7">
+                    <div className="flex items-center justify-between p-4 rounded-xl bg-white/10 border border-white/20 hover:bg-white/15 transition-colors">
+                      <span className="flex items-center gap-3 text-base font-medium text-white/90">
+                        <Calendar className="w-6 h-6 text-white/70" />
                         Eventos
                       </span>
-                      <span className="font-semibold">{org._count?.events || 0}</span>
+                      <span className="text-2xl font-bold text-white">{org._count?.events || 0}</span>
                     </div>
 
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="flex items-center gap-2 text-muted-foreground">
-                        <Users className="w-4 h-4" />
-                        Usuários
+                    <div className="flex items-center justify-between p-4 rounded-xl bg-white/10 border border-white/20 hover:bg-white/15 transition-colors">
+                      <span className="flex items-center gap-3 text-base font-medium text-white/90">
+                        <Users className="w-6 h-6 text-white/70" />
+                        Usuários Admin
                       </span>
-                      <span className="font-semibold">{org._count?.platformUsers || 0}</span>
+                      <span className="text-2xl font-bold text-white">{org._count?.platformUsers || 0}</span>
                     </div>
 
                     <Link
                       href={`/dashboard/admin/organizations/${org.id}`}
-                      className="flex items-center gap-2 text-primary hover:gap-3 transition-all text-sm font-semibold pt-2"
+                      className="flex items-center justify-center gap-3 w-full py-4 px-5 rounded-xl bg-gradient-to-r from-yellow-500 to-orange-600 text-white hover:from-yellow-600 hover:to-orange-700 transition-all font-semibold text-lg shadow-lg shadow-orange-500/30 mt-6"
                     >
-                      <Eye className="w-4 h-4" />
-                      Ver detalhes
+                      <Eye className="w-5 h-5" />
+                      Ver Detalhes
                     </Link>
                   </CardContent>
                 </Card>
@@ -162,7 +180,6 @@ export default async function AdminDashboardPage() {
             </div>
           )}
         </div>
-      </div>
     </div>
   )
 }

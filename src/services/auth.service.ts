@@ -1,6 +1,7 @@
 import { query } from '@/lib/db-sqlite'
 import { hashPassword, comparePassword, generateToken } from '@/lib/auth'
 import { validateCPF } from '@/lib/utils'
+import { randomUUID } from 'crypto'
 
 export class AuthService {
   async loginPlatformUser(email: string, password: string) {
@@ -25,7 +26,7 @@ export class AuthService {
       userId: user.id,
       email: user.email,
       role: user.role,
-      organizationId: user.organization_id || undefined,
+      organizationId: user.organizationId || undefined,
     })
 
     return {
@@ -34,7 +35,7 @@ export class AuthService {
         id: user.id,
         email: user.email,
         role: user.role,
-        organizationId: user.organization_id,
+        organizationId: user.organizationId,
       },
     }
   }
@@ -61,10 +62,10 @@ export class AuthService {
     }
 
     const passwordHash = await hashPassword(password)
-    const id = require('crypto').randomUUID()
+    const id = randomUUID()
 
     await query(
-      'INSERT INTO end_users (id, cpf, "passwordHash") VALUES (?, ?)',
+      'INSERT INTO end_users (id, cpf, "passwordHash") VALUES (?, ?, ?)',
       [id, cleanCpf, passwordHash]
     )
 
@@ -116,6 +117,121 @@ export class AuthService {
         id: user.id,
         cpf: user.cpf,
         fullName: user.fullName,
+      },
+    }
+  }
+
+  async loginEndUserWithPhone(cpf: string, phone: string, code: string) {
+    const cleanCpf = cpf.replace(/[^\d]/g, '')
+    const cleanPhone = phone.replace(/\D/g, '')
+
+    // Verificar se usuário existe
+    const userResult = await query('SELECT * FROM end_users WHERE cpf = ?', [cleanCpf])
+    const user = userResult.rows[0]
+
+    if (!user) {
+      throw new Error('CPF não encontrado')
+    }
+
+    // Verificar se telefone corresponde ao usuário
+    if (user.phone !== cleanPhone) {
+      throw new Error('Telefone não corresponde ao CPF cadastrado')
+    }
+
+    // Verificar código SMS
+    const smsService = (await import('@/services/sms.service')).smsService
+    const verifyResult = await smsService.verifyCode(cleanPhone, code)
+
+    if (!verifyResult.success) {
+      throw new Error(verifyResult.message || 'Código inválido')
+    }
+
+    // Gerar token
+    const token = generateToken({
+      userId: user.id,
+      email: user.cpf,
+      role: 'END_USER',
+    })
+
+    return {
+      token,
+      user: {
+        id: user.id,
+        cpf: user.cpf,
+        fullName: user.fullName,
+        phone: user.phone,
+      },
+    }
+  }
+
+  async getPhoneByCpf(cpf: string) {
+    const cleanCpf = cpf.replace(/[^\d]/g, '')
+    const result = await query('SELECT phone FROM end_users WHERE cpf = ?', [cleanCpf])
+    
+    if (result.rows.length === 0) {
+      throw new Error('CPF não encontrado')
+    }
+
+    const phone = result.rows[0].phone
+    if (!phone) {
+      throw new Error('Telefone não cadastrado para este CPF')
+    }
+
+    return phone
+  }
+
+  async registerEndUser2FA(cpf: string, phone: string) {
+    const cleanCpf = cpf.replace(/[^\d]/g, '')
+    const cleanPhone = phone.replace(/\D/g, '')
+
+    if (cleanCpf.length !== 11) {
+      throw new Error('CPF deve ter exatamente 11 dígitos')
+    }
+
+    if (!validateCPF(cleanCpf)) {
+      throw new Error('CPF inválido. Verifique os dígitos e tente novamente')
+    }
+
+    if (cleanPhone.length < 10) {
+      throw new Error('Telefone inválido')
+    }
+
+    // Verificar se CPF já existe
+    const existing = await query('SELECT * FROM end_users WHERE cpf = ?', [cleanCpf])
+
+    if (existing.rows[0]) {
+      throw new Error('Este CPF já está cadastrado')
+    }
+
+    // Verificar se telefone já está em uso
+    const existingPhone = await query('SELECT * FROM end_users WHERE phone = ?', [cleanPhone])
+
+    if (existingPhone.rows[0]) {
+      throw new Error('Este telefone já está cadastrado')
+    }
+
+    // Criar usuário sem senha (autenticação via SMS)
+    const id = randomUUID()
+    // Gerar um hash vazio ou usar o próprio CPF como "senha" (não será usado)
+    const passwordHash = await hashPassword(randomUUID()) // Hash aleatório, não será usado
+
+    await query(
+      'INSERT INTO end_users (id, cpf, "passwordHash", phone, "phoneVerified") VALUES (?, ?, ?, ?, ?)',
+      [id, cleanCpf, passwordHash, cleanPhone, 1]
+    )
+
+    const token = generateToken({
+      userId: id,
+      email: cleanCpf,
+      role: 'END_USER',
+    })
+
+    return {
+      token,
+      user: {
+        id,
+        cpf: cleanCpf,
+        phone: cleanPhone,
       },
     }
   }
@@ -178,7 +294,7 @@ export class AuthService {
     }
 
     const passwordHash = await hashPassword(data.password)
-    const id = require('crypto').randomUUID()
+    const id = randomUUID()
 
     // Criar usuário
     await query(

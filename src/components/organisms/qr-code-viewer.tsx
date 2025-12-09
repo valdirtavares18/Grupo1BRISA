@@ -1,9 +1,8 @@
 'use client'
 
-import { QRCodeSVG } from 'react-qr-code'
 import { Card, CardContent, Button } from '@/components/atoms'
-import { Download, QrCode } from 'lucide-react'
-import { useRef } from 'react'
+import { Download } from 'lucide-react'
+import { useRef, useState, useEffect } from 'react'
 
 interface QRCodeViewerProps {
   url: string
@@ -12,6 +11,35 @@ interface QRCodeViewerProps {
 
 export function QRCodeViewer({ url, eventTitle }: QRCodeViewerProps) {
   const qrRef = useRef<HTMLDivElement>(null)
+  const [QRCodeSVG, setQRCodeSVG] = useState<any>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    // Validar URL antes de gerar QRCode
+    if (!url || url.trim() === '') {
+      setError('URL do QR Code não está disponível')
+      setLoading(false)
+      return
+    }
+
+    import('react-qr-code').then((mod: any) => {
+      // react-qr-code exporta QRCodeSVG como named export
+      const QRCodeComponent = mod.QRCodeSVG || mod.default
+      if (QRCodeComponent) {
+        setQRCodeSVG(() => QRCodeComponent)
+        setLoading(false)
+      } else {
+        console.error('Módulo react-qr-code não contém QRCodeSVG:', mod)
+        setError('Erro ao carregar gerador de QR Code')
+        setLoading(false)
+      }
+    }).catch((err) => {
+      console.error('Erro ao carregar react-qr-code:', err)
+      setError('Erro ao carregar gerador de QR Code')
+      setLoading(false)
+    })
+  }, [url])
 
   const downloadQR = () => {
     const svg = qrRef.current?.querySelector('svg')
@@ -48,15 +76,31 @@ export function QRCodeViewer({ url, eventTitle }: QRCodeViewerProps) {
     <div className="space-y-4">
       <div 
         ref={qrRef} 
-        className="p-6 lg:p-8 bg-white rounded-2xl border-2 border-dashed border-gray-300 flex items-center justify-center"
+        className="p-6 lg:p-8 bg-white rounded-2xl border-2 border-dashed border-gray-300 flex items-center justify-center min-h-[256px]"
       >
-        <QRCodeSVG
-          value={url}
-          size={256}
-          level="H"
-          includeMargin
-          className="max-w-full h-auto"
-        />
+        {loading ? (
+          <div className="text-center">
+            <div className="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin mx-auto mb-4" />
+            <p className="text-sm text-muted-foreground">Carregando QR Code...</p>
+          </div>
+        ) : error ? (
+          <div className="text-center">
+            <p className="text-sm text-red-600 mb-2">{error}</p>
+            <p className="text-xs text-muted-foreground">URL: {url || 'Não disponível'}</p>
+          </div>
+        ) : QRCodeSVG && url ? (
+          <QRCodeSVG
+            value={url}
+            size={256}
+            level="H"
+            includeMargin
+            className="max-w-full h-auto"
+          />
+        ) : (
+          <div className="text-center">
+            <p className="text-sm text-muted-foreground">URL não disponível</p>
+          </div>
+        )}
       </div>
       
       <div className="text-center space-y-2">
@@ -66,7 +110,7 @@ export function QRCodeViewer({ url, eventTitle }: QRCodeViewerProps) {
         </p>
       </div>
       
-      <Button onClick={downloadQR} className="w-full" size="lg">
+      <Button onClick={downloadQR} className="w-full" size="lg" disabled={loading || !QRCodeSVG}>
         <Download className="mr-2 h-5 w-5" />
         Baixar QR Code (PNG)
       </Button>

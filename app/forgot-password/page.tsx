@@ -78,7 +78,7 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-br from-primary to-primary/80">
+    <div className="min-h-screen flex flex-col bg-gradient-to-br from-primary via-blue-800 to-primary">
       <div className="container mx-auto px-4 py-6">
         <Link 
           href="/login"
