@@ -9,7 +9,7 @@ Este guia foi criado para orientar os novos integrantes da equipe no uso do Git 
 
 1.  Crie uma pasta em seu computador onde você quer guardar o projeto.
 2.  Abra o Google Antigravity e indique que vai trabalhar na pasta criada para o projeto.
-3.  Você precisa ter o **Git** instalado no seu computador: Escreva no prompt do Antigravity: Baixe e instale o Git no meu pc local.
+3.  Você precisa ter o **Git** instalado no seu computador, escreva no prompt do Antigravity: "Baixe e instale o Git no meu pc local".
 
 
 ## Passo 2: Baixando o Projeto (Clonar)
@@ -25,6 +25,7 @@ Para mudar para a sua branch (substitua `**nome-da-sua-branch**` pelo nome que c
 
 Escreva no prompt do Antigravity: git checkout nome-da-sua-branch
 DICAS:
+> Se não lembra o nome exato da sua branch, peça pro Antigravity: liste os nomes das branchs deste projeto no GitHub.
 > Para confirmar em qual branch você está, digite `git status`. Deve aparecer "On branch nome-da-sua-branch".
 > Avise o Gravity pra não esquecer: a partir de agora , toda vez que eu abrir este projeto, todas as alterações que eu fizer devem ser feitas na branch com nome **nome-da-sua-branch**
 
