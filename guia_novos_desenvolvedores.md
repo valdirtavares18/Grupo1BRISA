@@ -24,9 +24,12 @@ Cada desenvolvedor tem uma "branch" (ramificação) própria para trabalhar sem 
 Para mudar para a sua branch (substitua `**nome-da-sua-branch**` pelo nome que criaram para você no GitHub):
 
 Escreva no prompt do Antigravity: git checkout nome-da-sua-branch
+
 DICAS:
 > Se não lembra o nome exato da sua branch, peça pro Antigravity: liste os nomes das branchs deste projeto no GitHub.
+> 
 > Para confirmar em qual branch você está, digite `git status`. Deve aparecer "On branch nome-da-sua-branch".
+> 
 > Avise o Gravity pra não esquecer: a partir de agora , toda vez que eu abrir este projeto, todas as alterações que eu fizer devem ser feitas na branch com nome **nome-da-sua-branch**
 
 ## Passo 4: Trabalhando e Salvando Alterações
