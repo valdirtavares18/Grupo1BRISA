@@ -59,7 +59,7 @@ export function LoginForm() {
         body: JSON.stringify({ cpf }),
       })
 
-      const phoneData = await phoneRes.json()
+      const phoneData = await parseJson(phoneRes)
 
       if (!phoneRes.ok) {
         throw new Error(phoneData.error || 'CPF não encontrado ou telefone não cadastrado')
@@ -67,7 +67,7 @@ export function LoginForm() {
 
       // Verificar se o telefone informado corresponde ao cadastrado
       const cleanPhoneInput = phone.replace(/\D/g, '')
-      const cleanPhoneStored = phoneData.phone.replace(/\D/g, '')
+      const cleanPhoneStored = (phoneData.phone || '').replace(/\D/g, '')
 
       if (cleanPhoneInput !== cleanPhoneStored) {
         throw new Error('Telefone não corresponde ao CPF cadastrado')
@@ -80,7 +80,7 @@ export function LoginForm() {
         body: JSON.stringify({ phone: cleanPhoneInput }),
       })
 
-      const smsData = await smsRes.json()
+      const smsData = await parseJson(smsRes)
 
       if (!smsRes.ok) {
         throw new Error(smsData.error || 'Erro ao enviar código')
@@ -94,8 +94,8 @@ export function LoginForm() {
         console.log(`📱 [DEV] Código de verificação para ${cleanPhoneInput}: ${smsData.code}`)
         alert(`Código de verificação (DEV): ${smsData.code}`)
       }
-    } catch (err: any) {
-      setError(err.message)
+    } catch (err) {
+      setErrorFriendly(err)
     } finally {
       setSendingCode(false)
     }
@@ -114,7 +114,7 @@ export function LoginForm() {
         body: JSON.stringify({ cpf, phone, code }),
       })
 
-      const data = await res.json()
+      const data = await parseJson(res)
 
       if (!res.ok) {
         throw new Error(data.error || 'Erro ao fazer login')
@@ -125,8 +125,8 @@ export function LoginForm() {
       
       // Redirecionar
       window.location.replace('/dashboard')
-    } catch (err: any) {
-      setError(err.message)
+    } catch (err) {
+      setErrorFriendly(err)
     } finally {
       setLoading(false)
     }
@@ -145,7 +145,7 @@ export function LoginForm() {
         body: JSON.stringify({ email, password }),
       })
 
-      const data = await res.json()
+      const data = await parseJson(res)
 
       if (!res.ok) {
         throw new Error(data.error || 'Erro ao fazer login')
@@ -156,27 +156,47 @@ export function LoginForm() {
       
       // Redirecionar
       window.location.replace('/dashboard')
-    } catch (err: any) {
-      setError(err.message)
+    } catch (err) {
+      setErrorFriendly(err)
     } finally {
       setLoading(false)
     }
   }
 
+  const parseJson = async (res: Response) => {
+    const text = await res.text()
+    if (!text.trim() || text.trimStart().startsWith('<')) {
+      throw new Error('Resposta inválida do servidor. Tente novamente.')
+    }
+    try {
+      return JSON.parse(text)
+    } catch {
+      throw new Error('Resposta inválida do servidor. Tente novamente.')
+    }
+  }
+
+  const setErrorFriendly = (err: unknown) => {
+    const msg = err instanceof Error ? err.message : 'Erro inesperado.'
+    const friendly = /JSON|Unexpected token|<!DOCTYPE/i.test(msg)
+      ? 'Resposta inválida do servidor. Tente novamente.'
+      : msg
+    setError(friendly)
+  }
+
   return (
     <Card className="shadow-2xl border-0">
-      <CardHeader className="space-y-2 pb-8 p-8">
-        <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center mb-6">
-          {userType === 'admin' ? <LogIn className="w-8 h-8 text-white" /> : step === 'cpf' ? <LogIn className="w-8 h-8 text-white" /> : <Shield className="w-8 h-8 text-white" />}
+      <CardHeader className="space-y-1.5 pb-6 p-6">
+        <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center mb-4">
+          {userType === 'admin' ? <LogIn className="w-6 h-6 text-white" /> : step === 'cpf' ? <LogIn className="w-6 h-6 text-white" /> : <Shield className="w-6 h-6 text-white" />}
         </div>
-        <CardTitle className="text-3xl sm:text-4xl lg:text-5xl">
+        <CardTitle className="text-2xl sm:text-3xl lg:text-4xl">
           {userType === 'admin' 
             ? 'Login Administrativo' 
             : step === 'cpf' 
               ? 'Bem-vindo de volta' 
               : 'Verificação de Segurança'}
         </CardTitle>
-        <CardDescription className="text-lg sm:text-xl">
+        <CardDescription className="text-sm sm:text-base">
           {userType === 'admin'
             ? 'Entre com seu email e senha de administrador'
             : step === 'cpf' 
@@ -184,10 +204,10 @@ export function LoginForm() {
               : `Enviamos um código para ${phone ? formatPhone(phone) : 'seu telefone'}`}
         </CardDescription>
       </CardHeader>
-      <CardContent className="p-8 pt-0">
+      <CardContent className="p-6 pt-0">
         {/* Toggle entre usuário final e admin */}
         {(step === 'cpf' || step === 'admin') && (
-          <div className="mb-6 flex gap-2 p-1 bg-muted rounded-lg">
+          <div className="mb-4 flex gap-2 p-1 bg-muted rounded-lg">
             <button
               type="button"
               onClick={() => {
@@ -195,7 +215,7 @@ export function LoginForm() {
                 setStep('cpf')
                 setError('')
               }}
-              className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition ${
+              className={`flex-1 py-1.5 px-3 rounded-md text-sm font-medium transition ${
                 userType === 'end_user'
                   ? 'bg-background text-foreground shadow-sm'
                   : 'text-muted-foreground hover:text-foreground'
@@ -210,7 +230,7 @@ export function LoginForm() {
                 setStep('admin')
                 setError('')
               }}
-              className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition ${
+              className={`flex-1 py-1.5 px-3 rounded-md text-sm font-medium transition ${
                 userType === 'admin'
                   ? 'bg-background text-foreground shadow-sm'
                   : 'text-muted-foreground hover:text-foreground'
@@ -223,17 +243,17 @@ export function LoginForm() {
 
         {/* Formulário de Admin */}
         {userType === 'admin' && step === 'admin' ? (
-          <form onSubmit={handleAdminSubmit} className="space-y-6">
+          <form onSubmit={handleAdminSubmit} className="space-y-4">
             {error && (
-              <div className="p-4 rounded-lg bg-destructive/10 border border-destructive/20 flex items-start gap-3">
-                <AlertCircle className="w-6 h-6 text-destructive flex-shrink-0 mt-0.5" />
-                <p className="text-base text-destructive">{error}</p>
+              <div className="p-3 rounded-lg bg-destructive/10 border border-destructive/20 flex items-start gap-2">
+                <AlertCircle className="w-5 h-5 text-destructive flex-shrink-0 mt-0.5" />
+                <p className="text-sm text-destructive">{error}</p>
               </div>
             )}
 
             <FormField label="Email" required>
               <div className="relative">
-                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-6 h-6 text-muted-foreground" />
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                 <Input
                   type="email"
                   placeholder="admin@exemplo.com"
@@ -241,14 +261,14 @@ export function LoginForm() {
                   onChange={(e) => setEmail(e.target.value)}
                   required
                   disabled={loading}
-                  className="pl-12 h-14 text-lg"
+                  className="pl-10 h-11 text-base"
                 />
               </div>
             </FormField>
 
             <FormField label="Senha" required>
               <div className="relative">
-                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-6 h-6 text-muted-foreground" />
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                 <Input
                   type="password"
                   placeholder="Digite sua senha"
@@ -256,20 +276,20 @@ export function LoginForm() {
                   onChange={(e) => setPassword(e.target.value)}
                   required
                   disabled={loading}
-                  className="pl-12 h-14 text-lg"
+                  className="pl-10 h-11 text-base"
                 />
               </div>
             </FormField>
 
-            <Button type="submit" className="w-full h-14 text-lg" size="lg" disabled={loading || !email || !password}>
+            <Button type="submit" className="w-full h-11 text-base" size="lg" disabled={loading || !email || !password}>
               {loading ? (
                 <>
-                  <div className="w-6 h-6 border-2 border-white/20 border-t-white rounded-full animate-spin mr-3" />
+                  <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin mr-2" />
                   Entrando...
                 </>
               ) : (
                 <>
-                  <LogIn className="mr-3 h-6 w-6" />
+                  <LogIn className="mr-2 h-5 w-5" />
                   Entrar como Administrador
                 </>
               )}
@@ -292,17 +312,17 @@ export function LoginForm() {
         ) : (
           <>
             {step === 'cpf' ? (
-          <form onSubmit={handleCpfSubmit} className="space-y-6">
+          <form onSubmit={handleCpfSubmit} className="space-y-4">
             {error && (
-              <div className="p-4 rounded-lg bg-destructive/10 border border-destructive/20 flex items-start gap-3">
-                <AlertCircle className="w-6 h-6 text-destructive flex-shrink-0 mt-0.5" />
-                <p className="text-base text-destructive">{error}</p>
+              <div className="p-3 rounded-lg bg-destructive/10 border border-destructive/20 flex items-start gap-2">
+                <AlertCircle className="w-5 h-5 text-destructive flex-shrink-0 mt-0.5" />
+                <p className="text-sm text-destructive">{error}</p>
               </div>
             )}
 
             <FormField label="CPF" required>
               <div className="relative">
-                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-6 h-6 text-muted-foreground" />
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                 <Input
                   type="text"
                   placeholder="000.000.000-00"
@@ -313,7 +333,7 @@ export function LoginForm() {
                   }}
                   required
                   disabled={sendingCode}
-                  className="pl-12 h-14 text-lg"
+                  className="pl-10 h-11 text-base"
                   maxLength={14}
                 />
               </div>
@@ -321,7 +341,7 @@ export function LoginForm() {
 
             <FormField label="Telefone" required>
               <div className="relative">
-                <Smartphone className="absolute left-4 top-1/2 -translate-y-1/2 w-6 h-6 text-muted-foreground" />
+                <Smartphone className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                 <Input
                   type="text"
                   placeholder="(00) 00000-0000"
@@ -332,30 +352,30 @@ export function LoginForm() {
                   }}
                   required
                   disabled={sendingCode}
-                  className="pl-12 h-14 text-lg"
+                  className="pl-10 h-11 text-base"
                   maxLength={15}
                 />
               </div>
-              <p className="text-sm text-muted-foreground mt-2">
+              <p className="text-sm text-muted-foreground mt-1.5">
                 Informe o telefone cadastrado no seu CPF
               </p>
             </FormField>
 
-            <Button type="submit" className="w-full h-14 text-lg" size="lg" disabled={sendingCode || !cpf || !phone}>
+            <Button type="submit" className="w-full h-11 text-base" size="lg" disabled={sendingCode || !cpf || !phone}>
               {sendingCode ? (
                 <>
-                  <div className="w-6 h-6 border-2 border-white/20 border-t-white rounded-full animate-spin mr-3" />
+                  <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin mr-2" />
                   Enviando código...
                 </>
               ) : (
                 <>
-                  <Smartphone className="mr-3 h-6 w-6" />
+                  <Smartphone className="mr-2 h-5 w-5" />
                   Enviar código SMS
                 </>
               )}
             </Button>
 
-            <div className="text-center text-base text-muted-foreground pt-6 border-t">
+            <div className="text-center text-sm text-muted-foreground pt-4 border-t">
               Não tem uma conta?{' '}
               <Link href="/register" className="text-primary font-semibold hover:underline">
                 Cadastre-se gratuitamente
@@ -363,24 +383,24 @@ export function LoginForm() {
             </div>
           </form>
         ) : (
-          <form onSubmit={handleCodeSubmit} className="space-y-6">
+          <form onSubmit={handleCodeSubmit} className="space-y-4">
             {error && (
-              <div className="p-4 rounded-lg bg-destructive/10 border border-destructive/20 flex items-start gap-3">
-                <AlertCircle className="w-6 h-6 text-destructive flex-shrink-0 mt-0.5" />
-                <p className="text-base text-destructive">{error}</p>
+              <div className="p-3 rounded-lg bg-destructive/10 border border-destructive/20 flex items-start gap-2">
+                <AlertCircle className="w-5 h-5 text-destructive flex-shrink-0 mt-0.5" />
+                <p className="text-sm text-destructive">{error}</p>
               </div>
             )}
 
             {codeSent && (
-              <div className="p-4 rounded-lg bg-green-50 border border-green-200 flex items-start gap-3">
-                <Shield className="w-6 h-6 text-green-600 flex-shrink-0 mt-0.5" />
-                <p className="text-base text-green-900">Código enviado com sucesso! Verifique seu telefone.</p>
+              <div className="p-3 rounded-lg bg-green-50 border border-green-200 flex items-start gap-2">
+                <Shield className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
+                <p className="text-sm text-green-900">Código enviado com sucesso! Verifique seu telefone.</p>
               </div>
             )}
 
             <FormField label="Código de Verificação" required>
               <div className="relative">
-                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-6 h-6 text-muted-foreground" />
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                 <Input
                   type="text"
                   placeholder="000000"
@@ -388,24 +408,24 @@ export function LoginForm() {
                   onChange={(e) => setCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
                   required
                   disabled={loading}
-                  className="pl-12 text-center text-3xl tracking-widest h-16"
+                  className="pl-10 text-center text-2xl tracking-widest h-12"
                   maxLength={6}
                 />
               </div>
-              <p className="text-sm text-muted-foreground mt-2">
+              <p className="text-sm text-muted-foreground mt-1.5">
                 Digite o código de 6 dígitos enviado para seu telefone
               </p>
             </FormField>
 
-            <Button type="submit" className="w-full h-14 text-lg" size="lg" disabled={loading || code.length !== 6}>
+            <Button type="submit" className="w-full h-11 text-base" size="lg" disabled={loading || code.length !== 6}>
               {loading ? (
                 <>
-                  <div className="w-6 h-6 border-2 border-white/20 border-t-white rounded-full animate-spin mr-3" />
+                  <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin mr-2" />
                   Verificando...
                 </>
               ) : (
                 <>
-                  <LogIn className="mr-3 h-6 w-6" />
+                  <LogIn className="mr-2 h-5 w-5" />
                   Entrar
                 </>
               )}
@@ -414,7 +434,7 @@ export function LoginForm() {
             <Button
               type="button"
               variant="outline"
-              className="w-full h-14 text-lg"
+              className="w-full h-11 text-base"
               onClick={() => {
                 setStep('cpf')
                 setCode('')

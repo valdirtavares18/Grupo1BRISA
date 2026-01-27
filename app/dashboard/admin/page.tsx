@@ -44,7 +44,7 @@ export default async function AdminDashboardPage() {
 
         {/* Stats */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-          <Card className="hover:bg-white/15 hover:shadow-2xl transition-all group">
+          <Card className="bg-white/10 border-white/20 hover:bg-white/15 hover:shadow-2xl transition-all group">
             <CardContent className="p-7">
               <div className="flex items-center justify-between">
                 <div className="flex-1">
@@ -58,7 +58,7 @@ export default async function AdminDashboardPage() {
             </CardContent>
           </Card>
 
-          <Card className="hover:bg-white/15 hover:shadow-2xl transition-all group">
+          <Card className="bg-white/10 border-white/20 hover:bg-white/15 hover:shadow-2xl transition-all group">
             <CardContent className="p-7">
               <div className="flex items-center justify-between">
                 <div className="flex-1">
@@ -72,7 +72,7 @@ export default async function AdminDashboardPage() {
             </CardContent>
           </Card>
 
-          <Card className="hover:bg-white/15 hover:shadow-2xl transition-all group">
+          <Card className="bg-white/10 border-white/20 hover:bg-white/15 hover:shadow-2xl transition-all group">
             <CardContent className="p-7">
               <div className="flex items-center justify-between">
                 <div className="flex-1">
@@ -88,7 +88,7 @@ export default async function AdminDashboardPage() {
             </CardContent>
           </Card>
 
-          <Card className="hover:bg-white/15 hover:shadow-2xl transition-all group">
+          <Card className="bg-white/10 border-white/20 hover:bg-white/15 hover:shadow-2xl transition-all group">
             <CardContent className="p-7">
               <div className="flex items-center justify-between">
                 <div className="flex-1">
@@ -117,7 +117,7 @@ export default async function AdminDashboardPage() {
           </div>
           
           {organizations.length === 0 ? (
-            <Card>
+            <Card className="bg-white/10 border-white/20">
               <CardContent className="p-20 text-center">
                 <div className="w-24 h-24 rounded-full bg-white/15 flex items-center justify-center mx-auto mb-8">
                   <Building2 className="w-12 h-12 text-white/70" />
@@ -137,7 +137,7 @@ export default async function AdminDashboardPage() {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
               {organizations.map((org) => (
-                <Card key={org.id} className="hover:bg-white/15 hover:shadow-2xl transition-all group">
+                <Card key={org.id} className="bg-white/10 border-white/20 hover:bg-white/15 hover:shadow-2xl transition-all group">
                   <CardHeader className="pb-5 pt-7">
                     <div className="flex items-start justify-between">
                       <div className="flex-1 min-w-0">
