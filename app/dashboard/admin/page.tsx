@@ -26,16 +26,16 @@ export default async function AdminDashboardPage() {
   const totalEvents = organizations.reduce((sum, org) => sum + (org._count?.events || 0), 0)
 
   return (
-    <div className="p-6 lg:p-10 lg:py-12 max-w-7xl mx-auto">
+    <div className="p-5 lg:p-6 lg:py-8 max-w-7xl mx-auto">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 mb-10">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
           <div>
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-3 text-white">Dashboard Administrador</h1>
-            <p className="text-xl text-white/90">Gerencie todas as organizações da plataforma</p>
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-2 text-white">Dashboard Administrador</h1>
+            <p className="text-base text-white/90">Gerencie todas as organizações da plataforma</p>
           </div>
           <Link href="/dashboard/admin/organizations/new" className="inline-flex">
-            <Button size="lg" className="bg-gradient-to-r from-yellow-500 to-orange-600 text-white hover:from-yellow-600 hover:to-orange-700 shadow-xl shadow-orange-500/30 flex items-center gap-3 text-lg px-8 py-7 h-auto">
-              <Plus className="w-6 h-6" />
+            <Button size="lg" className="bg-gradient-to-r from-yellow-500 to-orange-600 text-white hover:from-yellow-600 hover:to-orange-700 shadow-xl shadow-orange-500/30 flex items-center gap-2 text-base px-6 py-3 h-auto">
+              <Plus className="w-5 h-5" />
               <span className="hidden sm:inline">Nova Organização</span>
               <span className="sm:hidden">Nova</span>
             </Button>
@@ -43,62 +43,62 @@ export default async function AdminDashboardPage() {
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           <Card className="bg-white/10 border-white/20 hover:bg-white/15 hover:shadow-2xl transition-all group">
-            <CardContent className="p-7">
+            <CardContent className="p-5">
               <div className="flex items-center justify-between">
                 <div className="flex-1">
-                  <p className="text-base font-medium text-white/80 mb-2">Organizações</p>
-                  <p className="text-5xl font-bold text-white">{organizations.length}</p>
+                  <p className="text-sm font-medium text-white/80 mb-1.5">Organizações</p>
+                  <p className="text-4xl font-bold text-white">{organizations.length}</p>
                 </div>
-                <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center shadow-lg shadow-orange-500/30 group-hover:scale-110 transition-transform">
-                  <Building2 className="w-8 h-8 text-white" />
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center shadow-lg shadow-orange-500/30 group-hover:scale-110 transition-transform">
+                  <Building2 className="w-6 h-6 text-white" />
                 </div>
               </div>
             </CardContent>
           </Card>
 
           <Card className="bg-white/10 border-white/20 hover:bg-white/15 hover:shadow-2xl transition-all group">
-            <CardContent className="p-7">
+            <CardContent className="p-5">
               <div className="flex items-center justify-between">
                 <div className="flex-1">
-                  <p className="text-base font-medium text-white/80 mb-2">Total de Eventos</p>
-                  <p className="text-5xl font-bold text-white">{totalEvents}</p>
+                  <p className="text-sm font-medium text-white/80 mb-1.5">Total de Eventos</p>
+                  <p className="text-4xl font-bold text-white">{totalEvents}</p>
                 </div>
-                <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center shadow-lg shadow-orange-500/30 group-hover:scale-110 transition-transform">
-                  <Calendar className="w-8 h-8 text-white" />
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center shadow-lg shadow-orange-500/30 group-hover:scale-110 transition-transform">
+                  <Calendar className="w-6 h-6 text-white" />
                 </div>
               </div>
             </CardContent>
           </Card>
 
           <Card className="bg-white/10 border-white/20 hover:bg-white/15 hover:shadow-2xl transition-all group">
-            <CardContent className="p-7">
+            <CardContent className="p-5">
               <div className="flex items-center justify-between">
                 <div className="flex-1">
-                  <p className="text-base font-medium text-white/80 mb-2">Organizações Ativas</p>
-                  <p className="text-5xl font-bold text-white">
+                  <p className="text-sm font-medium text-white/80 mb-1.5">Organizações Ativas</p>
+                  <p className="text-4xl font-bold text-white">
                     {organizations.filter(o => o.isActive).length}
                   </p>
                 </div>
-                <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center shadow-lg shadow-orange-500/30 group-hover:scale-110 transition-transform">
-                  <TrendingUp className="w-8 h-8 text-white" />
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center shadow-lg shadow-orange-500/30 group-hover:scale-110 transition-transform">
+                  <TrendingUp className="w-6 h-6 text-white" />
                 </div>
               </div>
             </CardContent>
           </Card>
 
           <Card className="bg-white/10 border-white/20 hover:bg-white/15 hover:shadow-2xl transition-all group">
-            <CardContent className="p-7">
+            <CardContent className="p-5">
               <div className="flex items-center justify-between">
                 <div className="flex-1">
-                  <p className="text-base font-medium text-white/80 mb-2">Usuários Admin</p>
-                  <p className="text-5xl font-bold text-white">
+                  <p className="text-sm font-medium text-white/80 mb-1.5">Usuários Admin</p>
+                  <p className="text-4xl font-bold text-white">
                     {organizations.reduce((sum, org) => sum + (org._count?.platformUsers || 0), 0)}
                   </p>
                 </div>
-                <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center shadow-lg shadow-orange-500/30 group-hover:scale-110 transition-transform">
-                  <Users className="w-8 h-8 text-white" />
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center shadow-lg shadow-orange-500/30 group-hover:scale-110 transition-transform">
+                  <Users className="w-6 h-6 text-white" />
                 </div>
               </div>
             </CardContent>
