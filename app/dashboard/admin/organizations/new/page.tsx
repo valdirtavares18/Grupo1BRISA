@@ -5,10 +5,10 @@ import Link from 'next/link'
 
 export default function NewOrganizationPage() {
   return (
-    <div className="p-6 lg:p-8 lg:py-10 max-w-4xl mx-auto">
+    <div className="p-5 lg:p-6 lg:py-8 max-w-2xl mx-auto">
         <Link 
           href="/dashboard/admin"
-          className="inline-flex items-center gap-2 text-white/80 hover:text-white transition mb-6"
+          className="inline-flex items-center gap-2 text-white/80 hover:text-white transition text-sm mb-5"
         >
           <ArrowLeft className="w-4 h-4" />
           <span>Voltar para dashboard</span>
