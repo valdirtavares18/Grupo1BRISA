@@ -186,7 +186,7 @@ export default function EditEventPage({ params }: { params: { id: string } }) {
           <p className="text-white/80">Atualize as informações do evento</p>
         </div>
 
-        <Card className="border-0 shadow-xl">
+        <Card className="bg-white/10 border-white/20 backdrop-blur-sm shadow-xl">
           <CardContent className="p-6 lg:p-8">
             <form onSubmit={handleSubmit} className="space-y-6">
               {error && (
