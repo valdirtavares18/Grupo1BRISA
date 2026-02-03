@@ -85,7 +85,7 @@ export default async function EventDetailsPage({ params }: PageProps) {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
           {/* Event Info */}
           <div className="space-y-6">
-            <Card className="hover:bg-white/15 hover:shadow-2xl transition-all">
+            <Card className="bg-white/10 border-white/20 backdrop-blur-sm hover:bg-white/15 hover:scale-[1.01] hover:shadow-xl transition-all">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-white">
                   <Calendar className="w-5 h-5" />
@@ -198,7 +198,7 @@ export default async function EventDetailsPage({ params }: PageProps) {
 
           {/* QR Code */}
           <div className="space-y-6">
-            <Card className="hover:bg-white/15 hover:shadow-2xl transition-all">
+            <Card className="bg-white/10 border-white/20 backdrop-blur-sm hover:bg-white/15 hover:scale-[1.01] hover:shadow-xl transition-all">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-white">
                   <QrCode className="w-5 h-5" />

@@ -66,7 +66,7 @@ export default async function OrganizationDashboardPage() {
 
         {/* Stats Grid */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-6 mb-8">
-          <Card className="hover:bg-white/15 hover:shadow-2xl transition-all">
+          <Card className="bg-white/10 border-white/20 backdrop-blur-sm hover:bg-white/15 hover:scale-[1.02] hover:shadow-xl transition-all">
             <CardContent className="p-4 lg:p-6">
               <div className="flex flex-col">
                 <div className="flex items-center justify-between mb-2">
@@ -80,7 +80,7 @@ export default async function OrganizationDashboardPage() {
             </CardContent>
           </Card>
 
-          <Card className="hover:bg-white/15 hover:shadow-2xl transition-all">
+          <Card className="bg-white/10 border-white/20 backdrop-blur-sm hover:bg-white/15 hover:scale-[1.02] hover:shadow-xl transition-all">
             <CardContent className="p-4 lg:p-6">
               <div className="flex flex-col">
                 <div className="flex items-center justify-between mb-2">
@@ -94,7 +94,7 @@ export default async function OrganizationDashboardPage() {
             </CardContent>
           </Card>
 
-          <Card className="hover:bg-white/15 hover:shadow-2xl transition-all">
+          <Card className="bg-white/10 border-white/20 backdrop-blur-sm hover:bg-white/15 hover:scale-[1.02] hover:shadow-xl transition-all">
             <CardContent className="p-4 lg:p-6">
               <div className="flex flex-col">
                 <div className="flex items-center justify-between mb-2">
@@ -108,7 +108,7 @@ export default async function OrganizationDashboardPage() {
             </CardContent>
           </Card>
 
-          <Card className="hover:bg-white/15 hover:shadow-2xl transition-all">
+          <Card className="bg-white/10 border-white/20 backdrop-blur-sm hover:bg-white/15 hover:scale-[1.02] hover:shadow-xl transition-all">
             <CardContent className="p-4 lg:p-6">
               <div className="flex flex-col">
                 <div className="flex items-center justify-between mb-2">
@@ -124,7 +124,7 @@ export default async function OrganizationDashboardPage() {
         </div>
 
         {/* Users Summary Card */}
-        <Card className="mb-8 hover:bg-white/15 hover:shadow-2xl transition-all">
+        <Card className="mb-8 bg-white/10 border-white/20 backdrop-blur-sm hover:bg-white/15 hover:scale-[1.01] hover:shadow-xl transition-all">
           <CardContent className="p-6">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
               <div>
@@ -145,7 +145,7 @@ export default async function OrganizationDashboardPage() {
 
         {/* Events List */}
         {events.length === 0 ? (
-          <Card>
+          <Card className="bg-white/10 border-white/20 backdrop-blur-sm">
             <CardContent className="p-8 lg:p-12 text-center">
               <Calendar className="w-16 h-16 text-white/40 mx-auto mb-4" />
               <h3 className="text-lg font-semibold mb-2 text-white">Nenhum evento cadastrado</h3>
@@ -169,7 +169,7 @@ export default async function OrganizationDashboardPage() {
               const isUpcoming = startDate > now
 
               return (
-                <Card key={event.id} className="hover:bg-white/15 hover:shadow-2xl transition-all group overflow-hidden">
+                <Card key={event.id} className="bg-white/10 border-white/20 backdrop-blur-sm hover:bg-white/15 hover:scale-[1.02] hover:shadow-xl transition-all group overflow-hidden">
                   
                   <CardHeader>
                     <div className="flex items-start justify-between mb-2">
@@ -204,7 +204,7 @@ export default async function OrganizationDashboardPage() {
 
                     <Link
                       href={`/dashboard/organization/events/${event.id}`}
-                      className="flex items-center justify-center gap-2 w-full mt-4 px-4 py-2 rounded-lg bg-gradient-to-r from-yellow-500 to-orange-600 text-white hover:from-yellow-600 hover:to-orange-700 transition-all font-semibold"
+                      className="flex items-center justify-center gap-2 w-full mt-4 px-4 py-2 rounded-lg bg-gradient-to-r from-yellow-500 to-orange-600 text-white hover:from-yellow-600 hover:to-orange-700 transition-all font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2"
                     >
                       <Eye className="w-4 h-4" />
                       Ver Detalhes

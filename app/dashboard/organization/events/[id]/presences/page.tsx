@@ -48,26 +48,26 @@ export default async function EventPresencesPage({ params }: PageProps) {
 
         {/* Stats Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 lg:gap-6 mb-8">
-          <Card className="border-0 shadow-lg">
+          <Card className="bg-white/10 border-white/20 backdrop-blur-sm hover:bg-white/15 hover:scale-[1.02] hover:shadow-xl transition-all">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground mb-2">Total de Acessos</p>
-                  <p className="text-3xl lg:text-4xl font-bold text-primary">{stats.total}</p>
+                  <p className="text-sm font-medium text-white/70 mb-2">Total de Acessos</p>
+                  <p className="text-3xl lg:text-4xl font-bold text-white">{stats.total}</p>
                 </div>
-                <div className="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center">
-                  <Calendar className="w-6 h-6 text-primary" />
+                <div className="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center">
+                  <Calendar className="w-6 h-6 text-white" />
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          <Card className="border-0 shadow-lg">
+          <Card className="bg-white/10 border-white/20 backdrop-blur-sm hover:bg-white/15 hover:scale-[1.02] hover:shadow-xl transition-all">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground mb-2">Identificados</p>
-                  <p className="text-3xl lg:text-4xl font-bold text-slate-900">{stats.identified}</p>
+                  <p className="text-sm font-medium text-white/70 mb-2">Identificados</p>
+                  <p className="text-3xl lg:text-4xl font-bold text-white">{stats.identified}</p>
                 </div>
                 <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center">
                   <UserCheck className="w-6 h-6 text-white" />
@@ -76,15 +76,15 @@ export default async function EventPresencesPage({ params }: PageProps) {
             </CardContent>
           </Card>
 
-          <Card className="border-0 shadow-lg">
+          <Card className="bg-white/10 border-white/20 backdrop-blur-sm hover:bg-white/15 hover:scale-[1.02] hover:shadow-xl transition-all">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground mb-2">Anônimos</p>
-                  <p className="text-3xl lg:text-4xl font-bold text-orange-600">{stats.anonymous}</p>
+                  <p className="text-sm font-medium text-white/70 mb-2">Anônimos</p>
+                  <p className="text-3xl lg:text-4xl font-bold text-orange-200">{stats.anonymous}</p>
                 </div>
-                <div className="w-12 h-12 rounded-xl bg-orange-50 flex items-center justify-center">
-                  <UserX className="w-6 h-6 text-orange-600" />
+                <div className="w-12 h-12 rounded-xl bg-orange-500/30 flex items-center justify-center">
+                  <UserX className="w-6 h-6 text-orange-200" />
                 </div>
               </div>
             </CardContent>
@@ -92,9 +92,9 @@ export default async function EventPresencesPage({ params }: PageProps) {
         </div>
 
         {/* Presences List */}
-        <Card className="border-0 shadow-lg">
+        <Card className="bg-white/10 border-white/20 backdrop-blur-sm hover:bg-white/15 hover:shadow-xl transition-all">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
+            <CardTitle className="flex items-center gap-2 text-white">
               <Users className="w-5 h-5" />
               Registros de Presença
             </CardTitle>
@@ -102,8 +102,8 @@ export default async function EventPresencesPage({ params }: PageProps) {
           <CardContent>
             {presences.length === 0 ? (
               <div className="text-center py-12">
-                <Users className="w-16 h-16 text-muted-foreground mx-auto mb-4 opacity-50" />
-                <p className="text-muted-foreground">
+                <Users className="w-16 h-16 text-white/40 mx-auto mb-4 opacity-50" />
+                <p className="text-white/80">
                   Nenhuma presença registrada ainda
                 </p>
               </div>
@@ -112,7 +112,7 @@ export default async function EventPresencesPage({ params }: PageProps) {
                 {presences.map((presence) => (
                   <div
                     key={presence.id}
-                    className="p-4 rounded-xl border-2 border-gray-100 hover:border-primary/30 hover:bg-gray-50 transition-all"
+                    className="p-4 rounded-xl border-2 border-white/20 hover:border-white/40 hover:bg-white/10 transition-all"
                   >
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                       <div className="flex items-start gap-3 flex-1">
@@ -125,17 +125,17 @@ export default async function EventPresencesPage({ params }: PageProps) {
                         </div>
                         
                         <div className="flex-1 min-w-0">
-                          <p className="font-semibold text-base">
+                          <p className="font-semibold text-base text-white">
                             {presence.endUser?.fullName || 'Participante Anônimo'}
                           </p>
                           
                           <div className="flex flex-wrap items-center gap-2 mt-1">
-                            <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                            <div className="flex items-center gap-1 text-xs text-white/70">
                               <Clock className="w-3 h-3" />
                               {new Date(presence.accessTimestamp).toLocaleString('pt-BR')}
                             </div>
                             {presence.endUser && (
-                              <span className="text-xs text-muted-foreground">
+                              <span className="text-xs text-white/70">
                                 • CPF: {presence.endUser.cpf}
                               </span>
                             )}
