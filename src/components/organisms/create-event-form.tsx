@@ -164,7 +164,7 @@ export function CreateEventForm() {
   }
 
   return (
-    <Card>
+    <Card className="bg-white/10 border-white/20 backdrop-blur-sm">
       <CardContent className="p-6 lg:p-8">
         <form onSubmit={handleSubmit} className="space-y-6">
           {error && (
