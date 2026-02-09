@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { Card, CardContent, CardHeader, CardTitle, Button, Input, Badge } from '@/components/atoms'
 import { PublicLayout } from '@/components/organisms/public-layout'
 import { Search, MapPin, Calendar, Filter, X, Users, Building2 } from 'lucide-react'
+import { CityAutocomplete } from '@/components/molecules/city-autocomplete'
 import Link from 'next/link'
 
 interface Event {
@@ -124,27 +125,34 @@ export default function EventSearchPage() {
         <Card className="border-0 shadow-2xl bg-white/5 backdrop-blur-sm mb-8 border border-white/10">
           <CardContent className="p-8">
             <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="flex gap-4">
+              <div className="flex flex-col lg:flex-row gap-4">
                 <div className="flex-1 relative">
-                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-6 h-6 text-white/40" />
-                  <Input
-                    type="text"
-                    placeholder="Buscar por cidade, estado ou CEP..."
-                    value={filters.city || filters.state || filters.zipCode}
-                    onChange={(e) => {
-                      const value = e.target.value
-                      if (/\d/.test(value) && value.length <= 9) {
-                        setFilters({ ...filters, zipCode: value, city: '', state: '' })
-                      } else {
-                        setFilters({ ...filters, city: value, zipCode: '' })
-                      }
-                    }}
-                    className="pl-12 h-14 text-lg bg-white/10 border-white/20 text-white placeholder:text-white/40 focus:border-cyan-400/50 focus:ring-cyan-400/20"
+                  <CityAutocomplete
+                    value={filters.city}
+                    onChange={(city: string, state: string) => setFilters({ ...filters, city, state, zipCode: '' })}
+                    className="h-14 text-lg bg-white/10 border-white/20 text-white placeholder:text-white/40 focus:border-cyan-400/50 focus:ring-cyan-400/20"
                   />
                 </div>
-                <Button 
-                  type="submit" 
-                  disabled={loading} 
+                <div className="lg:w-48 relative">
+                  <div className="relative">
+                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-6 h-6 text-white/40" />
+                    <Input
+                      type="text"
+                      placeholder="CEP"
+                      value={filters.zipCode}
+                      onChange={(e) => {
+                        const value = e.target.value.replace(/\D/g, '')
+                        if (value.length <= 8) {
+                          setFilters({ ...filters, zipCode: value, city: '', state: '' })
+                        }
+                      }}
+                      className="pl-12 h-14 text-lg bg-white/10 border-white/20 text-white placeholder:text-white/40 focus:border-cyan-400/50 focus:ring-cyan-400/20"
+                    />
+                  </div>
+                </div>
+                <Button
+                  type="submit"
+                  disabled={loading}
                   size="lg"
                   className="h-14 px-8 bg-gradient-to-r from-cyan-500 to-blue-600 text-white hover:from-cyan-600 hover:to-blue-700 text-lg shadow-lg shadow-blue-500/30"
                 >
@@ -278,8 +286,8 @@ export default function EventSearchPage() {
                 const isActive = new Date(event.startDate) <= now && new Date(event.endDate) >= now
 
                 return (
-                  <Card 
-                    key={event.id} 
+                  <Card
+                    key={event.id}
                     className="border-0 shadow-2xl bg-white/5 backdrop-blur-sm hover:bg-white/10 border border-white/10 hover:border-cyan-400/30 transition-all duration-300 group overflow-hidden"
                   >
                     {isActive && (
@@ -367,9 +375,9 @@ export default function EventSearchPage() {
                       </div>
 
                       <Link href={`/${event.organizationSlug}/events`} className="block pt-2">
-                        <Button 
-                          variant="outline" 
-                          className="w-full border-cyan-400/30 bg-transparent text-white hover:bg-cyan-500/20 hover:border-cyan-400/50 hover:text-cyan-300" 
+                        <Button
+                          variant="outline"
+                          className="w-full border-cyan-400/30 bg-transparent text-white hover:bg-cyan-500/20 hover:border-cyan-400/50 hover:text-cyan-300"
                           size="lg"
                         >
                           Ver Detalhes
