@@ -1,5 +1,6 @@
 import { eventService } from '@/services/event.service'
 import { notFound } from 'next/navigation'
+import { headers } from 'next/headers'
 import { QRCodeViewer } from '@/components/organisms/qr-code-viewer'
 import { CloseEventButton } from '@/components/organisms/close-event-button'
 import { DuplicateEventButton } from '@/components/organisms/duplicate-event-button'
@@ -37,10 +38,9 @@ export default async function EventDetailsPage({ params }: PageProps) {
     )
   }
 
-  // Construir URL absoluta
-  const baseUrl = process.env.NEXTAUTH_URL ||
-    process.env.NEXT_PUBLIC_APP_URL ||
-    'http://localhost:3000'
+  const host = headers().get('host') || 'localhost:3000'
+  const protocol = host.includes('localhost') ? 'http' : 'https'
+  const baseUrl = `${protocol}://${host}`
   const qrCodeUrl = `${baseUrl}/event/${qrCodeToken}`
 
   const startDate = new Date(event.startDate)

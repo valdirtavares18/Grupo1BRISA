@@ -78,6 +78,7 @@ export function Sidebar({ userRole, userName }: SidebarProps) {
         return [
           { label: 'Dashboard', href: '/dashboard/admin', icon: LayoutDashboard },
           { label: 'Nova Organização', href: '/dashboard/admin/organizations/new', icon: Plus },
+          { label: 'Segurança', href: '/dashboard/admin/password', icon: Lock },
         ]
 
       case 'ORG_ADMIN':
@@ -87,6 +88,7 @@ export function Sidebar({ userRole, userName }: SidebarProps) {
           { label: 'Feed', href: '/dashboard/organization/feed', icon: MessageSquare },
           { label: 'Usuários', href: '/dashboard/organization/users', icon: Users },
           { label: 'Configurações', href: '/dashboard/organization/settings', icon: Settings },
+          { label: 'Segurança', href: '/dashboard/organization/password', icon: Lock },
         ]
 
       case 'END_USER':

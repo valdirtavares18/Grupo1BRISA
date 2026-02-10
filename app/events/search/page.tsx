@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { Card, CardContent, CardHeader, CardTitle, Button, Input, Badge } from '@/components/atoms'
 import { PublicLayout } from '@/components/organisms/public-layout'
 import { Search, MapPin, Calendar, Filter, X, Users, Building2 } from 'lucide-react'
+import { CityAutocomplete } from '@/components/molecules/city-autocomplete'
 import Link from 'next/link'
 
 interface Event {
@@ -122,23 +123,30 @@ export default function EventSearchPage() {
         <Card className="border-0 shadow-2xl bg-white/5 backdrop-blur-sm mb-8 border border-white/10">
           <CardContent className="p-8">
             <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="flex gap-4">
+              <div className="flex flex-col lg:flex-row gap-4">
                 <div className="flex-1 relative">
-                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-6 h-6 text-white/40" />
-                  <Input
-                    type="text"
-                    placeholder="Buscar por cidade, estado ou CEP..."
-                    value={filters.city || filters.state || filters.zipCode}
-                    onChange={(e) => {
-                      const value = e.target.value
-                      if (/\d/.test(value) && value.length <= 9) {
-                        setFilters({ ...filters, zipCode: value, city: '', state: '' })
-                      } else {
-                        setFilters({ ...filters, city: value, zipCode: '' })
-                      }
-                    }}
-                    className="pl-12 h-14 text-lg bg-white/10 border-white/20 text-white placeholder:text-white/40 focus:border-cyan-400/50 focus:ring-cyan-400/20"
+                  <CityAutocomplete
+                    value={filters.city}
+                    onChange={(city: string, state: string) => setFilters({ ...filters, city, state, zipCode: '' })}
+                    className="h-14 text-lg bg-white/10 border-white/20 text-white placeholder:text-white/40 focus:border-cyan-400/50 focus:ring-cyan-400/20"
                   />
+                </div>
+                <div className="lg:w-48 relative">
+                  <div className="relative">
+                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-6 h-6 text-white/40" />
+                    <Input
+                      type="text"
+                      placeholder="CEP"
+                      value={filters.zipCode}
+                      onChange={(e) => {
+                        const value = e.target.value.replace(/\D/g, '')
+                        if (value.length <= 8) {
+                          setFilters({ ...filters, zipCode: value, city: '', state: '' })
+                        }
+                      }}
+                      className="pl-12 h-14 text-lg bg-white/10 border-white/20 text-white placeholder:text-white/40 focus:border-cyan-400/50 focus:ring-cyan-400/20"
+                    />
+                  </div>
                 </div>
                 <Button
                   type="submit"

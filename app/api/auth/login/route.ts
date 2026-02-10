@@ -3,11 +3,11 @@ import { authService } from '@/services/auth.service'
 
 export async function POST(request: NextRequest) {
   console.log('🚀 [API Login] Iniciando login...')
-  
+
   try {
     const body = await request.json()
     console.log('📥 [API Login] Body recebido:', { email: body.email, hasPassword: !!body.password })
-    
+
     const { email, password } = body
 
     if (!email || !password) {
@@ -38,11 +38,11 @@ export async function POST(request: NextRequest) {
     }
 
     const response = NextResponse.json(result)
-    
+
     console.log('🔵 [API Login] Definindo cookie token...')
     console.log('🔵 [API Login] Token a ser salvo:', result.token?.substring(0, 30) + '...')
     console.log('🔵 [API Login] NODE_ENV:', process.env.NODE_ENV)
-    
+
     response.cookies.set('token', result.token, {
       httpOnly: true,
       secure: false,
@@ -50,16 +50,14 @@ export async function POST(request: NextRequest) {
       path: '/',
       maxAge: 60 * 60 * 24 * 7,
     })
-    
+
     console.log('🔵 [API Login] Cookie definido')
     console.log('🔵 [API Login] Set-Cookie header:', response.headers.get('set-cookie'))
 
     return response
   } catch (error: any) {
-    console.log('❌ [API Login] Erro:', error.message)
-    console.log('📚 [API Login] Stack:', error.stack)
     return NextResponse.json(
-      { error: error.message || 'Erro ao fazer login' },
+      { error: error.message || 'Erro ao realizar login' },
       { status: 401 }
     )
   }

@@ -34,6 +34,7 @@ export function RegisterWithPhoneForm({
   })
   const [verificationCode, setVerificationCode] = useState('')
   const [phoneToVerify, setPhoneToVerify] = useState('')
+  const [channel, setChannel] = useState<'sms' | 'whatsapp'>('sms')
 
   const handleSendCode = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -73,7 +74,7 @@ export function RegisterWithPhoneForm({
       const res = await fetch('/api/sms/send-code', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ phone: formData.phone }),
+        body: JSON.stringify({ phone: formData.phone, channel }),
       })
 
       const data = await res.json()
@@ -301,9 +302,42 @@ export function RegisterWithPhoneForm({
                 />
               </div>
               <p className="text-xs text-muted-foreground mt-1">
-                Você receberá um código SMS para verificação
+                Você receberá um código de verificação
               </p>
             </FormField>
+
+            <div className="space-y-2">
+              <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                Receber código via
+              </label>
+              <div className="flex gap-4">
+                <label className={`flex-1 flex items-center justify-center gap-2 p-3 rounded-lg border cursor-pointer transition-all ${channel === 'sms' ? 'border-primary bg-primary/5 text-primary' : 'border-input hover:bg-muted'}`}>
+                  <input
+                    type="radio"
+                    name="channel"
+                    value="sms"
+                    checked={channel === 'sms'}
+                    onChange={() => setChannel('sms')}
+                    className="sr-only"
+                  />
+                  <Phone className="w-4 h-4" />
+                  <span>SMS</span>
+                </label>
+                <label className={`flex-1 flex items-center justify-center gap-2 p-3 rounded-lg border cursor-pointer transition-all ${channel === 'whatsapp' ? 'border-green-500 bg-green-50 text-green-700' : 'border-input hover:bg-muted'}`}>
+                  <input
+                    type="radio"
+                    name="channel"
+                    value="whatsapp"
+                    checked={channel === 'whatsapp'}
+                    onChange={() => setChannel('whatsapp')}
+                    className="sr-only"
+                  />
+                  {/* Using standard Shield icon as replacement for generic WhatsApp icon */}
+                  <div className="w-4 h-4 flex items-center justify-center font-bold text-xs bg-green-600 text-white rounded-full">W</div>
+                  <span>WhatsApp</span>
+                </label>
+              </div>
+            </div>
 
             <FormField label="Senha" required>
               <div className="relative">

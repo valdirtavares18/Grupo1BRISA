@@ -208,7 +208,7 @@ export class AuthService {
     return phone
   }
 
-  async registerEndUser2FA(cpf: string, phone: string) {
+  async registerEndUser2FA(cpf: string, phone: string, fullName?: string) {
     const cleanCpf = cpf.replace(/[^\d]/g, '')
     const cleanPhone = phone.replace(/\D/g, '')
 
@@ -243,9 +243,19 @@ export class AuthService {
     // Gerar um hash vazio ou usar o próprio CPF como "senha" (não será usado)
     const passwordHash = await hashPassword(randomUUID()) // Hash aleatório, não será usado
 
+    const updates = ['id', 'cpf', '"passwordHash"', 'phone', '"phoneVerified"']
+    const values = [id, cleanCpf, passwordHash, cleanPhone, 1]
+    const placeholders = ['?', '?', '?', '?', '?']
+
+    if (fullName) {
+      updates.push('"fullName"')
+      values.push(fullName)
+      placeholders.push('?')
+    }
+
     await query(
-      'INSERT INTO end_users (id, cpf, "passwordHash", phone, "phoneVerified") VALUES (?, ?, ?, ?, ?)',
-      [id, cleanCpf, passwordHash, cleanPhone, 1]
+      `INSERT INTO end_users (${updates.join(', ')}) VALUES (${placeholders.join(', ')})`,
+      values
     )
 
     const token = generateToken({
@@ -260,6 +270,7 @@ export class AuthService {
         id,
         cpf: cleanCpf,
         phone: cleanPhone,
+        fullName,
       },
     }
   }

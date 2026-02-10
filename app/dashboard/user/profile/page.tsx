@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useRef, useState, useEffect } from 'react'
 import { Card, CardContent, CardHeader, CardTitle, Button, Input, Avatar, AvatarImage, AvatarFallback } from '@/components/atoms'
 import { FormField } from '@/components/molecules'
 import { User, Mail, Phone, Camera, Save, AlertCircle, CheckCircle2, ArrowLeft, Trash2, MapPin, FileText, Loader2 } from 'lucide-react'
@@ -66,6 +66,12 @@ export default function UserProfilePage() {
     setSuccess('')
     setLoading(true)
 
+    if (!formData.phone) {
+      setError('O telefone é obrigatório.')
+      setLoading(false)
+      return
+    }
+
     try {
       const res = await fetch('/api/user/profile', {
         method: 'PUT',
@@ -128,13 +134,16 @@ export default function UserProfilePage() {
     const file = e.target.files?.[0]
     if (!file) return
 
-    if (file.size > 5 * 1024 * 1024) {
-      setError('A imagem deve ter no máximo 5MB')
+    // Limit to 10MB input (we will compress it way down)
+    if (file.size > 10 * 1024 * 1024) {
+      setError('A imagem deve ter no máximo 10MB')
       return
     }
 
-    if (!file.type.startsWith('image/')) {
-      setError('Por favor, selecione uma imagem válida')
+    // Strict type check
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/jpg']
+    if (!allowedTypes.includes(file.type)) {
+      setError('Formato não suportado. Use JPG, PNG ou WebP.')
       return
     }
 
@@ -142,34 +151,85 @@ export default function UserProfilePage() {
     setError('')
 
     try {
-      // Converter para base64 (para simplificar, em produção usar upload para S3 ou similar)
-      const reader = new FileReader()
-      reader.onloadend = async () => {
-        const base64 = reader.result as string
+      // Create an image element to load the file
+      const img = document.createElement('img')
+      const objectUrl = URL.createObjectURL(file)
 
-        // Salvar como URL base64 (em produção, fazer upload para storage)
-        setFormData({ ...formData, profilePhotoUrl: base64 })
+      img.onload = async () => {
+        try {
+          // Create canvas for resizing
+          const canvas = document.createElement('canvas')
+          // Reduced max dimensions for better success rate
+          const MAX_WIDTH = 600
+          const MAX_HEIGHT = 600
+          let width = img.width
+          let height = img.height
 
-        // Atualizar no backend
-        const res = await fetch('/api/user/profile', {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          credentials: 'include',
-          body: JSON.stringify({
-            ...formData,
-            profilePhotoUrl: base64,
-          }),
-        })
+          // Calculate new dimensions
+          if (width > height) {
+            if (width > MAX_WIDTH) {
+              height *= MAX_WIDTH / width
+              width = MAX_WIDTH
+            }
+          } else {
+            if (height > MAX_HEIGHT) {
+              width *= MAX_HEIGHT / height
+              height = MAX_HEIGHT
+            }
+          }
 
-        if (res.ok) {
-          setSuccess('Foto atualizada com sucesso!')
-          setTimeout(() => setSuccess(''), 3000)
+          canvas.width = width
+          canvas.height = height
+
+          // Draw image to canvas
+          const ctx = canvas.getContext('2d')
+          ctx?.drawImage(img, 0, 0, width, height)
+
+          // More aggressive compression (0.6 quality)
+          const base64 = canvas.toDataURL('image/jpeg', 0.6)
+
+          // Debug info (can be removed later)
+          console.log(`Original size: ${file.size}, Compressed size: ${base64.length}`)
+
+          // Salvar como URL base64 (em produção, fazer upload para storage)
+          setFormData(prev => ({ ...prev, profilePhotoUrl: base64 }))
+
+          // Atualizar no backend
+          const res = await fetch('/api/user/profile', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({
+              ...formData,
+              profilePhotoUrl: base64,
+            }),
+          })
+
+          if (res.ok) {
+            setSuccess('Foto atualizada com sucesso!')
+            setTimeout(() => setSuccess(''), 3000)
+          } else {
+            const data = await res.json()
+            throw new Error(data.error || 'Erro ao atualizar foto')
+          }
+        } catch (err: any) {
+          setError(err.message || 'Erro ao processar foto')
+        } finally {
+          setUploadingPhoto(false)
+          URL.revokeObjectURL(objectUrl)
         }
       }
-      reader.readAsDataURL(file)
+
+      img.onerror = () => {
+        setError('Erro ao carregar a imagem')
+        setUploadingPhoto(false)
+        URL.revokeObjectURL(objectUrl)
+      }
+
+      img.src = objectUrl
+
     } catch (err: any) {
       setError(err.message || 'Erro ao fazer upload da foto')
-    } finally {
       setUploadingPhoto(false)
     }
   }
@@ -251,12 +311,12 @@ export default function UserProfilePage() {
               <div className="text-center">
                 <input
                   id="photo-upload"
+                  ref={fileInputRef}
                   type="file"
-                  accept="image/*"
+                  accept="image/png, image/jpeg, image/jpg, image/webp"
                   onChange={handlePhotoUpload}
                   className="hidden"
                   disabled={uploadingPhoto}
-                  ref={fileInputRef}
                 />
                 <Button
                   type="button"
@@ -278,7 +338,7 @@ export default function UserProfilePage() {
                   )}
                 </Button>
                 <p className="text-xs text-muted-foreground mt-2">
-                  Máximo 5MB. Formatos: JPG, PNG
+                  Máximo 10MB. Formatos: JPG, PNG, WebP
                 </p>
               </div>
             </div>
@@ -320,7 +380,7 @@ export default function UserProfilePage() {
                 </div>
               </FormField>
 
-              <FormField label="Telefone">
+              <FormField label="Telefone" required>
                 <div className="relative">
                   <Phone className="w-5 h-5 text-muted-foreground absolute left-3 top-1/2 -translate-y-1/2" />
                   <Input
@@ -329,6 +389,7 @@ export default function UserProfilePage() {
                     placeholder="(00) 00000-0000"
                     disabled={loading}
                     className="pl-10"
+                    required
                   />
                 </div>
               </FormField>

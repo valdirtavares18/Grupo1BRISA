@@ -9,7 +9,7 @@ export async function GET(
 ) {
   try {
     const token = request.cookies.get('token')?.value
-    
+
     if (!token) {
       return NextResponse.json(
         { error: 'Não autorizado' },
@@ -34,7 +34,10 @@ export async function GET(
       )
     }
 
-    const qrCodeUrl = `${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/event/${event.qrCodeToken}`
+    const host = request.headers.get('host') || 'localhost:3000'
+    const protocol = host.includes('localhost') ? 'http' : 'https'
+    const baseUrl = `${protocol}://${host}`
+    const qrCodeUrl = `${baseUrl}/event/${event.qrCodeToken}`
 
     return NextResponse.json({
       qrCodeToken: event.qrCodeToken,
