@@ -77,6 +77,7 @@ export function Sidebar({ userRole, userName }: SidebarProps) {
         return [
           { label: 'Dashboard', href: '/dashboard/admin', icon: LayoutDashboard },
           { label: 'Nova Organização', href: '/dashboard/admin/organizations/new', icon: Plus },
+          { label: 'Segurança', href: '/dashboard/admin/password', icon: Lock },
         ]
 
       case 'ORG_ADMIN':
@@ -85,6 +86,7 @@ export function Sidebar({ userRole, userName }: SidebarProps) {
           { label: 'Novo Evento', href: '/dashboard/organization/events/new', icon: Plus },
           { label: 'Feed', href: '/dashboard/organization/feed', icon: MessageSquare },
           { label: 'Usuários', href: '/dashboard/organization/users', icon: Users },
+          { label: 'Segurança', href: '/dashboard/organization/password', icon: Lock },
         ]
 
       case 'END_USER':
@@ -94,7 +96,6 @@ export function Sidebar({ userRole, userName }: SidebarProps) {
           { label: 'Buscar Eventos', href: '/events/search', icon: Search },
           { label: 'Escanear QR', href: '/scan', icon: QrCode },
           { label: 'Meu Perfil', href: '/dashboard/user/profile', icon: User },
-          { label: 'Segurança', href: '/dashboard/user/password', icon: Lock },
         ]
 
       default:
