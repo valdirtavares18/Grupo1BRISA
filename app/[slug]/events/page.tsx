@@ -21,11 +21,11 @@ export default async function OrganizationEventsPage({ params }: PageProps) {
 
   const now = new Date()
   const activeEvents = events.filter(
-    (e) => new Date(e.startDate) <= now && new Date(e.endDate) >= now && e.manuallyEnded !== 1
+    (e: any) => new Date(e.startDate) <= now && new Date(e.endDate) >= now && e.manuallyEnded !== 1
   )
-  const upcomingEvents = events.filter((e) => new Date(e.startDate) > now)
+  const upcomingEvents = events.filter((e: any) => new Date(e.startDate) > now)
   const pastEvents = events.filter(
-    (e) => new Date(e.endDate) < now || e.manuallyEnded === 1
+    (e: any) => new Date(e.endDate) < now || e.manuallyEnded === 1
   )
 
   // Aplicar tema da organização
@@ -36,8 +36,8 @@ export default async function OrganizationEventsPage({ params }: PageProps) {
   const themeStyle = backgroundStyle
     ? { background: backgroundStyle }
     : {
-        background: `linear-gradient(to-br, ${primaryColor}, ${primaryColor}dd, ${primaryColor})`,
-      }
+      background: `linear-gradient(to-br, ${primaryColor}, ${primaryColor}dd, ${primaryColor})`,
+    }
 
   return (
     <div className="min-h-screen" style={themeStyle}>
@@ -78,7 +78,7 @@ export default async function OrganizationEventsPage({ params }: PageProps) {
           <div className="mb-12">
             <h2 className="text-2xl sm:text-3xl font-bold text-white mb-6">Eventos em Andamento</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {activeEvents.map((event) => {
+              {activeEvents.map((event: any) => {
                 const startDate = new Date(event.startDate)
                 const endDate = new Date(event.endDate)
                 return (
@@ -159,7 +159,7 @@ export default async function OrganizationEventsPage({ params }: PageProps) {
           <div className="mb-12">
             <h2 className="text-2xl sm:text-3xl font-bold text-white mb-6">Próximos Eventos</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {upcomingEvents.map((event) => {
+              {upcomingEvents.map((event: any) => {
                 const startDate = new Date(event.startDate)
                 return (
                   <Card
@@ -225,7 +225,7 @@ export default async function OrganizationEventsPage({ params }: PageProps) {
           <div className="mb-12">
             <h2 className="text-2xl sm:text-3xl font-bold text-white mb-6">Eventos Anteriores</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {pastEvents.slice(0, 9).map((event) => {
+              {pastEvents.slice(0, 9).map((event: any) => {
                 const startDate = new Date(event.startDate)
                 return (
                   <Card

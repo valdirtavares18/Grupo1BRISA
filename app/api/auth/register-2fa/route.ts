@@ -40,8 +40,9 @@ export async function POST(request: NextRequest) {
       }
 
       // Enviar código SMS
-      const smsRes = await smsService.sendVerificationCode(cleanPhone)
-      
+      const channel = body.channel === 'whatsapp' ? 'whatsapp' : 'sms'
+      const smsRes = await smsService.sendVerificationCode(cleanPhone, channel)
+
       if (!smsRes.success) {
         return NextResponse.json(
           { error: smsRes.message || 'Erro ao enviar código SMS' },
@@ -59,7 +60,7 @@ export async function POST(request: NextRequest) {
     // Se tiver código, é o segundo passo (verificar e criar conta)
 
     const cleanPhone = phone.replace(/\D/g, '')
-    
+
     // Verificar código SMS
     const verificationResult = await smsService.verifyCode(cleanPhone, code)
 
@@ -71,7 +72,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Criar conta sem senha (2FA)
-    const result = await authService.registerEndUser2FA(cpf, cleanPhone)
+    const result = await authService.registerEndUser2FA(cpf, cleanPhone, body.fullName)
 
     const response = NextResponse.json(result)
     response.cookies.set('token', result.token, {

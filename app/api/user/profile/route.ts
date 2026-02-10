@@ -5,7 +5,7 @@ import { verifyToken } from '@/lib/auth'
 export async function GET(request: NextRequest) {
   try {
     const token = request.cookies.get('token')?.value
-    
+
     if (!token) {
       return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
     }
@@ -17,12 +17,12 @@ export async function GET(request: NextRequest) {
 
     const { query } = await import('@/lib/db-sqlite')
     const result = await query('SELECT * FROM end_users WHERE id = ?', [payload.userId])
-    
+
     if (result.rows.length === 0) {
       return NextResponse.json({ error: 'Usuário não encontrado' }, { status: 404 })
     }
 
-    const user = result.rows[0]
+    const user: any = result.rows[0]
     delete user.passwordHash
 
     return NextResponse.json(user)
@@ -34,7 +34,7 @@ export async function GET(request: NextRequest) {
 export async function PUT(request: NextRequest) {
   try {
     const token = request.cookies.get('token')?.value
-    
+
     if (!token) {
       return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
     }
@@ -45,7 +45,11 @@ export async function PUT(request: NextRequest) {
     }
 
     const body = await request.json()
-    const user = await userService.updateProfile(payload.userId, body)
+    // Simple log to check payload size
+    console.log(`[Profile Update] Received payload size: ${JSON.stringify(body).length} characters`)
+    console.log(`[Profile Update] User ID: ${payload.userId}`)
+
+    const user: any = await userService.updateProfile(payload.userId, body)
 
     delete user.passwordHash
 

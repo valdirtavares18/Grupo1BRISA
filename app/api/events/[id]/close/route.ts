@@ -8,7 +8,7 @@ export async function POST(
 ) {
   try {
     const token = request.cookies.get('token')?.value
-    
+
     if (!token) {
       return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
     }
@@ -31,7 +31,7 @@ export async function POST(
       )
     }
 
-    const event = eventResult.rows[0]
+    const event: any = eventResult.rows[0]
 
     // Verificar se já está encerrado
     if (event.manuallyEnded === 1) {

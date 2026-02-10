@@ -14,7 +14,7 @@ export class SMSService {
    * Em desenvolvimento: retorna código para teste (mock)
    * Em produção: integrar com Twilio ou outro serviço SMS
    */
-  async sendVerificationCode(phone: string): Promise<{ success: boolean; code?: string; message: string }> {
+  async sendVerificationCode(phone: string, channel: 'sms' | 'whatsapp' = 'sms'): Promise<{ success: boolean; code?: string; message: string }> {
     try {
       // Limpar telefone (remover caracteres não numéricos)
       const cleanPhone = phone.replace(/\D/g, '')
@@ -56,21 +56,21 @@ export class SMSService {
           const client = twilio.default(twilioAccountSid, twilioAuthToken)
 
           // Formatar telefone para formato internacional (+55 para Brasil)
-          const formattedPhone = cleanPhone.startsWith('55') 
-            ? `+${cleanPhone}` 
+          const formattedPhone = cleanPhone.startsWith('55')
+            ? `+${cleanPhone}`
             : `+55${cleanPhone}`
 
           // Usar Twilio Verify (melhor para códigos de verificação)
           const verification = await client.verify.v2
             .services(twilioVerifyServiceSid)
             .verifications
-            .create({ to: formattedPhone, channel: 'sms' })
+            .create({ to: formattedPhone, channel: channel })
 
-          console.log(`📱 [SMS] Código enviado para ${formattedPhone} via Twilio Verify (SID: ${verification.sid})`)
-          
+          console.log(`📱 [${channel.toUpperCase()}] Código enviado para ${formattedPhone} via Twilio Verify (SID: ${verification.sid})`)
+
           // Com Twilio Verify, não precisamos salvar o código manualmente
           // O Twilio gerencia isso. Mas vamos manter o código no banco para compatibilidade
-          
+
           return {
             success: true,
             message: 'Código enviado com sucesso para seu telefone',
@@ -83,8 +83,8 @@ export class SMSService {
 
       // Modo desenvolvimento/mock: mostrar código no console e alert
       if (process.env.NODE_ENV === 'development') {
-        console.log(`📱 [SMS DEV] Código de verificação para ${cleanPhone}: ${code}`)
-        
+        console.log(`📱 [${channel.toUpperCase()} DEV] Código de verificação para ${cleanPhone}: ${code}`)
+
         return {
           success: true,
           code, // Apenas em desenvolvimento
@@ -115,8 +115,8 @@ export class SMSService {
       const cleanCode = code.replace(/\D/g, '')
 
       // Formatar telefone para formato internacional
-      const formattedPhone = cleanPhone.startsWith('55') 
-        ? `+${cleanPhone}` 
+      const formattedPhone = cleanPhone.startsWith('55')
+        ? `+${cleanPhone}`
         : `+55${cleanPhone}`
 
       // Tentar verificar via Twilio Verify se estiver configurado
@@ -141,7 +141,7 @@ export class SMSService {
               'SELECT * FROM phone_verifications WHERE phone = ? AND verified = 0 ORDER BY createdAt DESC LIMIT 1',
               [cleanPhone]
             )
-            
+
             if (result.rows.length > 0) {
               await query(
                 'UPDATE phone_verifications SET verified = 1 WHERE id = ?',
