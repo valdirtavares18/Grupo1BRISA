@@ -6,7 +6,11 @@ import { Card, CardContent, Button, Input } from '@/components/atoms'
 import { FormField } from '@/components/molecules'
 import { Calendar, Clock, FileText, AlertCircle, MapPin, Tag, Gift, Loader2 } from 'lucide-react'
 
-export function CreateEventForm() {
+interface CreateEventFormProps {
+  organizationId?: string
+}
+
+export function CreateEventForm({ organizationId: propOrganizationId }: CreateEventFormProps) {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -82,7 +86,7 @@ export function CreateEventForm() {
   const handleCepChange = async (value: string) => {
     const cleanCep = value.replace(/\D/g, '')
     const formatted = cleanCep.length > 5 ? `${cleanCep.substring(0, 5)}-${cleanCep.substring(5)}` : cleanCep
-    
+
     setFormData({ ...formData, zipCode: formatted })
 
     // Buscar endereço quando CEP tiver 8 dígitos
@@ -116,7 +120,7 @@ export function CreateEventForm() {
     try {
       const now = new Date()
       now.setHours(0, 0, 0, 0)
-      
+
       const startDate = new Date(`${formData.startDate}T${formData.startTime}`)
       const endDate = new Date(`${formData.endDate}T${formData.endTime}`)
 
@@ -136,6 +140,7 @@ export function CreateEventForm() {
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
         body: JSON.stringify({
+          organizationId: propOrganizationId,
           title: formData.title,
           description: formData.description || null,
           startDate: startDate.toISOString(),
@@ -359,48 +364,48 @@ export function CreateEventForm() {
             <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
               <Card className="w-full max-w-md">
                 <CardContent className="p-6 space-y-4">
-              <h3 className="text-lg font-semibold text-white">Criar Novo Tipo de Evento</h3>
-              <Input
-                type="text"
-                placeholder="Nome do tipo (ex: Cultura, Esporte)"
-                value={newTypeName}
-                onChange={(e) => setNewTypeName(e.target.value)}
-                disabled={creatingType}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    handleCreateNewType()
-                  }
-                }}
-                className="bg-white/10 border-white/30 text-white placeholder:text-white/50 focus:border-yellow-500 focus:ring-yellow-500"
-              />
-              <div className="flex gap-2">
-                <Button
-                  onClick={handleCreateNewType}
-                  disabled={creatingType || !newTypeName.trim()}
-                  className="flex-1 bg-gradient-to-r from-yellow-500 to-orange-600 text-white hover:from-yellow-600 hover:to-orange-700"
-                >
-                  {creatingType ? (
-                    <>
-                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                      Criando...
-                    </>
-                  ) : (
-                    'Criar'
-                  )}
-                </Button>
-                <Button
-                  variant="outline"
-                  onClick={() => {
-                    setShowNewTypeDialog(false)
-                    setNewTypeName('')
-                    setError('')
-                  }}
-                  disabled={creatingType}
-                  className="border-white/30 text-white hover:bg-white/20 bg-white/10"
-                >
-                  Cancelar
-                </Button>
-              </div>
+                  <h3 className="text-lg font-semibold text-white">Criar Novo Tipo de Evento</h3>
+                  <Input
+                    type="text"
+                    placeholder="Nome do tipo (ex: Cultura, Esporte)"
+                    value={newTypeName}
+                    onChange={(e) => setNewTypeName(e.target.value)}
+                    disabled={creatingType}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        handleCreateNewType()
+                      }
+                    }}
+                    className="bg-white/10 border-white/30 text-white placeholder:text-white/50 focus:border-yellow-500 focus:ring-yellow-500"
+                  />
+                  <div className="flex gap-2">
+                    <Button
+                      onClick={handleCreateNewType}
+                      disabled={creatingType || !newTypeName.trim()}
+                      className="flex-1 bg-gradient-to-r from-yellow-500 to-orange-600 text-white hover:from-yellow-600 hover:to-orange-700"
+                    >
+                      {creatingType ? (
+                        <>
+                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                          Criando...
+                        </>
+                      ) : (
+                        'Criar'
+                      )}
+                    </Button>
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        setShowNewTypeDialog(false)
+                        setNewTypeName('')
+                        setError('')
+                      }}
+                      disabled={creatingType}
+                      className="border-white/30 text-white hover:bg-white/20 bg-white/10"
+                    >
+                      Cancelar
+                    </Button>
+                  </div>
                 </CardContent>
               </Card>
             </div>
