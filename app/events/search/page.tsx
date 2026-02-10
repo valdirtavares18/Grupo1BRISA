@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Card, CardContent, CardHeader, CardTitle, Button, Input, Badge } from '@/components/atoms'
 import { PublicLayout } from '@/components/organisms/public-layout'
 import { Search, MapPin, Calendar, Filter, X, Users, Building2 } from 'lucide-react'
@@ -39,12 +39,9 @@ export default function EventSearchPage() {
   const [eventTypes, setEventTypes] = useState<string[]>([])
   const [showFilters, setShowFilters] = useState(false)
 
-  useEffect(() => {
-    fetchEventTypes()
-    searchEvents()
-  }, [])
 
-  const fetchEventTypes = async () => {
+
+  const fetchEventTypes = useCallback(async () => {
     try {
       const res = await fetch('/api/events/types')
       if (res.ok) {
@@ -54,9 +51,9 @@ export default function EventSearchPage() {
     } catch (err) {
       console.error('Erro ao buscar tipos de eventos:', err)
     }
-  }
+  }, [])
 
-  const searchEvents = async () => {
+  const searchEvents = useCallback(async () => {
     setLoading(true)
     setError('')
 
@@ -80,7 +77,12 @@ export default function EventSearchPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [filters])
+
+  useEffect(() => {
+    fetchEventTypes()
+    searchEvents()
+  }, [fetchEventTypes, searchEvents])
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -96,11 +98,7 @@ export default function EventSearchPage() {
     })
   }
 
-  useEffect(() => {
-    if (filters.city || filters.state || filters.zipCode || filters.eventType) {
-      searchEvents()
-    }
-  }, [filters])
+
 
   const formatZipCode = (zipCode: string) => {
     const clean = zipCode.replace(/\D/g, '')

@@ -40,6 +40,34 @@ export class AuthService {
     }
   }
 
+  async changePlatformUserPassword(userId: string, currentPassword: string, newPassword: string) {
+    const result = await query('SELECT * FROM platform_users WHERE id = ?', [userId])
+    const user = result.rows[0]
+
+    if (!user) {
+      throw new Error('Usuário não encontrado')
+    }
+
+    const validPassword = await comparePassword(currentPassword, user.passwordHash)
+
+    if (!validPassword) {
+      throw new Error('Senha atual incorreta')
+    }
+
+    if (newPassword.length < 6) {
+      throw new Error('A nova senha deve ter no mínimo 6 caracteres')
+    }
+
+    const newHash = await hashPassword(newPassword)
+
+    await query(
+      'UPDATE platform_users SET "passwordHash" = ? WHERE id = ?',
+      [newHash, userId]
+    )
+
+    return { success: true }
+  }
+
   async registerEndUser(cpf: string, password: string) {
     const cleanCpf = cpf.replace(/[^\d]/g, '')
 

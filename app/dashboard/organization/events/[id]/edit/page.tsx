@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Card, CardContent, Button, Input } from '@/components/atoms'
 import { FormField } from '@/components/molecules'
 import { useRouter } from 'next/navigation'
@@ -34,7 +34,7 @@ export default function EditEventPage({ params }: { params: { id: string } }) {
   const handleCepChange = async (value: string) => {
     const cleanCep = value.replace(/\D/g, '')
     const formatted = cleanCep.length > 5 ? `${cleanCep.substring(0, 5)}-${cleanCep.substring(5)}` : cleanCep
-    
+
     setFormData({ ...formData, zipCode: formatted })
 
     // Buscar endereço quando CEP tiver 8 dígitos
@@ -74,11 +74,7 @@ export default function EditEventPage({ params }: { params: { id: string } }) {
     reward: '',
   })
 
-  useEffect(() => {
-    fetchEvent()
-  }, [])
-
-  const fetchEvent = async () => {
+  const fetchEvent = useCallback(async () => {
     try {
       const res = await fetch(`/api/events/${params.id}`, {
         credentials: 'include'
@@ -89,10 +85,10 @@ export default function EditEventPage({ params }: { params: { id: string } }) {
         const start = new Date(event.startDate)
         const end = new Date(event.endDate)
 
-        const zipCodeFormatted = event.zipCode 
-          ? (event.zipCode.length === 8 
-              ? `${event.zipCode.substring(0, 5)}-${event.zipCode.substring(5)}` 
-              : event.zipCode)
+        const zipCodeFormatted = event.zipCode
+          ? (event.zipCode.length === 8
+            ? `${event.zipCode.substring(0, 5)}-${event.zipCode.substring(5)}`
+            : event.zipCode)
           : ''
 
         setFormData({
@@ -115,7 +111,11 @@ export default function EditEventPage({ params }: { params: { id: string } }) {
     } finally {
       setLoadingData(false)
     }
-  }
+  }, [params.id])
+
+  useEffect(() => {
+    fetchEvent()
+  }, [fetchEvent])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -173,241 +173,241 @@ export default function EditEventPage({ params }: { params: { id: string } }) {
 
   return (
     <div className="p-4 lg:p-6 lg:py-8 max-w-4xl mx-auto">
-        <Link 
-          href={`/dashboard/organization/events/${params.id}`}
-          className="inline-flex items-center gap-2 text-white/80 hover:text-white transition mb-6"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          <span>Voltar para o evento</span>
-        </Link>
+      <Link
+        href={`/dashboard/organization/events/${params.id}`}
+        className="inline-flex items-center gap-2 text-white/80 hover:text-white transition mb-6"
+      >
+        <ArrowLeft className="w-4 h-4" />
+        <span>Voltar para o evento</span>
+      </Link>
 
-        <div className="mb-6">
-          <h1 className="text-3xl font-bold mb-2 text-white">Editar Evento</h1>
-          <p className="text-white/80">Atualize as informações do evento</p>
-        </div>
+      <div className="mb-6">
+        <h1 className="text-3xl font-bold mb-2 text-white">Editar Evento</h1>
+        <p className="text-white/80">Atualize as informações do evento</p>
+      </div>
 
-        <Card className="bg-white/10 border-white/20 backdrop-blur-sm shadow-xl">
-          <CardContent className="p-6 lg:p-8">
-            <form onSubmit={handleSubmit} className="space-y-6">
-              {error && (
-                <div className="p-4 rounded-lg bg-destructive/10 border border-destructive/20 flex items-start gap-3">
-                  <AlertCircle className="w-5 h-5 text-destructive flex-shrink-0 mt-0.5" />
-                  <p className="text-sm text-destructive">{error}</p>
-                </div>
-              )}
+      <Card className="bg-white/10 border-white/20 backdrop-blur-sm shadow-xl">
+        <CardContent className="p-6 lg:p-8">
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {error && (
+              <div className="p-4 rounded-lg bg-destructive/10 border border-destructive/20 flex items-start gap-3">
+                <AlertCircle className="w-5 h-5 text-destructive flex-shrink-0 mt-0.5" />
+                <p className="text-sm text-destructive">{error}</p>
+              </div>
+            )}
 
-              <FormField label="Título do Evento" required>
-                <div className="relative">
-                  <FileText className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                  <Input
-                    value={formData.title}
-                    onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                    placeholder="Ex: Workshop de Tecnologia 2025"
-                    required
-                    disabled={loading}
-                    className="pl-10"
-                  />
-                </div>
-              </FormField>
-
-              <FormField label="Descrição">
-                <textarea
-                  value={formData.description}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  placeholder="Descreva os detalhes do evento..."
-                  className="flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 min-h-[120px] resize-y"
+            <FormField label="Título do Evento" required>
+              <div className="relative">
+                <FileText className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                <Input
+                  value={formData.title}
+                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                  placeholder="Ex: Workshop de Tecnologia 2025"
+                  required
                   disabled={loading}
+                  className="pl-10"
                 />
-              </FormField>
-
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div className="space-y-4">
-                  <h3 className="font-semibold flex items-center gap-2">
-                    <Calendar className="w-4 h-4" />
-                    Data e Hora de Início
-                  </h3>
-                  <div className="grid grid-cols-2 gap-3">
-                    <FormField label="Data" required>
-                      <Input
-                        type="date"
-                        value={formData.startDate}
-                        onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
-                        required
-                        disabled={loading}
-                      />
-                    </FormField>
-
-                    <FormField label="Hora" required>
-                      <Input
-                        type="time"
-                        value={formData.startTime}
-                        onChange={(e) => setFormData({ ...formData, startTime: e.target.value })}
-                        required
-                        disabled={loading}
-                      />
-                    </FormField>
-                  </div>
-                </div>
-
-                <div className="space-y-4">
-                  <h3 className="font-semibold flex items-center gap-2">
-                    <Clock className="w-4 h-4" />
-                    Data e Hora de Término
-                  </h3>
-                  <div className="grid grid-cols-2 gap-3">
-                    <FormField label="Data" required>
-                      <Input
-                        type="date"
-                        value={formData.endDate}
-                        onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
-                        required
-                        disabled={loading}
-                      />
-                    </FormField>
-
-                    <FormField label="Hora" required>
-                      <Input
-                        type="time"
-                        value={formData.endTime}
-                        onChange={(e) => setFormData({ ...formData, endTime: e.target.value })}
-                        required
-                        disabled={loading}
-                      />
-                    </FormField>
-                  </div>
-                </div>
               </div>
+            </FormField>
 
-              <div className="border-t pt-6 space-y-4">
+            <FormField label="Descrição">
+              <textarea
+                value={formData.description}
+                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                placeholder="Descreva os detalhes do evento..."
+                className="flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 min-h-[120px] resize-y"
+                disabled={loading}
+              />
+            </FormField>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div className="space-y-4">
                 <h3 className="font-semibold flex items-center gap-2">
-                  <MapPin className="w-4 h-4" />
-                  Localização
+                  <Calendar className="w-4 h-4" />
+                  Data e Hora de Início
                 </h3>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <FormField label="CEP">
-                    <div className="relative">
-                      <Input
-                        type="text"
-                        placeholder="00000-000"
-                        value={formData.zipCode}
-                        onChange={(e) => handleCepChange(e.target.value)}
-                        maxLength={9}
-                        disabled={loading || loadingCep}
-                      />
-                      {loadingCep && (
-                        <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 animate-spin text-muted-foreground" />
-                      )}
-                    </div>
-                    {loadingCep && (
-                      <p className="text-xs text-muted-foreground mt-1">Buscando endereço...</p>
-                    )}
-                  </FormField>
-
-                  <FormField label="Estado">
+                <div className="grid grid-cols-2 gap-3">
+                  <FormField label="Data" required>
                     <Input
-                      type="text"
-                      placeholder="Ex: SP, RJ"
-                      value={formData.state}
-                      onChange={(e) => setFormData({ ...formData, state: e.target.value.toUpperCase() })}
-                      maxLength={2}
+                      type="date"
+                      value={formData.startDate}
+                      onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
+                      required
                       disabled={loading}
                     />
                   </FormField>
 
-                  <FormField label="Cidade">
+                  <FormField label="Hora" required>
                     <Input
-                      type="text"
-                      placeholder="Nome da cidade"
-                      value={formData.city}
-                      onChange={(e) => setFormData({ ...formData, city: e.target.value })}
-                      disabled={loading}
-                    />
-                  </FormField>
-
-                  <FormField label="Endereço">
-                    <Input
-                      type="text"
-                      placeholder="Rua, número, complemento"
-                      value={formData.address}
-                      onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                      type="time"
+                      value={formData.startTime}
+                      onChange={(e) => setFormData({ ...formData, startTime: e.target.value })}
+                      required
                       disabled={loading}
                     />
                   </FormField>
                 </div>
               </div>
 
-              <FormField label="Tipo de Evento">
-                <div className="relative">
-                  <Tag className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                  <select
-                    value={formData.eventType}
-                    onChange={(e) => setFormData({ ...formData, eventType: e.target.value })}
-                    className="w-full pl-10 pr-3 py-2 rounded-lg border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-                    disabled={loading}
-                  >
-                    <option value="">Selecione o tipo (opcional)</option>
-                    {eventTypes.map((type) => (
-                      <option key={type} value={type}>
-                        {type}
-                      </option>
-                    ))}
-                  </select>
+              <div className="space-y-4">
+                <h3 className="font-semibold flex items-center gap-2">
+                  <Clock className="w-4 h-4" />
+                  Data e Hora de Término
+                </h3>
+                <div className="grid grid-cols-2 gap-3">
+                  <FormField label="Data" required>
+                    <Input
+                      type="date"
+                      value={formData.endDate}
+                      onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
+                      required
+                      disabled={loading}
+                    />
+                  </FormField>
+
+                  <FormField label="Hora" required>
+                    <Input
+                      type="time"
+                      value={formData.endTime}
+                      onChange={(e) => setFormData({ ...formData, endTime: e.target.value })}
+                      required
+                      disabled={loading}
+                    />
+                  </FormField>
                 </div>
-                {formData.eventType && !eventTypes.includes(formData.eventType) && (
+              </div>
+            </div>
+
+            <div className="border-t pt-6 space-y-4">
+              <h3 className="font-semibold flex items-center gap-2">
+                <MapPin className="w-4 h-4" />
+                Localização
+              </h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <FormField label="CEP">
+                  <div className="relative">
+                    <Input
+                      type="text"
+                      placeholder="00000-000"
+                      value={formData.zipCode}
+                      onChange={(e) => handleCepChange(e.target.value)}
+                      maxLength={9}
+                      disabled={loading || loadingCep}
+                    />
+                    {loadingCep && (
+                      <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 animate-spin text-muted-foreground" />
+                    )}
+                  </div>
+                  {loadingCep && (
+                    <p className="text-xs text-muted-foreground mt-1">Buscando endereço...</p>
+                  )}
+                </FormField>
+
+                <FormField label="Estado">
                   <Input
                     type="text"
-                    placeholder="Digite o tipo de evento"
-                    value={formData.eventType}
-                    onChange={(e) => setFormData({ ...formData, eventType: e.target.value })}
+                    placeholder="Ex: SP, RJ"
+                    value={formData.state}
+                    onChange={(e) => setFormData({ ...formData, state: e.target.value.toUpperCase() })}
+                    maxLength={2}
                     disabled={loading}
-                    className="mt-2"
                   />
-                )}
-              </FormField>
+                </FormField>
 
-              <FormField label="Recompensa">
-                <div className="relative">
-                  <Gift className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                <FormField label="Cidade">
                   <Input
-                    value={formData.reward}
-                    onChange={(e) => setFormData({ ...formData, reward: e.target.value })}
-                    placeholder="Ex: Certificado digital, Desconto de 10%, Brinde exclusivo..."
+                    type="text"
+                    placeholder="Nome da cidade"
+                    value={formData.city}
+                    onChange={(e) => setFormData({ ...formData, city: e.target.value })}
                     disabled={loading}
-                    className="pl-10"
                   />
-                </div>
-                <p className="text-xs text-muted-foreground mt-1">
-                  Recompensa que será exibida para quem escanear o QR Code deste evento
-                </p>
-              </FormField>
+                </FormField>
 
-              <div className="flex flex-col sm:flex-row gap-3 pt-4 border-t">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => router.back()}
-                  disabled={loading}
-                  className="w-full sm:w-auto"
-                >
-                  Cancelar
-                </Button>
-                <Button type="submit" disabled={loading} className="w-full sm:flex-1">
-                  {loading ? (
-                    <>
-                      <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin mr-2" />
-                      Salvando...
-                    </>
-                  ) : (
-                    <>
-                      <Save className="w-5 h-5 mr-2" />
-                      Salvar Alterações
-                    </>
-                  )}
-                </Button>
+                <FormField label="Endereço">
+                  <Input
+                    type="text"
+                    placeholder="Rua, número, complemento"
+                    value={formData.address}
+                    onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                    disabled={loading}
+                  />
+                </FormField>
               </div>
-            </form>
-          </CardContent>
-        </Card>
+            </div>
+
+            <FormField label="Tipo de Evento">
+              <div className="relative">
+                <Tag className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                <select
+                  value={formData.eventType}
+                  onChange={(e) => setFormData({ ...formData, eventType: e.target.value })}
+                  className="w-full pl-10 pr-3 py-2 rounded-lg border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                  disabled={loading}
+                >
+                  <option value="">Selecione o tipo (opcional)</option>
+                  {eventTypes.map((type) => (
+                    <option key={type} value={type}>
+                      {type}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              {formData.eventType && !eventTypes.includes(formData.eventType) && (
+                <Input
+                  type="text"
+                  placeholder="Digite o tipo de evento"
+                  value={formData.eventType}
+                  onChange={(e) => setFormData({ ...formData, eventType: e.target.value })}
+                  disabled={loading}
+                  className="mt-2"
+                />
+              )}
+            </FormField>
+
+            <FormField label="Recompensa">
+              <div className="relative">
+                <Gift className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                <Input
+                  value={formData.reward}
+                  onChange={(e) => setFormData({ ...formData, reward: e.target.value })}
+                  placeholder="Ex: Certificado digital, Desconto de 10%, Brinde exclusivo..."
+                  disabled={loading}
+                  className="pl-10"
+                />
+              </div>
+              <p className="text-xs text-muted-foreground mt-1">
+                Recompensa que será exibida para quem escanear o QR Code deste evento
+              </p>
+            </FormField>
+
+            <div className="flex flex-col sm:flex-row gap-3 pt-4 border-t">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => router.back()}
+                disabled={loading}
+                className="w-full sm:w-auto"
+              >
+                Cancelar
+              </Button>
+              <Button type="submit" disabled={loading} className="w-full sm:flex-1">
+                {loading ? (
+                  <>
+                    <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin mr-2" />
+                    Salvando...
+                  </>
+                ) : (
+                  <>
+                    <Save className="w-5 h-5 mr-2" />
+                    Salvar Alterações
+                  </>
+                )}
+              </Button>
+            </div>
+          </form>
+        </CardContent>
+      </Card>
     </div>
   )
 }

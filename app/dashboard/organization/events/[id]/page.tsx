@@ -4,6 +4,7 @@ import { headers } from 'next/headers'
 import { QRCodeViewer } from '@/components/organisms/qr-code-viewer'
 import { CloseEventButton } from '@/components/organisms/close-event-button'
 import { DuplicateEventButton } from '@/components/organisms/duplicate-event-button'
+import { DeleteEventButton } from '@/components/organisms/delete-event-button'
 import { Card, CardContent, CardHeader, CardTitle, Badge } from '@/components/atoms'
 import { PageHeader } from '@/components/molecules'
 import Link from 'next/link'
@@ -37,7 +38,6 @@ export default async function EventDetailsPage({ params }: PageProps) {
     )
   }
 
-  // Construir URL absoluta dinamicamente
   const host = headers().get('host') || 'localhost:3000'
   const protocol = host.includes('localhost') ? 'http' : 'https'
   const baseUrl = `${protocol}://${host}`
@@ -191,6 +191,10 @@ export default async function EventDetailsPage({ params }: PageProps) {
                   eventId={event.id}
                   eventTitle={event.title}
                   isClosed={event.manuallyEnded === 1}
+                />
+                <DeleteEventButton
+                  eventId={event.id}
+                  eventTitle={event.title}
                 />
               </div>
             </CardContent>

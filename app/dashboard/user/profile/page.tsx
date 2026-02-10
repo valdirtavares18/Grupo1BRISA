@@ -1,7 +1,6 @@
 'use client'
 
 import { useRef, useState, useEffect } from 'react'
-
 import { Card, CardContent, CardHeader, CardTitle, Button, Input, Avatar, AvatarImage, AvatarFallback } from '@/components/atoms'
 import { FormField } from '@/components/molecules'
 import { User, Mail, Phone, Camera, Save, AlertCircle, CheckCircle2, ArrowLeft, Trash2, MapPin, FileText, Loader2 } from 'lucide-react'
@@ -311,6 +310,7 @@ export default function UserProfilePage() {
               </Avatar>
               <div className="text-center">
                 <input
+                  id="photo-upload"
                   ref={fileInputRef}
                   type="file"
                   accept="image/png, image/jpeg, image/jpg, image/webp"
@@ -338,7 +338,7 @@ export default function UserProfilePage() {
                   )}
                 </Button>
                 <p className="text-xs text-muted-foreground mt-2">
-                  Formatos: JPG, PNG, WebP
+                  Máximo 10MB. Formatos: JPG, PNG, WebP
                 </p>
               </div>
             </div>

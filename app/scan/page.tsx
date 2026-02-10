@@ -16,7 +16,7 @@ export default function ScanPage() {
       const url = new URL(decodedText)
       const pathname = url.pathname
       const token = pathname.split('/event/')[1]
-      
+
       if (token) {
         router.push(`/event/${token}`)
       } else {
@@ -82,7 +82,7 @@ export default function ScanPage() {
                 <div>
                   <p className="font-semibold text-sm mb-1">Como usar</p>
                   <p className="text-sm text-muted-foreground">
-                    1. Clique em "Iniciar Scanner"<br />
+                    1. Clique em &quot;Iniciar Scanner&quot;<br />
                     2. Permita o acesso à câmera<br />
                     3. Aponte para o QR code do evento<br />
                     4. Aguarde a leitura automática
