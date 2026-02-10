@@ -25,9 +25,9 @@ export default async function OrganizationPage({ params }: PageProps) {
 
   const now = new Date()
   const activeEvents = events.filter(
-    (e) => new Date(e.startDate) <= now && new Date(e.endDate) >= now
+    (e: any) => new Date(e.startDate) <= now && new Date(e.endDate) >= now
   )
-  const upcomingEvents = events.filter((e) => new Date(e.startDate) > now)
+  const upcomingEvents = events.filter((e: any) => new Date(e.startDate) > now)
 
   // Aplicar tema da organização
   const primaryColor = organization.theme?.primaryColor || '#001F3F'
@@ -37,8 +37,8 @@ export default async function OrganizationPage({ params }: PageProps) {
   const themeStyle = backgroundStyle
     ? { background: backgroundStyle }
     : {
-        background: `linear-gradient(to-br, ${primaryColor}, ${primaryColor}dd, ${primaryColor})`,
-      }
+      background: `linear-gradient(to-br, ${primaryColor}, ${primaryColor}dd, ${primaryColor})`,
+    }
 
   return (
     <div className="min-h-screen" style={themeStyle}>
@@ -91,7 +91,7 @@ export default async function OrganizationPage({ params }: PageProps) {
               Eventos em Andamento
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {activeEvents.map((event) => {
+              {activeEvents.map((event: any) => {
                 const startDate = new Date(event.startDate)
                 return (
                   <Card
@@ -165,7 +165,7 @@ export default async function OrganizationPage({ params }: PageProps) {
               Próximos Eventos
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {upcomingEvents.slice(0, 6).map((event) => {
+              {upcomingEvents.slice(0, 6).map((event: any) => {
                 const startDate = new Date(event.startDate)
                 return (
                   <Card
@@ -251,7 +251,7 @@ export default async function OrganizationPage({ params }: PageProps) {
               </Link>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {feeds.slice(0, 4).map((feed) => (
+              {feeds.slice(0, 4).map((feed: any) => (
                 <Card
                   key={feed.id}
                   className="border-0 shadow-2xl bg-white/95 backdrop-blur-sm overflow-hidden hover:shadow-3xl transition"

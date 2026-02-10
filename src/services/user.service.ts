@@ -75,12 +75,12 @@ export class UserService {
 
   async changePassword(userId: string, currentPassword: string, newPassword: string) {
     const userResult = await query('SELECT * FROM end_users WHERE id = ?', [userId])
-    
+
     if (userResult.rows.length === 0) {
       throw new Error('Usuário não encontrado')
     }
 
-    const user = userResult.rows[0]
+    const user = userResult.rows[0] as any
 
     // Verificar senha atual
     const valid = await comparePassword(currentPassword, user.passwordHash)

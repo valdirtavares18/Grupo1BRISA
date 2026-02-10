@@ -20,6 +20,7 @@ import {
   X,
   LogOut,
   ChevronRight,
+  Settings,
 } from 'lucide-react'
 import { Button } from '@/components/atoms'
 
@@ -85,6 +86,7 @@ export function Sidebar({ userRole, userName }: SidebarProps) {
           { label: 'Novo Evento', href: '/dashboard/organization/events/new', icon: Plus },
           { label: 'Feed', href: '/dashboard/organization/feed', icon: MessageSquare },
           { label: 'Usuários', href: '/dashboard/organization/users', icon: Users },
+          { label: 'Configurações', href: '/dashboard/organization/settings', icon: Settings },
         ]
 
       case 'END_USER':
@@ -160,8 +162,8 @@ export function Sidebar({ userRole, userName }: SidebarProps) {
           {(userName || userRole) && (
             <div
               className={`px-5 border-b border-gray-200 transition-all duration-300 ${isMobileOpen || isExpanded
-                  ? 'opacity-100 py-5'
-                  : 'opacity-0 h-0 py-0 overflow-hidden'
+                ? 'opacity-100 py-5'
+                : 'opacity-0 h-0 py-0 overflow-hidden'
                 }`}
             >
               {userName && (

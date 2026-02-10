@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Card, CardContent, CardHeader, CardTitle, Button, Input, Badge } from '@/components/atoms'
 import { PublicLayout } from '@/components/organisms/public-layout'
 import { Search, MapPin, Calendar, Filter, X, Users, Building2 } from 'lucide-react'
@@ -38,12 +38,9 @@ export default function EventSearchPage() {
   const [eventTypes, setEventTypes] = useState<string[]>([])
   const [showFilters, setShowFilters] = useState(false)
 
-  useEffect(() => {
-    fetchEventTypes()
-    searchEvents()
-  }, [])
 
-  const fetchEventTypes = async () => {
+
+  const fetchEventTypes = useCallback(async () => {
     try {
       const res = await fetch('/api/events/types')
       if (res.ok) {
@@ -53,9 +50,9 @@ export default function EventSearchPage() {
     } catch (err) {
       console.error('Erro ao buscar tipos de eventos:', err)
     }
-  }
+  }, [])
 
-  const searchEvents = async () => {
+  const searchEvents = useCallback(async () => {
     setLoading(true)
     setError('')
 
@@ -79,7 +76,12 @@ export default function EventSearchPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [filters])
+
+  useEffect(() => {
+    fetchEventTypes()
+    searchEvents()
+  }, [fetchEventTypes, searchEvents])
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -95,11 +97,7 @@ export default function EventSearchPage() {
     })
   }
 
-  useEffect(() => {
-    if (filters.city || filters.state || filters.zipCode || filters.eventType) {
-      searchEvents()
-    }
-  }, [filters])
+
 
   const formatZipCode = (zipCode: string) => {
     const clean = zipCode.replace(/\D/g, '')
@@ -142,9 +140,9 @@ export default function EventSearchPage() {
                     className="pl-12 h-14 text-lg bg-white/10 border-white/20 text-white placeholder:text-white/40 focus:border-cyan-400/50 focus:ring-cyan-400/20"
                   />
                 </div>
-                <Button 
-                  type="submit" 
-                  disabled={loading} 
+                <Button
+                  type="submit"
+                  disabled={loading}
                   size="lg"
                   className="h-14 px-8 bg-gradient-to-r from-cyan-500 to-blue-600 text-white hover:from-cyan-600 hover:to-blue-700 text-lg shadow-lg shadow-blue-500/30"
                 >
@@ -278,8 +276,8 @@ export default function EventSearchPage() {
                 const isActive = new Date(event.startDate) <= now && new Date(event.endDate) >= now
 
                 return (
-                  <Card 
-                    key={event.id} 
+                  <Card
+                    key={event.id}
                     className="border-0 shadow-2xl bg-white/5 backdrop-blur-sm hover:bg-white/10 border border-white/10 hover:border-cyan-400/30 transition-all duration-300 group overflow-hidden"
                   >
                     {isActive && (
@@ -367,9 +365,9 @@ export default function EventSearchPage() {
                       </div>
 
                       <Link href={`/${event.organizationSlug}/events`} className="block pt-2">
-                        <Button 
-                          variant="outline" 
-                          className="w-full border-cyan-400/30 bg-transparent text-white hover:bg-cyan-500/20 hover:border-cyan-400/50 hover:text-cyan-300" 
+                        <Button
+                          variant="outline"
+                          className="w-full border-cyan-400/30 bg-transparent text-white hover:bg-cyan-500/20 hover:border-cyan-400/50 hover:text-cyan-300"
                           size="lg"
                         >
                           Ver Detalhes
