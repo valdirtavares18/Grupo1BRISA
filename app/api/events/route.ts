@@ -6,7 +6,7 @@ import { UserRole } from '@/types'
 export async function GET(request: NextRequest) {
   try {
     const token = request.cookies.get('token')?.value
-    
+
     if (!token) {
       return NextResponse.json(
         { error: 'Não autorizado' },
@@ -39,7 +39,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const token = request.cookies.get('token')?.value
-    
+
     if (!token) {
       return NextResponse.json(
         { error: 'Não autorizado' },
@@ -48,7 +48,7 @@ export async function POST(request: NextRequest) {
     }
 
     const payload = verifyToken(token)
-    if (!payload || payload.role !== UserRole.ORG_ADMIN || !payload.organizationId) {
+    if (!payload || !payload.role) {
       return NextResponse.json(
         { error: 'Acesso negado' },
         { status: 403 }
@@ -56,10 +56,22 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json()
-    
+
+    // Validar quem pode criar eventos
+    let organizationId = payload.organizationId
+
+    if (payload.role === UserRole.SUPER_ADMIN) {
+      if (!body.organizationId) {
+        return NextResponse.json({ error: 'ID da organização é obrigatório para Super Admin' }, { status: 400 })
+      }
+      organizationId = body.organizationId
+    } else if (payload.role !== UserRole.ORG_ADMIN || !payload.organizationId) {
+      return NextResponse.json({ error: 'Acesso negado' }, { status: 403 })
+    }
+
     // Converter strings de data para objetos Date
     const eventData: any = {
-      organizationId: payload.organizationId,
+      organizationId,
       title: body.title,
       description: body.description,
       startDate: new Date(body.startDate),
@@ -71,7 +83,7 @@ export async function POST(request: NextRequest) {
       eventType: body.eventType,
       reward: body.reward,
     }
-    
+
     const event = await eventService.createEvent(eventData)
 
     return NextResponse.json(event, { status: 201 })

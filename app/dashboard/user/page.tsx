@@ -101,24 +101,6 @@ export default async function UserDashboardPage() {
           </Card>
         </Link>
 
-        <Link href="/dashboard/user/password" className="block">
-          <Card className="hover:shadow-xl hover:scale-[1.02] transition-all duration-200 cursor-pointer h-full group">
-            <CardHeader>
-              <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center mb-4 shadow-lg">
-                <Lock className="w-7 h-7 text-white" />
-              </div>
-              <CardTitle className="text-slate-900 text-xl font-bold">Segurança</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-slate-600 mb-4 text-sm leading-relaxed">
-                Altere sua senha e mantenha sua conta protegida.
-              </p>
-              <div className="text-sm text-orange-600 font-semibold group-hover:text-orange-700 transition-colors">
-                Alterar senha →
-              </div>
-            </CardContent>
-          </Card>
-        </Link>
       </div>
     </div>
   )

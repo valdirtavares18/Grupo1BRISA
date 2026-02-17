@@ -23,14 +23,19 @@ export default async function EventPage({ params }: PageProps) {
   const now = new Date()
   const startDate = new Date(event.startDate)
   const endDate = new Date(event.endDate)
+
+  // Adicionar margem de tolerância de 15 minutos para início do evento
+  const gracePeriodInMinutes = 15
+  const startDateWithGrace = new Date(startDate.getTime() - (gracePeriodInMinutes * 60 * 1000))
+
   const isPastEvent = endDate < now
-  const isBeforeEvent = startDate > now
-  const isActiveEvent = startDate <= now && endDate >= now
+  const isBeforeEvent = startDateWithGrace > now
+  const isActiveEvent = startDateWithGrace <= now && endDate >= now
 
   const headersList = headers()
-  const ipAddress = headersList.get('x-forwarded-for') || 
-                    headersList.get('x-real-ip') || 
-                    'unknown'
+  const ipAddress = headersList.get('x-forwarded-for') ||
+    headersList.get('x-real-ip') ||
+    'unknown'
   const userAgent = headersList.get('user-agent') || 'unknown'
 
   // Verificar se usuário está logado
@@ -38,7 +43,7 @@ export default async function EventPage({ params }: PageProps) {
   const token = cookieStore.get('token')?.value
   let isLoggedIn = false
   let loggedInUserId: string | undefined = undefined
-  
+
   if (token) {
     const payload = verifyToken(token)
     if (payload && payload.role === 'END_USER') {
@@ -63,9 +68,9 @@ export default async function EventPage({ params }: PageProps) {
         initialScanToken,
       })
 
-      presenceResult = { 
-        success: true, 
-        message: 'Presença registrada! Escolha seu perfil no evento.', 
+      presenceResult = {
+        success: true,
+        message: 'Presença registrada! Escolha seu perfil no evento.',
         alreadyRegistered: false,
         presenceLogId: presenceLog.id
       }
@@ -145,7 +150,7 @@ export default async function EventPage({ params }: PageProps) {
         <Card className="shadow-2xl border-0 overflow-hidden">
           {/* Event Header with gradient */}
           <div className="h-2 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500" />
-          
+
           <CardHeader className="pb-6">
             <div className="space-y-4">
               <div>
@@ -159,7 +164,7 @@ export default async function EventPage({ params }: PageProps) {
                   </div>
                 )}
               </div>
-              
+
               {event.description && (
                 <p className="text-muted-foreground text-base leading-relaxed">
                   {event.description}
@@ -167,7 +172,7 @@ export default async function EventPage({ params }: PageProps) {
               )}
             </div>
           </CardHeader>
-          
+
           <CardContent className="space-y-6">
             {/* Event Details */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -177,8 +182,8 @@ export default async function EventPage({ params }: PageProps) {
                   <div>
                     <p className="text-sm font-semibold text-blue-900">Início</p>
                     <p className="text-blue-700 mt-1">
-                      {startDate.toLocaleDateString('pt-BR', { 
-                        day: '2-digit', 
+                      {startDate.toLocaleDateString('pt-BR', {
+                        day: '2-digit',
                         month: 'long',
                         year: 'numeric'
                       })}
@@ -196,9 +201,9 @@ export default async function EventPage({ params }: PageProps) {
                   <div>
                     <p className="text-sm font-semibold text-purple-900">Término</p>
                     <p className="text-purple-700 mt-1">
-                      {endDate.toLocaleDateString('pt-BR', { 
-                        day: '2-digit', 
-                        month: 'long' 
+                      {endDate.toLocaleDateString('pt-BR', {
+                        day: '2-digit',
+                        month: 'long'
                       })}
                     </p>
                     <p className="text-sm text-purple-600">
@@ -233,7 +238,7 @@ export default async function EventPage({ params }: PageProps) {
               <div className="text-sm text-blue-900">
                 <p className="font-semibold mb-1">Complete seu registro</p>
                 <p>
-                  Faça login ou crie uma conta para vincular sua presença ao seu CPF e receber 
+                  Faça login ou crie uma conta para vincular sua presença ao seu CPF e receber
                   notificações de eventos futuros.
                 </p>
               </div>
@@ -248,7 +253,7 @@ export default async function EventPage({ params }: PageProps) {
                     Fazer Login para Registro Completo
                   </Button>
                 </Link>
-                
+
                 <Link href="/register" className="block">
                   <Button variant="outline" className="w-full" size="lg">
                     Criar Nova Conta

@@ -4,7 +4,8 @@ import { smsService } from '@/services/sms.service'
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { phone } = body
+    const { phone, channel } = body
+    const validChannel = channel === 'whatsapp' ? 'whatsapp' : 'sms'
 
     if (!phone) {
       return NextResponse.json(
@@ -13,7 +14,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const result = await smsService.sendVerificationCode(phone)
+    const result = await smsService.sendVerificationCode(phone, validChannel)
 
     if (!result.success) {
       return NextResponse.json(

@@ -75,12 +75,12 @@ export class UserService {
 
   async changePassword(userId: string, currentPassword: string, newPassword: string) {
     const userResult = await query('SELECT * FROM end_users WHERE id = ?', [userId])
-    
+
     if (userResult.rows.length === 0) {
       throw new Error('Usuário não encontrado')
     }
 
-    const user = userResult.rows[0]
+    const user = userResult.rows[0] as any
 
     // Verificar senha atual
     const valid = await comparePassword(currentPassword, user.passwordHash)
@@ -101,6 +101,38 @@ export class UserService {
 
     await query(
       'UPDATE end_users SET "passwordHash" = ?, "updatedAt" = CURRENT_TIMESTAMP WHERE id = ?',
+      [newHash, userId]
+    )
+
+    return { success: true }
+  }
+
+  async changePlatformPassword(userId: string, currentPassword: string, newPassword: string) {
+    const userResult = await query('SELECT * FROM platform_users WHERE id = ?', [userId])
+    
+    if (userResult.rows.length === 0) {
+      throw new Error('Usuário não encontrado')
+    }
+
+    const user = userResult.rows[0]
+
+    const valid = await comparePassword(currentPassword, user.passwordHash)
+    if (!valid) {
+      throw new Error('Senha atual incorreta')
+    }
+
+    if (!newPassword || newPassword.length < 6) {
+      throw new Error('A nova senha deve ter no mínimo 6 caracteres')
+    }
+
+    if (newPassword === currentPassword) {
+      throw new Error('A nova senha deve ser diferente da senha atual')
+    }
+
+    const newHash = await hashPassword(newPassword)
+
+    await query(
+      'UPDATE platform_users SET "passwordHash" = ?, "updatedAt" = CURRENT_TIMESTAMP WHERE id = ?',
       [newHash, userId]
     )
 

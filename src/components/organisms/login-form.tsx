@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, Button, Input } from '@/components/atoms'
 import { FormField } from '@/components/molecules'
 import Link from 'next/link'
-import { LogIn, Mail, Lock, AlertCircle, Smartphone, Shield, User } from 'lucide-react'
+import { LogIn, Mail, Lock, AlertCircle, Smartphone, Shield } from 'lucide-react'
 
 type LoginStep = 'cpf' | 'code' | 'admin'
 type UserType = 'end_user' | 'admin'
@@ -22,6 +22,7 @@ export function LoginForm() {
   const [loading, setLoading] = useState(false)
   const [sendingCode, setSendingCode] = useState(false)
   const [codeSent, setCodeSent] = useState(false)
+  const [channel, setChannel] = useState<'sms' | 'whatsapp'>('sms')
   const router = useRouter()
 
   const formatCPF = (value: string) => {
@@ -77,7 +78,7 @@ export function LoginForm() {
       const smsRes = await fetch('/api/sms/send-code', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ phone: cleanPhoneInput }),
+        body: JSON.stringify({ phone: cleanPhoneInput, channel }),
       })
 
       const smsData = await parseJson(smsRes)
@@ -216,8 +217,8 @@ export function LoginForm() {
                 setError('')
               }}
               className={`flex-1 py-1.5 px-3 rounded-md text-sm font-medium transition ${userType === 'end_user'
-                ? 'bg-background text-foreground shadow-sm'
-                : 'text-muted-foreground hover:text-foreground'
+                  ? 'bg-background text-foreground shadow-sm'
+                  : 'text-muted-foreground hover:text-foreground'
                 }`}
             >
               Participante
@@ -230,8 +231,8 @@ export function LoginForm() {
                 setError('')
               }}
               className={`flex-1 py-1.5 px-3 rounded-md text-sm font-medium transition ${userType === 'admin'
-                ? 'bg-background text-foreground shadow-sm'
-                : 'text-muted-foreground hover:text-foreground'
+                  ? 'bg-background text-foreground shadow-sm'
+                  : 'text-muted-foreground hover:text-foreground'
                 }`}
             >
               Profissional
@@ -320,7 +321,7 @@ export function LoginForm() {
 
                 <FormField label="CPF" required>
                   <div className="relative">
-                    <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                     <Input
                       type="text"
                       placeholder="000.000.000-00"
@@ -358,6 +359,38 @@ export function LoginForm() {
                     Informe o telefone cadastrado no seu CPF
                   </p>
                 </FormField>
+
+                <div className="space-y-2">
+                  <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                    Receber código via
+                  </label>
+                  <div className="flex gap-4">
+                    <label className={`flex-1 flex items-center justify-center gap-2 p-3 rounded-lg border cursor-pointer transition-all ${channel === 'sms' ? 'border-primary bg-primary/5 text-primary' : 'border-input hover:bg-muted'}`}>
+                      <input
+                        type="radio"
+                        name="channel"
+                        value="sms"
+                        checked={channel === 'sms'}
+                        onChange={() => setChannel('sms')}
+                        className="sr-only"
+                      />
+                      <Smartphone className="w-4 h-4" />
+                      <span>SMS</span>
+                    </label>
+                    <label className={`flex-1 flex items-center justify-center gap-2 p-3 rounded-lg border cursor-pointer transition-all ${channel === 'whatsapp' ? 'border-green-500 bg-green-50 text-green-700' : 'border-input hover:bg-muted'}`}>
+                      <input
+                        type="radio"
+                        name="channel"
+                        value="whatsapp"
+                        checked={channel === 'whatsapp'}
+                        onChange={() => setChannel('whatsapp')}
+                        className="sr-only"
+                      />
+                      <Shield className="w-4 h-4" />
+                      <span>WhatsApp</span>
+                    </label>
+                  </div>
+                </div>
 
                 <Button type="submit" className="w-full h-11 text-base" size="lg" disabled={sendingCode || !cpf || !phone}>
                   {sendingCode ? (

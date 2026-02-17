@@ -10,6 +10,20 @@ export function validateEmail(email: string): boolean {
   return emailRegex.test(email)
 }
 
+export function validatePhone(phone: string): boolean {
+  // Remove tudo que não é dígito
+  const cleanPhone = phone.replace(/\D/g, '')
+  
+  // Verifica se tem 10 ou 11 dígitos (com DDD)
+  // Ex: 11 99999-9999 (11) ou 11 3333-3333 (10)
+  if (cleanPhone.length < 10 || cleanPhone.length > 11) return false
+  
+  // Verifica se todos os dígitos são iguais (ex: 99999999999)
+  if (/^(\d)\1+$/.test(cleanPhone)) return false
+  
+  return true
+}
+
 export function validateCPF(cpf: string): boolean {
   cpf = cpf.replace(/[^\d]+/g, '')
   

@@ -20,6 +20,7 @@ import {
   X,
   LogOut,
   ChevronRight,
+  Settings,
 } from 'lucide-react'
 import { Button } from '@/components/atoms'
 
@@ -77,6 +78,7 @@ export function Sidebar({ userRole, userName }: SidebarProps) {
         return [
           { label: 'Dashboard', href: '/dashboard/admin', icon: LayoutDashboard },
           { label: 'Nova Organização', href: '/dashboard/admin/organizations/new', icon: Plus },
+          { label: 'Segurança', href: '/dashboard/admin/password', icon: Lock },
         ]
 
       case 'ORG_ADMIN':
@@ -85,6 +87,8 @@ export function Sidebar({ userRole, userName }: SidebarProps) {
           { label: 'Novo Evento', href: '/dashboard/organization/events/new', icon: Plus },
           { label: 'Feed', href: '/dashboard/organization/feed', icon: MessageSquare },
           { label: 'Usuários', href: '/dashboard/organization/users', icon: Users },
+          { label: 'Configurações', href: '/dashboard/organization/settings', icon: Settings },
+          { label: 'Segurança', href: '/dashboard/organization/password', icon: Lock },
         ]
 
       case 'END_USER':
@@ -94,7 +98,6 @@ export function Sidebar({ userRole, userName }: SidebarProps) {
           { label: 'Buscar Eventos', href: '/events/search', icon: Search },
           { label: 'Escanear QR', href: '/scan', icon: QrCode },
           { label: 'Meu Perfil', href: '/dashboard/user/profile', icon: User },
-          { label: 'Segurança', href: '/dashboard/user/password', icon: Lock },
         ]
 
       default:
@@ -160,11 +163,10 @@ export function Sidebar({ userRole, userName }: SidebarProps) {
           {/* User Info */}
           {(userName || userRole) && (
             <div
-              className={`px-5 border-b border-gray-200 transition-all duration-300 ${
-                isMobileOpen || isExpanded 
-                  ? 'opacity-100 py-5' 
-                  : 'opacity-0 h-0 py-0 overflow-hidden'
-              }`}
+              className={`px-5 border-b border-gray-200 transition-all duration-300 ${isMobileOpen || isExpanded
+                ? 'opacity-100 py-5'
+                : 'opacity-0 h-0 py-0 overflow-hidden'
+                }`}
             >
               {userName && (
                 <p className="text-base font-semibold text-gray-900 truncate mb-2">{userName}</p>
@@ -174,8 +176,8 @@ export function Sidebar({ userRole, userName }: SidebarProps) {
                   {userRole === 'SUPER_ADMIN'
                     ? 'SUPER ADMIN'
                     : userRole === 'ORG_ADMIN'
-                    ? 'ADMIN'
-                    : 'USUÁRIO'}
+                      ? 'ADMIN'
+                      : 'USUÁRIO'}
                 </span>
               )}
             </div>
@@ -196,17 +198,15 @@ export function Sidebar({ userRole, userName }: SidebarProps) {
                         flex items-center px-4 py-4 rounded-xl
                         transition-colors duration-200
                         ${(isMobileOpen || isExpanded) ? 'gap-4' : 'gap-0 justify-center'}
-                        ${
-                          active
-                            ? 'bg-slate-100 text-slate-900 font-semibold'
-                            : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
+                        ${active
+                          ? 'bg-slate-100 text-slate-900 font-semibold'
+                          : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
                         }
                       `}
                     >
                       <Icon
-                        className={`flex-shrink-0 w-7 h-7 ${
-                          active ? 'text-slate-900' : 'text-slate-500'
-                        }`}
+                        className={`flex-shrink-0 w-7 h-7 ${active ? 'text-slate-900' : 'text-slate-500'
+                          }`}
                       />
                       {(isMobileOpen || isExpanded) && (
                         <span className="font-semibold text-base whitespace-nowrap">
@@ -217,15 +217,13 @@ export function Sidebar({ userRole, userName }: SidebarProps) {
                         <span
                           className={`
                             ml-auto px-3 py-1 rounded-full text-sm font-semibold
-                            ${
-                              active
-                                ? 'bg-white/20 text-white'
-                                : 'bg-primary/10 text-primary'
+                            ${active
+                              ? 'bg-white/20 text-white'
+                              : 'bg-primary/10 text-primary'
                             }
-                            ${
-                              isMobileOpen || isExpanded
-                                ? 'opacity-100'
-                                : 'opacity-0 w-0 overflow-hidden'
+                            ${isMobileOpen || isExpanded
+                              ? 'opacity-100'
+                              : 'opacity-0 w-0 overflow-hidden'
                             }
                           `}
                         >
@@ -236,10 +234,9 @@ export function Sidebar({ userRole, userName }: SidebarProps) {
                         <ChevronRight
                           className={`
                             ml-auto w-5 h-5 text-slate-900
-                            ${
-                              isMobileOpen || isExpanded
-                                ? 'opacity-100'
-                                : 'opacity-0 w-0 overflow-hidden'
+                            ${isMobileOpen || isExpanded
+                              ? 'opacity-100'
+                              : 'opacity-0 w-0 overflow-hidden'
                             }
                           `}
                         />
@@ -267,10 +264,9 @@ export function Sidebar({ userRole, userName }: SidebarProps) {
                 className={`
                   text-base whitespace-nowrap
                   transition-all duration-200
-                  ${
-                    isMobileOpen || isExpanded
-                      ? 'opacity-100 translate-x-0'
-                      : 'opacity-0 -translate-x-4 w-0 overflow-hidden'
+                  ${isMobileOpen || isExpanded
+                    ? 'opacity-100 translate-x-0'
+                    : 'opacity-0 -translate-x-4 w-0 overflow-hidden'
                   }
                 `}
               >

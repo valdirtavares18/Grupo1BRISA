@@ -1,0 +1,171 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Inscrições SESC</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f7fa;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #004aad; /* azul SESC */
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+        main {
+            padding: 20px;
+            max-width: 800px;
+            margin: auto;
+        }
+        form {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        form label {
+            display: block;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        form input, form select, form button {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        form button {
+            background-color: #f9a825; /* amarelo SESC */
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        form button:hover {
+            background-color: #c68400;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th {
+            background-color: #004aad;
+            color: white;
+            padding: 10px;
+        }
+        td {
+            padding: 8px;
+            text-align: center;
+        }
+        section {
+            background: #fff3e0;
+            padding: 15px;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Inscrições em Eventos - SESC</h1>
+    </header>
+
+    <main>
+        <form id="formInscricao">
+            <label for="nome">Nome:</label>
+            <input type="text" id="nome" required>
+
+            <label for="cpf">CPF:</label>
+            <input type="text" id="cpf" required>
+
+            <label for="telefone">Telefone:</label>
+            <input type="text" id="telefone" required>
+
+            <label for="evento">Evento:</label>
+            <select id="evento" required>
+                <option value="">Selecione...</option>
+                <option value="Oficina de Arte">Oficina de Arte</option>
+                <option value="Aula de Dança">Aula de Dança</option>
+                <option value="Palestra de Saúde">Palestra de Saúde</option>
+            </select>
+
+            <button type="submit">Inscrever-se</button>
+        </form>
+
+        <h2>Lista de Inscritos</h2>
+        <table id="tabelaInscritos">
+            <thead>
+                <tr>
+                    <th>Nome</th>
+                    <th>CPF</th>
+                    <th>Telefone</th>
+                    <th>Evento</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- inscritos aparecem aqui -->
+            </tbody>
+        </table>
+
+        <section>
+            <h2>Estatísticas</h2>
+            <p>Total de inscritos: <span id="totalInscritos">0</span></p>
+            <p>Oficina de Arte: <span id="qtdArte">0</span></p>
+            <p>Aula de Dança: <span id="qtdDanca">0</span></p>
+            <p>Palestra de Saúde: <span id="qtdSaude">0</span></p>
+        </section>
+    </main>
+
+    <script>
+        const form = document.getElementById('formInscricao');
+        const tabela = document.getElementById('tabelaInscritos').querySelector('tbody');
+        const totalSpan = document.getElementById('totalInscritos');
+        const qtdArte = document.getElementById('qtdArte');
+        const qtdDanca = document.getElementById('qtdDanca');
+        const qtdSaude = document.getElementById('qtdSaude');
+
+        let inscritos = JSON.parse(localStorage.getItem("inscritos")) || [];
+
+        function atualizarTabela() {
+            tabela.innerHTML = "";
+            inscritos.forEach(inscrito => {
+                const row = tabela.insertRow();
+                row.insertCell(0).textContent = inscrito.nome;
+                row.insertCell(1).textContent = inscrito.cpf;
+                row.insertCell(2).textContent = inscrito.telefone;
+                row.insertCell(3).textContent = inscrito.evento;
+            });
+            totalSpan.textContent = inscritos.length;
+            qtdArte.textContent = inscritos.filter(i => i.evento === "Oficina de Arte").length;
+            qtdDanca.textContent = inscritos.filter(i => i.evento === "Aula de Dança").length;
+            qtdSaude.textContent = inscritos.filter(i => i.evento === "Palestra de Saúde").length;
+        }
+
+        form.addEventListener('submit', e => {
+            e.preventDefault();
+            const novoInscrito = {
+                nome: document.getElementById('nome').value,
+                cpf: document.getElementById('cpf').value,
+                telefone: document.getElementById('telefone').value,
+                evento: document.getElementById('evento').value
+            };
+            inscritos.push(novoInscrito);
+            localStorage.setItem("inscritos", JSON.stringify(inscritos));
+            atualizarTabela();
+            form.reset();
+        });
+
+        atualizarTabela();
+    </script>
+</body>
+</html>
+```
