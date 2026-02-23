@@ -4,6 +4,7 @@ import { LogOut, Menu, X } from 'lucide-react'
 import { useState } from 'react'
 import { Button, Logo } from '@/components/atoms'
 import { useRouter } from 'next/navigation'
+import { ThemeToggle } from '@/components/atoms/theme-toggle'
 
 interface NavbarProps {
   userRole?: string
@@ -16,7 +17,7 @@ export function Navbar({ userRole, userName }: NavbarProps) {
 
   const handleLogout = async () => {
     try {
-      await fetch('/api/auth/logout', { 
+      await fetch('/api/auth/logout', {
         method: 'POST',
         credentials: 'include',
       })
@@ -30,7 +31,7 @@ export function Navbar({ userRole, userName }: NavbarProps) {
   }
 
   return (
-    <nav className="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
+    <nav className="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm dark:bg-gray-950 dark:border-gray-800 transition-colors duration-300">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
@@ -48,6 +49,7 @@ export function Navbar({ userRole, userName }: NavbarProps) {
                 {userRole}
               </span>
             )}
+            <ThemeToggle />
             <Button variant="outline" size="sm" onClick={handleLogout}>
               <LogOut className="w-4 h-4 mr-2" />
               Sair
@@ -55,17 +57,20 @@ export function Navbar({ userRole, userName }: NavbarProps) {
           </div>
 
           {/* Mobile Menu Button */}
-          <button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden p-2 rounded-lg hover:bg-gray-100 transition"
-          >
-            {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-          </button>
+          <div className="flex items-center gap-2 md:hidden">
+            <ThemeToggle />
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="p-2 rounded-lg hover:bg-gray-100 transition dark:hover:bg-gray-800 dark:text-white"
+            >
+              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            </button>
+          </div>
         </div>
 
         {/* Mobile Menu */}
         {mobileMenuOpen && (
-          <div className="md:hidden py-4 border-t">
+          <div className="md:hidden py-4 border-t dark:border-gray-800">
             <div className="space-y-3">
               {userName && (
                 <p className="text-sm text-muted-foreground px-3">{userName}</p>
