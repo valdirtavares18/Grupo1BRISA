@@ -14,6 +14,7 @@ try {
     ALTER TABLE "Event" ADD COLUMN latitude REAL;
     ALTER TABLE "Event" ADD COLUMN longitude REAL;
     ALTER TABLE "Event" ADD COLUMN "eventType" TEXT;
+    ALTER TABLE "Event" ADD COLUMN reward TEXT;
   `)
   console.log('✅ Tabela Event atualizada')
 } catch (e) {

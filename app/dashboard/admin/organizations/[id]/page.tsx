@@ -49,7 +49,11 @@ export default async function OrganizationDetailsPage({ params, searchParams }: 
         </div>
 
         <div className="flex gap-3">
-          <Button variant="outline" className="border-white/30 text-white hover:bg-white/10" asChild>
+          <Button
+            variant="outline"
+            className="border-white/30 bg-white/10 text-white hover:bg-white/20 hover:border-white/50"
+            asChild
+          >
             <Link href={`/${organization.slug}`} target="_blank">
               <Globe className="w-4 h-4 mr-2" />
               Ver Página Pública

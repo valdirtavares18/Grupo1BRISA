@@ -43,6 +43,8 @@ export class EventSearchService {
    * Busca eventos por localização (CEP do usuário ou coordenadas)
    */
   async searchEventsByLocation(filters: EventSearchFilters) {
+    const nowISO = new Date().toISOString()
+
     let sql = `
       SELECT e.*, o.name as "organizationName", o.slug as "organizationSlug",
              ot."primaryColor", ot."logoUrl"
@@ -50,11 +52,11 @@ export class EventSearchService {
       INNER JOIN "Organization" o ON e."organizationId" = o.id
       LEFT JOIN "organization_themes" ot ON o.id = ot."organizationId"
       WHERE 1=1
-        AND e."manuallyEnded" = 0
-        AND e."endDate" >= datetime('now')
+        AND COALESCE(e."manuallyEnded", 0) = 0
+        AND e."endDate" >= ?
     `
 
-    const params: any[] = []
+    const params: any[] = [nowISO]
 
     // Filtrar por organização
     if (filters.organizationId) {

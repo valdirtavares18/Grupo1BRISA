@@ -6,6 +6,8 @@ import { Logo } from '@/components/atoms'
 import Link from 'next/link'
 import { Calendar, MapPin, Clock, ArrowLeft, Eye, Users, QrCode } from 'lucide-react'
 
+export const dynamic = 'force-dynamic'
+
 interface PageProps {
   params: { slug: string }
 }

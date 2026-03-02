@@ -53,7 +53,7 @@ export class EventService {
     const id = randomUUID()
 
     await query(
-      'INSERT INTO "Event" (id, "organizationId", title, description, "startDate", "endDate", "qrCodeToken", address, city, state, "zipCode", latitude, longitude, "eventType", reward) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+      'INSERT INTO "Event" (id, "organizationId", title, description, "startDate", "endDate", "qrCodeToken", "manuallyEnded", address, city, state, "zipCode", latitude, longitude, "eventType", reward) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
       [
         id,
         data.organizationId,
@@ -62,6 +62,7 @@ export class EventService {
         startDate.toISOString(),
         endDate.toISOString(),
         qrCodeToken,
+        0,
         data.address || null,
         data.city || null,
         data.state || null,

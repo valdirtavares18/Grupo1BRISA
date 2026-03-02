@@ -94,13 +94,11 @@ export function PublicSidebar() {
       <aside
         className={`
           fixed lg:sticky top-0 left-0 h-screen z-40
-          bg-gradient-to-b from-slate-900/95 via-blue-900/95 to-slate-900/95 backdrop-blur-md border-r border-white/10
           transition-all duration-300 ease-in-out
           ${isMobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
           w-72
           lg:w-20
           ${isExpanded ? 'lg:w-72' : ''}
-          shadow-2xl lg:shadow-none
           flex-shrink-0
         `}
         onMouseEnter={() => {

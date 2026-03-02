@@ -9,7 +9,8 @@ const columns = [
   { name: 'zipCode', type: 'TEXT' },
   { name: 'latitude', type: 'REAL' },
   { name: 'longitude', type: 'REAL' },
-  { name: 'eventType', type: 'TEXT' }
+  { name: 'eventType', type: 'TEXT' },
+  { name: 'reward', type: 'TEXT' }
 ]
 
 columns.forEach(col => {

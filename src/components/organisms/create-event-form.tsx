@@ -361,8 +361,8 @@ export function CreateEventForm({ organizationId: propOrganizationId }: CreateEv
 
           {/* Dialog para criar novo tipo */}
           {showNewTypeDialog && (
-            <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-              <Card className="w-full max-w-md">
+            <div className="fixed inset-0 z-50 grid min-h-screen place-items-center bg-black/70 p-4 backdrop-blur-sm">
+              <Card className="w-full max-w-md bg-slate-800/95 border-white/20 shadow-xl">
                 <CardContent className="p-6 space-y-4">
                   <h3 className="text-lg font-semibold text-white">Criar Novo Tipo de Evento</h3>
                   <Input
@@ -376,7 +376,7 @@ export function CreateEventForm({ organizationId: propOrganizationId }: CreateEv
                         handleCreateNewType()
                       }
                     }}
-                    className="bg-white/10 border-white/30 text-white placeholder:text-white/50 focus:border-yellow-500 focus:ring-yellow-500"
+                    className="bg-white/10 border-white/30 text-white placeholder:text-white/50 focus:border-yellow-500 focus:ring-yellow-500 [color-scheme:dark]"
                   />
                   <div className="flex gap-2">
                     <Button

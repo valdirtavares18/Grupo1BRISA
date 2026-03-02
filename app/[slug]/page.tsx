@@ -7,6 +7,8 @@ import { Logo } from '@/components/atoms'
 import Link from 'next/link'
 import { Calendar, MapPin, Clock, ArrowRight, Eye, Users, MessageSquare, QrCode } from 'lucide-react'
 
+export const dynamic = 'force-dynamic'
+
 interface PageProps {
   params: { slug: string }
 }
@@ -25,9 +27,11 @@ export default async function OrganizationPage({ params }: PageProps) {
 
   const now = new Date()
   const activeEvents = events.filter(
-    (e: any) => new Date(e.startDate) <= now && new Date(e.endDate) >= now
+    (e: any) => new Date(e.startDate) <= now && new Date(e.endDate) >= now && e.manuallyEnded !== 1
   )
-  const upcomingEvents = events.filter((e: any) => new Date(e.startDate) > now)
+  const upcomingEvents = events.filter(
+    (e: any) => new Date(e.startDate) > now && e.manuallyEnded !== 1
+  )
 
   // Aplicar tema da organização
   const primaryColor = organization.theme?.primaryColor || '#001F3F'

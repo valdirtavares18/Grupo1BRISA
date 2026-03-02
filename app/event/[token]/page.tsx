@@ -43,12 +43,16 @@ export default async function EventPage({ params }: PageProps) {
   const token = cookieStore.get('token')?.value
   let isLoggedIn = false
   let loggedInUserId: string | undefined = undefined
+  let hasValidSession = false
 
   if (token) {
     const payload = verifyToken(token)
-    if (payload && payload.role === 'END_USER') {
-      isLoggedIn = true
-      loggedInUserId = payload.userId
+    if (payload) {
+      hasValidSession = true
+      if (payload.role === 'END_USER') {
+        isLoggedIn = true
+        loggedInUserId = payload.userId
+      }
     }
   }
 
@@ -84,7 +88,7 @@ export default async function EventPage({ params }: PageProps) {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary via-blue-800 to-primary p-4">
+    <div className="min-h-screen p-4">
       <div className="max-w-2xl mx-auto py-8 lg:py-16">
         {/* Status Messages */}
         {isBeforeEvent && (
@@ -117,7 +121,9 @@ export default async function EventPage({ params }: PageProps) {
             <div className="text-white">
               <p className="font-semibold">Presença registrada!</p>
               <p className="text-sm text-white/80 mt-1">
-                Sua presença foi capturada com sucesso. Faça login para vincular seus dados.
+                {isLoggedIn
+                  ? 'Sua presença foi vinculada ao seu CPF.'
+                  : 'Sua presença foi capturada. Faça login para vincular ao seu CPF.'}
               </p>
             </div>
           </div>
@@ -232,20 +238,40 @@ export default async function EventPage({ params }: PageProps) {
               </div>
             )}
 
-            {/* Info Box */}
+            {/* Info Box - mensagem conforme estado de login */}
             <div className="p-4 rounded-xl bg-blue-50 border border-blue-200 flex items-start gap-3">
               <Info className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
               <div className="text-sm text-blue-900">
-                <p className="font-semibold mb-1">Complete seu registro</p>
-                <p>
-                  Faça login ou crie uma conta para vincular sua presença ao seu CPF e receber
-                  notificações de eventos futuros.
-                </p>
+                {hasValidSession ? (
+                  isLoggedIn ? (
+                    <>
+                      <p className="font-semibold mb-1">Você está logado</p>
+                      <p>
+                        Quando o evento estiver no horário, sua presença será vinculada ao seu CPF automaticamente.
+                      </p>
+                    </>
+                  ) : (
+                    <>
+                      <p className="font-semibold mb-1">Você está logado como administrador</p>
+                      <p>
+                        Para registrar presença como participante neste evento, acesse com uma conta de participante (CPF) ou crie uma.
+                      </p>
+                    </>
+                  )
+                ) : (
+                  <>
+                    <p className="font-semibold mb-1">Complete seu registro</p>
+                    <p>
+                      Faça login ou crie uma conta para vincular sua presença ao seu CPF e receber
+                      notificações de eventos futuros.
+                    </p>
+                  </>
+                )}
               </div>
             </div>
 
-            {/* Actions */}
-            {!isPastEvent && !isLoggedIn && !presenceResult.success && (
+            {/* Actions - só mostrar login/cadastro se não tiver sessão válida */}
+            {!isPastEvent && !hasValidSession && !presenceResult.success && (
               <div className="space-y-3">
                 <Link href="/login" className="block">
                   <Button className="w-full" size="lg">
