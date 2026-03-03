@@ -28,6 +28,11 @@ yarn-error.log*
 .env*.local
 .env
 
+# SQLite local (produção usa Turso)
+presenca.db
+presenca.db-shm
+presenca.db-wal
+
 # vercel
 .vercel
 
