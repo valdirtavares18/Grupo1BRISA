@@ -190,14 +190,14 @@ export function LoginForm() {
         <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center mb-4">
           {userType === 'admin' ? <LogIn className="w-6 h-6 text-white" /> : step === 'cpf' ? <LogIn className="w-6 h-6 text-white" /> : <Shield className="w-6 h-6 text-white" />}
         </div>
-        <CardTitle className="text-2xl sm:text-3xl lg:text-4xl">
+        <CardTitle className="text-2xl sm:text-3xl lg:text-4xl text-gray-900 dark:text-gray-100">
           {userType === 'admin'
             ? 'Login Administrativo'
             : step === 'cpf'
               ? 'Bem-vindo de volta'
               : 'Verificação de Segurança'}
         </CardTitle>
-        <CardDescription className="text-sm sm:text-base">
+        <CardDescription className="text-sm sm:text-base text-gray-700 dark:text-gray-300">
           {userType === 'admin'
             ? 'Entre com seu email e senha de administrador'
             : step === 'cpf'
@@ -355,17 +355,17 @@ export function LoginForm() {
                       maxLength={15}
                     />
                   </div>
-                  <p className="text-sm text-muted-foreground mt-1.5">
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-1.5">
                     Informe o telefone cadastrado no seu CPF
                   </p>
                 </FormField>
 
                 <div className="space-y-2">
-                  <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                  <label className="text-sm font-medium leading-none text-gray-900 dark:text-gray-100 peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                     Receber código via
                   </label>
                   <div className="flex gap-4">
-                    <label className={`flex-1 flex items-center justify-center gap-2 p-3 rounded-lg border cursor-pointer transition-all ${channel === 'sms' ? 'border-primary bg-primary/5 text-primary' : 'border-input hover:bg-muted'}`}>
+                    <label className={`flex-1 flex items-center justify-center gap-2 p-3 rounded-lg border cursor-pointer transition-all ${channel === 'sms' ? 'border-primary bg-primary/5 text-primary' : 'border-input hover:bg-muted text-gray-700 dark:text-gray-300'}`}>
                       <input
                         type="radio"
                         name="channel"
@@ -377,7 +377,7 @@ export function LoginForm() {
                       <Smartphone className="w-4 h-4" />
                       <span>SMS</span>
                     </label>
-                    <label className={`flex-1 flex items-center justify-center gap-2 p-3 rounded-lg border cursor-pointer transition-all ${channel === 'whatsapp' ? 'border-green-500 bg-green-50 text-green-700' : 'border-input hover:bg-muted'}`}>
+                    <label className={`flex-1 flex items-center justify-center gap-2 p-3 rounded-lg border cursor-pointer transition-all ${channel === 'whatsapp' ? 'border-green-500 bg-green-50 text-green-700 dark:bg-green-950/30 dark:text-green-400' : 'border-input hover:bg-muted text-gray-700 dark:text-gray-300'}`}>
                       <input
                         type="radio"
                         name="channel"

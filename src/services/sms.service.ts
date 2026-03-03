@@ -95,7 +95,7 @@ export class SMSService {
       // Se não tiver Twilio configurado e não estiver em dev, retornar erro
       return {
         success: false,
-        message: 'Serviço SMS não configurado. Configure as variáveis TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN e TWILIO_PHONE_NUMBER.',
+        message: 'Serviço SMS não configurado. Configure as variáveis TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN e TWILIO_VERIFY_SERVICE_SID na Vercel.',
       }
     } catch (error: any) {
       console.error('Erro ao enviar código SMS:', error)

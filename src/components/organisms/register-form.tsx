@@ -159,10 +159,10 @@ export function RegisterForm() {
         <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center mb-6">
           {step === 'cpf' ? <UserPlus className="w-8 h-8 text-white" /> : <Shield className="w-8 h-8 text-white" />}
         </div>
-        <CardTitle className="text-3xl sm:text-4xl lg:text-5xl">
+        <CardTitle className="text-3xl sm:text-4xl lg:text-5xl text-gray-900 dark:text-gray-100">
           {step === 'cpf' ? 'Criar sua conta' : 'Verificação de Segurança'}
         </CardTitle>
-        <CardDescription className="text-lg sm:text-xl">
+        <CardDescription className="text-lg sm:text-xl text-gray-700 dark:text-gray-300">
           {step === 'cpf'
             ? 'Registre-se com seu CPF e telefone para receber o código de verificação'
             : `Enviamos um código para ${phone ? formatPhone(phone) : 'seu telefone'}`}
@@ -180,7 +180,7 @@ export function RegisterForm() {
 
             <FormField label="CPF" required>
               <div className="relative">
-                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-6 h-6 text-muted-foreground" />
+                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-6 h-6 text-gray-500 dark:text-gray-400" />
                 <Input
                   type="text"
                   placeholder="000.000.000-00"
@@ -202,7 +202,7 @@ export function RegisterForm() {
 
             <FormField label="Nome Completo" required>
               <div className="relative">
-                <UserPlus className="absolute left-4 top-1/2 -translate-y-1/2 w-6 h-6 text-muted-foreground" />
+                <UserPlus className="absolute left-4 top-1/2 -translate-y-1/2 w-6 h-6 text-gray-500 dark:text-gray-400" />
                 <Input
                   type="text"
                   placeholder="Seu nome completo"
@@ -222,7 +222,7 @@ export function RegisterForm() {
 
             <FormField label="Telefone" required>
               <div className="relative">
-                <Smartphone className="absolute left-4 top-1/2 -translate-y-1/2 w-6 h-6 text-muted-foreground" />
+                <Smartphone className="absolute left-4 top-1/2 -translate-y-1/2 w-6 h-6 text-gray-500 dark:text-gray-400" />
                 <Input
                   type="text"
                   placeholder="(00) 00000-0000"
@@ -237,17 +237,17 @@ export function RegisterForm() {
                   maxLength={15}
                 />
               </div>
-              <p className="text-sm text-muted-foreground mt-2">
+              <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
                 Você receberá um código de verificação
               </p>
             </FormField>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+              <label className="text-sm font-medium leading-none text-gray-900 dark:text-gray-100 peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                 Receber código via
               </label>
               <div className="flex gap-4">
-                <label className={`flex-1 flex items-center justify-center gap-2 p-3 rounded-lg border cursor-pointer transition-all ${channel === 'sms' ? 'border-primary bg-primary/5 text-primary' : 'border-input hover:bg-muted'}`}>
+                <label className={`flex-1 flex items-center justify-center gap-2 p-3 rounded-lg border cursor-pointer transition-all ${channel === 'sms' ? 'border-primary bg-primary/5 text-primary' : 'border-input hover:bg-muted text-gray-700 dark:text-gray-300'}`}>
                   <input
                     type="radio"
                     name="channel"
@@ -259,7 +259,7 @@ export function RegisterForm() {
                   <Smartphone className="w-4 h-4" />
                   <span>SMS</span>
                 </label>
-                <label className={`flex-1 flex items-center justify-center gap-2 p-3 rounded-lg border cursor-pointer transition-all ${channel === 'whatsapp' ? 'border-green-500 bg-green-50 text-green-700' : 'border-input hover:bg-muted'}`}>
+                <label className={`flex-1 flex items-center justify-center gap-2 p-3 rounded-lg border cursor-pointer transition-all ${channel === 'whatsapp' ? 'border-green-500 bg-green-50 text-green-700 dark:bg-green-950/30 dark:text-green-400' : 'border-input hover:bg-muted text-gray-700 dark:text-gray-300'}`}>
                   <input
                     type="radio"
                     name="channel"

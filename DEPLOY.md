@@ -51,9 +51,15 @@ Guarde:
 
 **Observação:** O Turso não suporta `ALTER TABLE ... ADD CONSTRAINT` (FK). O script `scripts/apply-turso-schema.js` aplica o schema sem essas linhas; a aplicação funciona normalmente.
 
-## 3. Variáveis opcionais
+## 3. Variáveis opcionais (SMS / WhatsApp)
 
-- **Twilio (SMS):** se usar verificação por SMS, configure `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN` e `TWILIO_VERIFY_SERVICE_SID` no projeto da Vercel.
+Para códigos de verificação por SMS e WhatsApp, configure no projeto da Vercel:
+
+- `TWILIO_ACCOUNT_SID` – Console Twilio → Account Info  
+- `TWILIO_AUTH_TOKEN` – Console Twilio → Account Info  
+- `TWILIO_VERIFY_SERVICE_SID` – Console Twilio → **Verify** → **Services** → criar um serviço e copiar o SID (começa com `VA...`)
+
+Guia completo: [CONFIGURACAO_SMS.md](./CONFIGURACAO_SMS.md).
 
 ## 4. Local vs produção
 
