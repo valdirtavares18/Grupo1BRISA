@@ -91,10 +91,11 @@ export class AuthService {
 
     const passwordHash = await hashPassword(password)
     const id = randomUUID()
+    const now = new Date().toISOString()
 
     await query(
-      'INSERT INTO end_users (id, cpf, "passwordHash") VALUES (?, ?, ?)',
-      [id, cleanCpf, passwordHash]
+      'INSERT INTO end_users (id, cpf, "passwordHash", "createdAt", "updatedAt") VALUES (?, ?, ?, ?, ?)',
+      [id, cleanCpf, passwordHash, now, now]
     )
 
     const result = await query(
@@ -242,10 +243,11 @@ export class AuthService {
     const id = randomUUID()
     // Gerar um hash vazio ou usar o próprio CPF como "senha" (não será usado)
     const passwordHash = await hashPassword(randomUUID()) // Hash aleatório, não será usado
+    const now = new Date().toISOString()
 
-    const updates = ['id', 'cpf', '"passwordHash"', 'phone', '"phoneVerified"']
-    const values = [id, cleanCpf, passwordHash, cleanPhone, 1]
-    const placeholders = ['?', '?', '?', '?', '?']
+    const updates = ['id', 'cpf', '"passwordHash"', 'phone', '"phoneVerified"', '"createdAt"', '"updatedAt"']
+    const values = [id, cleanCpf, passwordHash, cleanPhone, 1, now, now]
+    const placeholders = ['?', '?', '?', '?', '?', '?', '?']
 
     if (fullName) {
       updates.push('"fullName"')
@@ -336,9 +338,10 @@ export class AuthService {
     const id = randomUUID()
 
     // Criar usuário
+    const now = new Date().toISOString()
     await query(
-      'INSERT INTO end_users (id, cpf, "passwordHash", phone, "phoneVerified") VALUES (?, ?, ?, ?, ?)',
-      [id, cleanCpf, passwordHash, cleanPhone, 1]
+      'INSERT INTO end_users (id, cpf, "passwordHash", phone, "phoneVerified", "createdAt", "updatedAt") VALUES (?, ?, ?, ?, ?, ?, ?)',
+      [id, cleanCpf, passwordHash, cleanPhone, 1, now, now]
     )
 
     // Salvar consentimentos
