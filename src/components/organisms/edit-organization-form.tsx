@@ -94,7 +94,6 @@ export function EditOrganizationForm({ organization }: EditOrganizationFormProps
             <FormField 
               label="Slug (URL)" 
               required
-              hint="Usado na URL pública. Apenas letras minúsculas, números e hífens."
             >
               <Input
                 placeholder="Ex: prefeitura-municipal"
@@ -137,8 +136,7 @@ export function EditOrganizationForm({ organization }: EditOrganizationFormProps
             </h3>
 
             <FormField 
-              label="Cor Primária" 
-              hint="Cor principal usada na interface da organização"
+              label="Cor Primária"
             >
               <div className="flex gap-3 items-center">
                 <Input
@@ -161,7 +159,6 @@ export function EditOrganizationForm({ organization }: EditOrganizationFormProps
 
             <FormField 
               label="URL do Logo" 
-              hint="Link direto para a imagem do logo (opcional)"
             >
               <Input
                 type="url"

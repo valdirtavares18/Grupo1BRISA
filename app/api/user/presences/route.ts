@@ -15,7 +15,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Acesso negado' }, { status: 403 })
     }
 
-    const presences = await userService.getUserPresences(payload.userId)
+    const presences = await userService.getUserHistory(payload.userId)
     
     return NextResponse.json(presences)
   } catch (error: any) {

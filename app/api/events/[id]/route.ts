@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { eventService } from '@/services/event.service'
+import { verifyToken } from '@/lib/auth'
 
 export async function GET(
   request: NextRequest,

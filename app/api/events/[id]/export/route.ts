@@ -34,7 +34,10 @@ export async function GET(
     const filename = `presencas-${event.title.replace(/\s+/g, '-')}-${new Date().toISOString().split('T')[0]}.${exported.extension}`
 
     if (format === 'xlsx') {
-      return new NextResponse(exported.content as Buffer, {
+      const buf = Buffer.isBuffer(exported.content)
+        ? exported.content
+        : Buffer.from(exported.content as unknown as ArrayBuffer)
+      return new NextResponse(new Uint8Array(buf), {
         headers: {
           'Content-Type': exported.mimeType,
           'Content-Disposition': `attachment; filename="${filename}"`

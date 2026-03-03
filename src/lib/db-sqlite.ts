@@ -23,17 +23,18 @@ let _tursoClient: import('@libsql/client').Client | null = null
 function getTursoClient(): import('@libsql/client').Client {
   if (_tursoClient) return _tursoClient
   const { createClient } = require('@libsql/client')
-  _tursoClient = createClient({
+  const client = createClient({
     url: process.env.TURSO_DATABASE_URL!,
     authToken: process.env.TURSO_AUTH_TOKEN!
   })
-  return _tursoClient
+  _tursoClient = client
+  return client
 }
 
 async function queryTurso(text: string, params?: any[]): Promise<{ rows: any[]; rowCount: number }> {
   const { sql, params: args } = normalizeQuery(text, params)
   const client = getTursoClient()
-  const result = await client.execute({ sql, args: args.length ? args : undefined })
+  const result = await client.execute({ sql, args: args.length ? args : [] })
   const columns = result.columns
   const rows = (result.rows as any[]).map((row) => {
     const obj: Record<string, any> = {}
