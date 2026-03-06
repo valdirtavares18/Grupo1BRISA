@@ -169,7 +169,7 @@ export function CreateEventForm({ organizationId: propOrganizationId }: CreateEv
   }
 
   return (
-    <Card className="bg-white/10 border-white/20 backdrop-blur-sm">
+    <Card className="bg-navy-light border-navy-border">
       <CardContent className="p-6 lg:p-8">
         <form onSubmit={handleSubmit} className="space-y-6">
           {error && (
@@ -181,14 +181,14 @@ export function CreateEventForm({ organizationId: propOrganizationId }: CreateEv
 
           <FormField label="Título do Evento" required>
             <div className="relative">
-              <FileText className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-white/60" />
+              <FileText className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[#8B92A0]" />
               <Input
                 value={formData.title}
                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                 placeholder="Ex: Workshop de Tecnologia 2025"
                 required
                 disabled={loading}
-                className="pl-10 bg-white/10 border-white/30 text-white placeholder:text-white/50 focus:border-yellow-500 focus:ring-yellow-500"
+                className="pl-10 bg-navy border-navy-border text-white placeholder:text-[#8B92A0] focus:border-mustard/50"
               />
             </div>
           </FormField>
@@ -198,7 +198,7 @@ export function CreateEventForm({ organizationId: propOrganizationId }: CreateEv
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
               placeholder="Descreva os detalhes do evento..."
-              className="flex w-full rounded-md border border-white/30 bg-white/10 px-3 py-2 text-sm text-white placeholder:text-white/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-500 focus-visible:border-yellow-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 min-h-[120px] resize-y"
+              className="flex w-full rounded-md border border-navy-border bg-navy px-3 py-2 text-sm text-white placeholder:text-[#8B92A0] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-mustard focus-visible:border-mustard focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 min-h-[120px] resize-y"
               disabled={loading}
             />
           </FormField>
@@ -217,7 +217,7 @@ export function CreateEventForm({ organizationId: propOrganizationId }: CreateEv
                     onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
                     required
                     disabled={loading}
-                    className="bg-white/10 border-white/30 text-white focus:border-yellow-500 focus:ring-yellow-500 [color-scheme:dark]"
+                    className="bg-navy border-navy-border text-white focus:border-mustard/50 [color-scheme:dark]"
                   />
                 </FormField>
 
@@ -228,7 +228,7 @@ export function CreateEventForm({ organizationId: propOrganizationId }: CreateEv
                     onChange={(e) => setFormData({ ...formData, startTime: e.target.value })}
                     required
                     disabled={loading}
-                    className="bg-white/10 border-white/30 text-white focus:border-yellow-500 focus:ring-yellow-500 [color-scheme:dark]"
+                    className="bg-navy border-navy-border text-white focus:border-mustard/50 [color-scheme:dark]"
                   />
                 </FormField>
               </div>
@@ -247,7 +247,7 @@ export function CreateEventForm({ organizationId: propOrganizationId }: CreateEv
                     onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
                     required
                     disabled={loading}
-                    className="bg-white/10 border-white/30 text-white focus:border-yellow-500 focus:ring-yellow-500 [color-scheme:dark]"
+                    className="bg-navy border-navy-border text-white focus:border-mustard/50 [color-scheme:dark]"
                   />
                 </FormField>
 
@@ -258,14 +258,14 @@ export function CreateEventForm({ organizationId: propOrganizationId }: CreateEv
                     onChange={(e) => setFormData({ ...formData, endTime: e.target.value })}
                     required
                     disabled={loading}
-                    className="bg-white/10 border-white/30 text-white focus:border-yellow-500 focus:ring-yellow-500 [color-scheme:dark]"
+                    className="bg-navy border-navy-border text-white focus:border-mustard/50 [color-scheme:dark]"
                   />
                 </FormField>
               </div>
             </div>
           </div>
 
-          <div className="border-t border-white/20 pt-6 space-y-4">
+          <div className="border-t border-navy-border pt-6 space-y-4">
             <h3 className="font-semibold flex items-center gap-2 text-white">
               <MapPin className="w-4 h-4" />
               Localização
@@ -280,14 +280,14 @@ export function CreateEventForm({ organizationId: propOrganizationId }: CreateEv
                     onChange={(e) => handleCepChange(e.target.value)}
                     maxLength={9}
                     disabled={loading || loadingCep}
-                    className="bg-white/10 border-white/30 text-white placeholder:text-white/50 focus:border-yellow-500 focus:ring-yellow-500"
+                    className="bg-navy border-navy-border text-white placeholder:text-[#8B92A0] focus:border-mustard/50"
                   />
                   {loadingCep && (
-                    <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 animate-spin text-white/60" />
+                    <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 animate-spin text-[#8B92A0]" />
                   )}
                 </div>
                 {loadingCep && (
-                  <p className="text-xs text-white/70 mt-1">Buscando endereço...</p>
+                  <p className="text-xs text-[#C8CDD5] mt-1">Buscando endereço...</p>
                 )}
               </FormField>
 
@@ -299,7 +299,7 @@ export function CreateEventForm({ organizationId: propOrganizationId }: CreateEv
                   onChange={(e) => setFormData({ ...formData, state: e.target.value.toUpperCase() })}
                   maxLength={2}
                   disabled={loading}
-                  className="bg-white/10 border-white/30 text-white placeholder:text-white/50 focus:border-yellow-500 focus:ring-yellow-500"
+                  className="bg-navy border-navy-border text-white placeholder:text-[#8B92A0] focus:border-mustard/50"
                 />
               </FormField>
 
@@ -310,7 +310,7 @@ export function CreateEventForm({ organizationId: propOrganizationId }: CreateEv
                   value={formData.city}
                   onChange={(e) => setFormData({ ...formData, city: e.target.value })}
                   disabled={loading}
-                  className="bg-white/10 border-white/30 text-white placeholder:text-white/50 focus:border-yellow-500 focus:ring-yellow-500"
+                  className="bg-navy border-navy-border text-white placeholder:text-[#8B92A0] focus:border-mustard/50"
                 />
               </FormField>
 
@@ -321,7 +321,7 @@ export function CreateEventForm({ organizationId: propOrganizationId }: CreateEv
                   value={formData.address}
                   onChange={(e) => setFormData({ ...formData, address: e.target.value })}
                   disabled={loading}
-                  className="bg-white/10 border-white/30 text-white placeholder:text-white/50 focus:border-yellow-500 focus:ring-yellow-500"
+                  className="bg-navy border-navy-border text-white placeholder:text-[#8B92A0] focus:border-mustard/50"
                 />
               </FormField>
             </div>
@@ -330,11 +330,11 @@ export function CreateEventForm({ organizationId: propOrganizationId }: CreateEv
           <FormField label="Tipo de Evento">
             <div className="space-y-2">
               <div className="relative">
-                <Tag className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-white/60" />
+                <Tag className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[#8B92A0]" />
                 <select
                   value={formData.eventType}
                   onChange={(e) => setFormData({ ...formData, eventType: e.target.value })}
-                  className="w-full pl-10 pr-3 py-2 rounded-lg border border-white/30 bg-white/10 text-sm text-white focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 [color-scheme:dark]"
+                  className="w-full pl-10 pr-3 py-2 rounded-lg border border-navy-border bg-navy text-sm text-white focus:outline-none focus:ring-2 focus:ring-mustard focus:border-mustard [color-scheme:dark]"
                   disabled={loading}
                 >
                   <option value="">Selecione o tipo (opcional)</option>
@@ -351,7 +351,7 @@ export function CreateEventForm({ organizationId: propOrganizationId }: CreateEv
                 size="sm"
                 onClick={() => setShowNewTypeDialog(true)}
                 disabled={loading}
-                className="w-full border-white/30 text-white hover:bg-white/20 bg-white/10"
+                className="w-full border-navy-border text-white hover:bg-navy-light bg-navy-light"
               >
                 <Tag className="w-4 h-4 mr-2" />
                 Criar novo tipo
@@ -361,8 +361,8 @@ export function CreateEventForm({ organizationId: propOrganizationId }: CreateEv
 
           {/* Dialog para criar novo tipo */}
           {showNewTypeDialog && (
-            <div className="fixed inset-0 z-50 grid min-h-screen place-items-center bg-black/70 p-4 backdrop-blur-sm">
-              <Card className="w-full max-w-md bg-slate-800/95 border-white/20 shadow-xl">
+            <div className="fixed inset-0 z-50 grid min-h-screen place-items-center bg-black/70 p-4">
+              <Card className="w-full max-w-md bg-navy-light border-navy-border shadow-md">
                 <CardContent className="p-6 space-y-4">
                   <h3 className="text-lg font-semibold text-white">Criar Novo Tipo de Evento</h3>
                   <Input
@@ -376,13 +376,13 @@ export function CreateEventForm({ organizationId: propOrganizationId }: CreateEv
                         handleCreateNewType()
                       }
                     }}
-                    className="bg-white/10 border-white/30 text-white placeholder:text-white/50 focus:border-yellow-500 focus:ring-yellow-500 [color-scheme:dark]"
+                    className="bg-navy border-navy-border text-white placeholder:text-[#8B92A0] focus:border-mustard/50 [color-scheme:dark]"
                   />
                   <div className="flex gap-2">
                     <Button
                       onClick={handleCreateNewType}
                       disabled={creatingType || !newTypeName.trim()}
-                      className="flex-1 bg-gradient-to-r from-yellow-500 to-orange-600 text-white hover:from-yellow-600 hover:to-orange-700"
+                      className="flex-1 bg-mustard text-ink"
                     >
                       {creatingType ? (
                         <>
@@ -401,7 +401,7 @@ export function CreateEventForm({ organizationId: propOrganizationId }: CreateEv
                         setError('')
                       }}
                       disabled={creatingType}
-                      className="border-white/30 text-white hover:bg-white/20 bg-white/10"
+                      className="border-navy-border text-white hover:bg-navy-light bg-navy-light"
                     >
                       Cancelar
                     </Button>
@@ -413,34 +413,34 @@ export function CreateEventForm({ organizationId: propOrganizationId }: CreateEv
 
           <FormField label="Recompensa">
             <div className="relative">
-              <Gift className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-white/60" />
+              <Gift className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[#8B92A0]" />
               <Input
                 value={formData.reward}
                 onChange={(e) => setFormData({ ...formData, reward: e.target.value })}
                 placeholder="Ex: Certificado digital, Desconto de 10%, Brinde exclusivo..."
                 disabled={loading}
-                className="pl-10 bg-white/10 border-white/30 text-white placeholder:text-white/50 focus:border-yellow-500 focus:ring-yellow-500"
+                className="pl-10 bg-navy border-navy-border text-white placeholder:text-[#8B92A0] focus:border-mustard/50"
               />
             </div>
-            <p className="text-xs text-white/70 mt-1">
+            <p className="text-xs text-[#C8CDD5] mt-1">
               Recompensa que será exibida para quem escanear o QR Code deste evento
             </p>
           </FormField>
 
-          <div className="flex flex-col sm:flex-row gap-3 pt-4 border-t border-white/20">
+          <div className="flex flex-col sm:flex-row gap-3 pt-4 border-t border-navy-border">
             <Button
               type="button"
               variant="outline"
               onClick={() => router.back()}
               disabled={loading}
-              className="w-full sm:w-auto border-white/30 text-white hover:bg-white/20 bg-white/10"
+              className="w-full sm:w-auto border-navy-border text-white hover:bg-navy-light bg-navy-light"
             >
               Cancelar
             </Button>
-            <Button type="submit" disabled={loading} className="w-full sm:flex-1 bg-gradient-to-r from-yellow-500 to-orange-600 text-white hover:from-yellow-600 hover:to-orange-700">
+            <Button type="submit" disabled={loading} className="w-full sm:flex-1 bg-mustard text-ink">
               {loading ? (
                 <>
-                  <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin mr-2" />
+                  <div className="w-5 h-5 border-2 border-navy-border border-t-white rounded-full animate-spin mr-2" />
                   Criando...
                 </>
               ) : (

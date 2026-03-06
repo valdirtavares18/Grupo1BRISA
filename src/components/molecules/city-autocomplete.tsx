@@ -71,35 +71,35 @@ export function CityAutocomplete({ value, onChange, disabled, className }: CityA
 
     return (
         <div className="relative w-full" ref={inputRef as any}>
-            <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-6 h-6 text-white/40" />
+            <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-6 h-6 text-[#8B92A0]" />
             <Input
                 type="text"
                 placeholder="Buscar por cidade..."
                 value={inputValue}
                 onChange={(e) => handleSearch(e.target.value)}
                 disabled={disabled}
-                className={`pl-12 ${className}`}
+                className={`pl-12 bg-navy border-navy-border placeholder:text-[#8B92A0] focus:border-mustard/50 ${className}`}
                 onFocus={() => {
                     if (inputValue.length >= 2) setShowSuggestions(true)
                 }}
             />
             {loading && (
                 <div className="absolute right-4 top-1/2 -translate-y-1/2">
-                    <Loader2 className="w-5 h-5 animate-spin text-white/40" />
+                    <Loader2 className="w-5 h-5 animate-spin text-[#8B92A0]" />
                 </div>
             )}
 
             {showSuggestions && suggestions.length > 0 && (
-                <div className="absolute z-50 w-full mt-2 bg-slate-900 border border-white/10 rounded-lg shadow-xl max-h-60 overflow-y-auto">
+                <div className="absolute z-50 w-full mt-2 bg-slate-900 border border-navy-border rounded-lg shadow-md max-h-60 overflow-y-auto">
                     {suggestions.map((city) => (
                         <button
                             key={city.id}
                             type="button"
-                            className="w-full px-4 py-3 text-left hover:bg-white/10 text-white flex items-center justify-between group transition-colors"
+                            className="w-full px-4 py-3 text-left hover:bg-navy-light text-white flex items-center justify-between group transition-colors"
                             onClick={() => handleSelect(city)}
                         >
                             <span>{city.name}</span>
-                            <span className="text-white/40 group-hover:text-white/60 text-sm font-mono bg-white/5 px-2 py-0.5 rounded">
+                            <span className="text-[#8B92A0] group-hover:text-[#8B92A0] text-sm font-mono bg-navy-light px-2 py-0.5 rounded">
                                 {city.state}
                             </span>
                         </button>

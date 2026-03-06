@@ -86,7 +86,7 @@ export default function UserHistoryPage() {
     <div className="p-4 lg:p-6 lg:py-8">
         <Link 
           href="/dashboard/user"
-          className="inline-flex items-center gap-2 text-white/80 hover:text-white transition mb-6"
+          className="inline-flex items-center gap-2 text-[#C8CDD5] hover:text-white transition mb-6"
         >
           <ArrowLeft className="w-4 h-4" />
           <span>Voltar</span>
@@ -98,18 +98,18 @@ export default function UserHistoryPage() {
         />
 
         {loading ? (
-          <Card>
+          <Card className="bg-navy-light border-navy-border">
             <CardContent className="p-12 text-center">
-              <div className="w-8 h-8 border-4 border-slate-200 border-t-orange-600 rounded-full animate-spin mx-auto mb-4" />
-              <p className="text-slate-600">Carregando histórico...</p>
+              <div className="w-8 h-8 border-4 border-navy-border border-t-mustard rounded-full animate-spin mx-auto mb-4" />
+              <p className="text-[#C8CDD5]">Carregando histórico...</p>
             </CardContent>
           </Card>
         ) : history.length === 0 ? (
-          <Card>
+          <Card className="bg-navy-light border-navy-border">
             <CardContent className="p-12 text-center">
-              <Calendar className="w-16 h-16 text-slate-300 mx-auto mb-4" />
-              <h3 className="text-lg font-semibold mb-2 text-slate-900">Nenhuma presença registrada</h3>
-              <p className="text-slate-600">
+              <Calendar className="w-16 h-16 text-[#8B92A0] mx-auto mb-4" />
+              <h3 className="text-lg font-semibold mb-2 text-white">Nenhuma presença registrada</h3>
+              <p className="text-[#C8CDD5]">
                 Escaneie QR Codes de eventos para começar seu histórico
               </p>
             </CardContent>
@@ -121,41 +121,41 @@ export default function UserHistoryPage() {
               const accessDate = new Date(item.accessTimestamp)
               
               return (
-                <Card key={index} className="hover:shadow-md transition-shadow">
+                <Card key={index} className="bg-navy-light border-navy-border hover:shadow-md transition-shadow">
                   <CardContent className="p-6">
                     <div className="flex flex-col gap-4">
                       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                         <div className="flex-1">
-                          <h3 className="font-bold text-lg mb-2 text-slate-900">{item.eventTitle}</h3>
+                          <h3 className="font-bold text-lg mb-2 text-white">{item.eventTitle}</h3>
                           
-                          <div className="flex flex-wrap gap-3 text-sm text-slate-600">
+                          <div className="flex flex-wrap gap-3 text-sm text-[#C8CDD5]">
                             <div className="flex items-center gap-2">
-                              <Building2 className="w-4 h-4 text-slate-400" />
+                              <Building2 className="w-4 h-4 text-[#8B92A0]" />
                               <span>{item.organizationName}</span>
                             </div>
                             
                             <div className="flex items-center gap-2">
-                              <Calendar className="w-4 h-4 text-slate-400" />
+                              <Calendar className="w-4 h-4 text-[#8B92A0]" />
                               <span>{eventDate.toLocaleDateString('pt-BR')}</span>
                             </div>
                             
                             <div className="flex items-center gap-2">
-                              <Clock className="w-4 h-4 text-slate-400" />
+                              <Clock className="w-4 h-4 text-[#8B92A0]" />
                               <span>Registrado em {accessDate.toLocaleString('pt-BR')}</span>
                             </div>
 
                             {item.profile && (
                               <div className="flex items-center gap-2">
-                                {item.profile === 'Ouvinte' && <User className="w-4 h-4 text-slate-400" />}
-                                {item.profile === 'Participante' && <Users className="w-4 h-4 text-slate-400" />}
-                                {item.profile === 'Atleta' && <Trophy className="w-4 h-4 text-slate-400" />}
+                                {item.profile === 'Ouvinte' && <User className="w-4 h-4 text-[#8B92A0]" />}
+                                {item.profile === 'Participante' && <Users className="w-4 h-4 text-[#8B92A0]" />}
+                                {item.profile === 'Atleta' && <Trophy className="w-4 h-4 text-[#8B92A0]" />}
                                 <span className="font-medium">Perfil: {item.profile}</span>
                               </div>
                             )}
                           </div>
 
                           {item.eventDescription && (
-                            <p className="text-sm text-slate-600 mt-2 line-clamp-2">
+                            <p className="text-sm text-[#C8CDD5] mt-2 line-clamp-2">
                               {item.eventDescription}
                             </p>
                           )}
@@ -166,7 +166,7 @@ export default function UserHistoryPage() {
                         </Badge>
                       </div>
 
-                      <div className="flex justify-end pt-2 border-t border-slate-200">
+                      <div className="flex justify-end pt-2 border-t border-navy-border">
                         <Button
                           variant="outline"
                           size="sm"
@@ -176,7 +176,7 @@ export default function UserHistoryPage() {
                         >
                           {downloadingId === item.id ? (
                             <>
-                              <div className="w-4 h-4 border-2 border-slate-200 border-t-orange-600 rounded-full animate-spin" />
+                              <div className="w-4 h-4 border-2 border-navy-border border-t-mustard rounded-full animate-spin" />
                               <span>Gerando...</span>
                             </>
                           ) : (

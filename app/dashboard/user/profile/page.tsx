@@ -264,7 +264,7 @@ export default function UserProfilePage() {
     <div className="p-4 lg:p-6 lg:py-8 max-w-3xl mx-auto">
       <Link
         href="/dashboard/user"
-        className="inline-flex items-center gap-2 text-white/80 hover:text-white transition mb-6"
+        className="inline-flex items-center gap-2 text-[#C8CDD5] hover:text-white transition mb-6"
       >
         <ArrowLeft className="w-4 h-4" />
         <span>Voltar</span>
@@ -272,11 +272,11 @@ export default function UserProfilePage() {
 
       <div className="mb-6">
         <h1 className="text-3xl font-bold mb-2 text-white">Meu Perfil</h1>
-        <p className="text-white/80">Gerencie suas informações pessoais</p>
+        <p className="text-[#C8CDD5]">Gerencie suas informações pessoais</p>
       </div>
 
       <div className="space-y-6">
-        <Card className="border-0 shadow-lg">
+        <Card className="border-0 shadow-md bg-navy-light border-navy-border">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <User className="w-5 h-5" />
@@ -304,7 +304,7 @@ export default function UserProfilePage() {
                 {formData.profilePhotoUrl ? (
                   <AvatarImage src={formData.profilePhotoUrl} alt={formData.fullName || 'Usuário'} />
                 ) : null}
-                <AvatarFallback className="text-2xl bg-primary/20 text-primary">
+                <AvatarFallback className="text-2xl bg-mustard/20 text-mustard">
                   {formData.fullName ? formData.fullName.charAt(0).toUpperCase() : 'U'}
                 </AvatarFallback>
               </Avatar>
@@ -468,7 +468,7 @@ export default function UserProfilePage() {
               <Button type="submit" className="w-full" disabled={loading}>
                 {loading ? (
                   <>
-                    <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin mr-2" />
+                    <div className="w-5 h-5 border-2 border-navy-border border-t-white rounded-full animate-spin mr-2" />
                     Salvando...
                   </>
                 ) : (
@@ -482,7 +482,7 @@ export default function UserProfilePage() {
           </CardContent>
         </Card>
 
-        <Card className="border-0 shadow-lg border-red-200">
+        <Card className="border-0 shadow-md bg-navy-light border-navy-border border-red-200">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-red-600">
               <Trash2 className="w-5 h-5" />

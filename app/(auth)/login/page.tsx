@@ -5,12 +5,12 @@ import Link from 'next/link'
 
 export default function LoginPage() {
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-br from-primary to-primary/80">
+    <div className="min-h-screen flex flex-col bg-navy">
       <div className="container mx-auto px-4 py-4 lg:py-5">
         <div className="flex items-center justify-between">
           <Link 
             href="/"
-            className="inline-flex items-center gap-2 text-white/80 hover:text-white transition text-base"
+            className="inline-flex items-center gap-2 text-[#C8CDD5] hover:text-white transition text-base"
           >
             <ArrowLeft className="w-4 h-4" />
             <span>Voltar</span>

@@ -37,9 +37,7 @@ export default async function OrganizationEventsPage({ params }: PageProps) {
 
   const themeStyle = backgroundStyle
     ? { background: backgroundStyle }
-    : {
-      background: `linear-gradient(to-br, ${primaryColor}, ${primaryColor}dd, ${primaryColor})`,
-    }
+    : { background: primaryColor }
 
   return (
     <div className="min-h-screen" style={themeStyle}>
@@ -51,7 +49,7 @@ export default async function OrganizationEventsPage({ params }: PageProps) {
               <img
                 src={logoUrl}
                 alt={organization.name}
-                className="h-16 mx-auto object-contain drop-shadow-lg"
+                className="h-16 mx-auto object-contain"
               />
             </div>
           ) : (
@@ -59,17 +57,17 @@ export default async function OrganizationEventsPage({ params }: PageProps) {
               <Logo className="scale-125 opacity-90" />
             </div>
           )}
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-2 drop-shadow-lg">
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-2">
             Eventos - {organization.name}
           </h1>
-          <p className="text-white/90 text-base sm:text-lg">
+          <p className="text-white text-base sm:text-lg">
             Confira todos os nossos eventos
           </p>
         </div>
 
         <Link
           href={`/${params.slug}`}
-          className="inline-flex items-center gap-2 text-white/80 hover:text-white transition mb-8"
+          className="inline-flex items-center gap-2 text-[#C8CDD5] hover:text-white transition mb-8"
         >
           <ArrowLeft className="w-4 h-4" />
           <span>Voltar para página principal</span>
@@ -86,9 +84,9 @@ export default async function OrganizationEventsPage({ params }: PageProps) {
                 return (
                   <Card
                     key={event.id}
-                    className="border-0 shadow-2xl bg-white/95 backdrop-blur-sm overflow-hidden hover:shadow-3xl transition"
+                    className="border-0 shadow-md bg-white overflow-hidden transition"
                   >
-                    <div className="h-2 bg-gradient-to-r from-green-500 to-emerald-500" />
+                    <div className="h-2 bg-green-500" />
                     <CardHeader>
                       <div className="flex items-start justify-between gap-2 mb-2">
                         <CardTitle className="text-lg line-clamp-2 flex-1">{event.title}</CardTitle>
@@ -166,13 +164,13 @@ export default async function OrganizationEventsPage({ params }: PageProps) {
                 return (
                   <Card
                     key={event.id}
-                    className="border-0 shadow-2xl bg-white/95 backdrop-blur-sm overflow-hidden hover:shadow-3xl transition"
+                    className="border-0 shadow-md bg-white overflow-hidden transition"
                   >
-                    <div className="h-2 bg-gradient-to-r from-blue-500 to-cyan-500" />
+                    <div className="h-2 bg-mustard" />
                     <CardHeader>
                       <div className="flex items-start justify-between gap-2 mb-2">
                         <CardTitle className="text-lg line-clamp-2 flex-1">{event.title}</CardTitle>
-                        <Badge className="bg-blue-500 hover:bg-blue-600 flex-shrink-0">
+                        <Badge className="bg-mustard text-ink flex-shrink-0">
                           Próximo
                         </Badge>
                       </div>
@@ -232,9 +230,9 @@ export default async function OrganizationEventsPage({ params }: PageProps) {
                 return (
                   <Card
                     key={event.id}
-                    className="border-0 shadow-2xl bg-white/95 backdrop-blur-sm overflow-hidden hover:shadow-3xl transition opacity-75"
+                    className="border-0 shadow-md bg-white overflow-hidden transition opacity-75"
                   >
-                    <div className="h-2 bg-gradient-to-r from-gray-400 to-gray-500" />
+                    <div className="h-2 bg-gray-500" />
                     <CardHeader>
                       <div className="flex items-start justify-between gap-2 mb-2">
                         <CardTitle className="text-lg line-clamp-2 flex-1">{event.title}</CardTitle>
@@ -275,7 +273,7 @@ export default async function OrganizationEventsPage({ params }: PageProps) {
 
         {/* No Events Message */}
         {events.length === 0 && (
-          <Card className="border-0 shadow-2xl bg-white/95 backdrop-blur-sm">
+          <Card className="border-0 shadow-md bg-white">
             <CardContent className="p-12 text-center">
               <Calendar className="w-16 h-16 text-muted-foreground mx-auto mb-4 opacity-50" />
               <h3 className="text-lg font-semibold mb-2">Nenhum evento disponível</h3>
@@ -290,7 +288,7 @@ export default async function OrganizationEventsPage({ params }: PageProps) {
         <div className="mt-12 text-center">
           <Link
             href={`/${params.slug}`}
-            className="inline-block px-6 py-3 rounded-xl bg-white/20 backdrop-blur-sm text-white hover:bg-white/30 transition text-sm font-semibold"
+            className="inline-block px-6 py-3 rounded-xl bg-navy-light text-white hover:bg-navy-light transition text-sm font-semibold border border-navy-border"
           >
             ← Voltar para página principal
           </Link>

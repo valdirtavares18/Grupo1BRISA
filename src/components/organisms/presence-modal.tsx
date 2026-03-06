@@ -50,7 +50,7 @@ export function PresenceModal({ eventId, isOpen, onClose }: PresenceModalProps) 
     <Dialog.Root open={isOpen} onOpenChange={onClose}>
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 bg-black/50 z-50" />
-        <Dialog.Content className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-4xl max-h-[90vh] overflow-y-auto bg-white rounded-xl shadow-2xl z-50 p-6">
+        <Dialog.Content className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-4xl max-h-[90vh] overflow-y-auto bg-white rounded-xl shadow-md z-50 p-6">
           <div className="flex items-center justify-between mb-6">
             <Dialog.Title className="text-2xl font-bold flex items-center gap-2">
               <Users className="w-6 h-6" />

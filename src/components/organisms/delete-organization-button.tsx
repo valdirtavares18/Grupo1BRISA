@@ -49,11 +49,11 @@ export function DeleteOrganizationButton({ organizationId, organizationName }: D
       </Button>
 
       {showConfirm && (
-        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-6">
+        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-6">
           <Card className="max-w-2xl w-full">
             <CardContent className="p-8">
               <h3 className="text-2xl font-bold mb-4 text-red-600">⚠️ Atenção!</h3>
-              <p className="text-lg text-white/90 mb-6">
+              <p className="text-lg text-white mb-6">
                 Tem certeza que deseja excluir a organização <strong className="text-white">{organizationName}</strong>?
               </p>
               <div className="bg-red-500/20 border-2 border-red-400/50 rounded-xl p-5 mb-8">
@@ -70,7 +70,7 @@ export function DeleteOrganizationButton({ organizationId, organizationName }: D
               <div className="flex gap-4">
                 <Button
                   variant="outline"
-                  className="flex-1 h-14 text-lg border-2 border-white/40 text-white hover:bg-white/25 bg-white/15 font-semibold"
+                  className="flex-1 h-14 text-lg border-2 border-navy-border text-white hover:bg-navy-light bg-navy-light font-semibold"
                   onClick={() => setShowConfirm(false)}
                   disabled={loading}
                 >

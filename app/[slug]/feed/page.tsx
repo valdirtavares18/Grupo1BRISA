@@ -31,9 +31,7 @@ export default async function OrganizationFeedPage({ params }: PageProps) {
       style={
         backgroundStyle
           ? { background: backgroundStyle }
-          : {
-              background: `linear-gradient(to-br, ${primaryColor}, ${primaryColor}dd, ${primaryColor})`,
-            }
+          : { background: primaryColor }
       }
     >
       <div className="max-w-4xl mx-auto py-8 lg:py-12">
@@ -52,17 +50,17 @@ export default async function OrganizationFeedPage({ params }: PageProps) {
               <Logo className="scale-125 opacity-90" />
             </div>
           )}
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-2 drop-shadow-lg">
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-2">
             Feed - {organization.name}
           </h1>
-          <p className="text-white/90 text-base sm:text-lg">
+          <p className="text-white text-base sm:text-lg">
             Acompanhe as últimas novidades e eventos
           </p>
         </div>
 
         {/* Feed Posts */}
         {feeds.length === 0 ? (
-          <Card className="border-0 shadow-2xl bg-white/95 backdrop-blur-sm">
+          <Card className="border-0 shadow-md bg-white">
             <CardContent className="p-12 text-center">
               <MessageSquare className="w-16 h-16 text-muted-foreground mx-auto mb-4 opacity-50" />
               <h3 className="text-lg font-semibold mb-2">Nenhum post disponível</h3>
@@ -76,7 +74,7 @@ export default async function OrganizationFeedPage({ params }: PageProps) {
             {feeds.map((feed) => (
               <Card
                 key={feed.id}
-                className="border-0 shadow-2xl bg-white/95 backdrop-blur-sm overflow-hidden"
+                className="border-0 shadow-md bg-white overflow-hidden"
               >
                 <CardHeader>
                   <div className="flex items-start justify-between gap-4">
@@ -121,7 +119,7 @@ export default async function OrganizationFeedPage({ params }: PageProps) {
         <div className="mt-12 text-center">
           <a
             href={`/${params.slug}`}
-            className="inline-block px-6 py-3 rounded-xl bg-white/20 backdrop-blur-sm text-white hover:bg-white/30 transition text-sm font-semibold"
+            className="inline-block px-6 py-3 rounded-xl bg-navy-light text-white hover:bg-navy-light transition text-sm font-semibold border border-navy-border"
           >
             ← Voltar para página da organização
           </a>

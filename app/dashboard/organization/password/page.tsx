@@ -63,7 +63,7 @@ export default function OrgAdminChangePasswordPage() {
     <div className="p-4 lg:p-6 lg:py-8 max-w-2xl mx-auto">
         <Link 
           href="/dashboard/organization"
-          className="inline-flex items-center gap-2 text-white/80 hover:text-white transition mb-6"
+          className="inline-flex items-center gap-2 text-[#C8CDD5] hover:text-white transition mb-6"
         >
           <ArrowLeft className="w-4 h-4" />
           <span>Voltar</span>
@@ -71,10 +71,10 @@ export default function OrgAdminChangePasswordPage() {
 
         <div className="mb-6">
           <h1 className="text-3xl font-bold mb-2">Alterar Senha</h1>
-          <p className="text-muted-foreground">Mantenha sua conta segura</p>
+          <p className="text-[#8B92A0]">Mantenha sua conta segura</p>
         </div>
 
-        <Card className="border-0 shadow-lg">
+        <Card className="bg-navy-light border-navy-border shadow-md">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Lock className="w-5 h-5" />
@@ -145,7 +145,7 @@ export default function OrgAdminChangePasswordPage() {
               <Button type="submit" className="w-full" disabled={loading}>
                 {loading ? (
                   <>
-                    <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin mr-2" />
+                    <div className="w-5 h-5 border-2 border-navy-border border-t-white rounded-full animate-spin mr-2" />
                     Alterando...
                   </>
                 ) : (

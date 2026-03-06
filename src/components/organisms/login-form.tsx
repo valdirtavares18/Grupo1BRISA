@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, Button, Input } from '@/components/atoms'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, Button, Input, Logo } from '@/components/atoms'
 import { FormField } from '@/components/molecules'
 import Link from 'next/link'
 import { LogIn, Mail, Lock, AlertCircle, Smartphone, Shield } from 'lucide-react'
@@ -185,11 +185,8 @@ export function LoginForm() {
   }
 
   return (
-    <Card className="shadow-2xl border-0">
-      <CardHeader className="space-y-1.5 pb-6 p-6">
-        <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center mb-4">
-          {userType === 'admin' ? <LogIn className="w-6 h-6 text-white" /> : step === 'cpf' ? <LogIn className="w-6 h-6 text-white" /> : <Shield className="w-6 h-6 text-white" />}
-        </div>
+    <Card className="shadow-md border border-slate-200">
+      <CardHeader className="space-y-1.5 pb-6 pt-10 px-6 text-center">
         <CardTitle className="text-2xl sm:text-3xl lg:text-4xl text-gray-900 dark:text-gray-100">
           {userType === 'admin'
             ? 'Login Administrativo'

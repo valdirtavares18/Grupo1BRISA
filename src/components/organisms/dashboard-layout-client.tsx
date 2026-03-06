@@ -18,21 +18,22 @@ export const useSidebar = () => useContext(SidebarContext)
 interface DashboardLayoutClientProps {
   children: React.ReactNode
   userRole: 'SUPER_ADMIN' | 'ORG_ADMIN' | 'END_USER'
-  userEmail: string
+  userName: string
+  userPhotoUrl?: string
 }
 
 export function DashboardLayoutClient({
   children,
   userRole,
-  userEmail,
+  userName,
+  userPhotoUrl,
 }: DashboardLayoutClientProps) {
   const [isExpanded, setIsExpanded] = useState(false)
 
   return (
     <SidebarContext.Provider value={{ isExpanded, setIsExpanded }}>
-      <div className="flex min-h-screen bg-gradient-to-br from-primary via-blue-800 to-primary">
-        {/* Sidebar */}
-        <Sidebar userRole={userRole} userName={userEmail} />
+      <div className="flex min-h-screen bg-navy">
+        <Sidebar userRole={userRole} userName={userName} userPhotoUrl={userPhotoUrl} />
 
         {/* Main Content */}
         <main

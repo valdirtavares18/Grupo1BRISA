@@ -166,7 +166,7 @@ export default function EditEventPage({ params }: { params: { id: string } }) {
     return (
       <div className="p-4 py-12 text-center max-w-4xl mx-auto">
         <div className="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin mx-auto" />
-        <p className="text-white/80 mt-4">Carregando...</p>
+        <p className="text-[#C8CDD5] mt-4">Carregando...</p>
       </div>
     )
   }
@@ -175,7 +175,7 @@ export default function EditEventPage({ params }: { params: { id: string } }) {
     <div className="p-4 lg:p-6 lg:py-8 max-w-4xl mx-auto">
       <Link
         href={`/dashboard/organization/events/${params.id}`}
-        className="inline-flex items-center gap-2 text-white/80 hover:text-white transition mb-6"
+        className="inline-flex items-center gap-2 text-[#C8CDD5] hover:text-white transition mb-6"
       >
         <ArrowLeft className="w-4 h-4" />
         <span>Voltar para o evento</span>
@@ -183,10 +183,10 @@ export default function EditEventPage({ params }: { params: { id: string } }) {
 
       <div className="mb-6">
         <h1 className="text-3xl font-bold mb-2 text-white">Editar Evento</h1>
-        <p className="text-white/80">Atualize as informações do evento</p>
+        <p className="text-[#C8CDD5]">Atualize as informações do evento</p>
       </div>
 
-      <Card className="bg-white/10 border-white/20 backdrop-blur-sm shadow-xl">
+      <Card className="bg-navy-light border-navy-border shadow-md">
         <CardContent className="p-6 lg:p-8">
           <form onSubmit={handleSubmit} className="space-y-6">
             {error && (
@@ -394,7 +394,7 @@ export default function EditEventPage({ params }: { params: { id: string } }) {
               <Button type="submit" disabled={loading} className="w-full sm:flex-1">
                 {loading ? (
                   <>
-                    <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin mr-2" />
+                    <div className="w-5 h-5 border-2 border-navy-border border-t-white rounded-full animate-spin mr-2" />
                     Salvando...
                   </>
                 ) : (

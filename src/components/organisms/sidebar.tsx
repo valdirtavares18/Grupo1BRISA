@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { usePathname, useRouter } from 'next/navigation'
+import { usePathname } from 'next/navigation'
 import Link from 'next/link'
 import { useSidebar } from './dashboard-layout-client'
 import {
@@ -22,11 +22,12 @@ import {
   ChevronRight,
   Settings,
 } from 'lucide-react'
-import { Button } from '@/components/atoms'
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/atoms/avatar'
 
 interface SidebarProps {
   userRole?: 'SUPER_ADMIN' | 'ORG_ADMIN' | 'END_USER'
   userName?: string
+  userPhotoUrl?: string
 }
 
 interface NavItem {
@@ -36,11 +37,17 @@ interface NavItem {
   badge?: number
 }
 
-export function Sidebar({ userRole, userName }: SidebarProps) {
+function getInitials(name?: string): string {
+  if (!name) return '?'
+  const parts = name.trim().split(/\s+/)
+  if (parts.length >= 2) return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase()
+  return parts[0][0]?.toUpperCase() || '?'
+}
+
+export function Sidebar({ userRole, userName, userPhotoUrl }: SidebarProps) {
   const [isMobileOpen, setIsMobileOpen] = useState(false)
   const { isExpanded, setIsExpanded } = useSidebar()
   const pathname = usePathname()
-  const router = useRouter()
 
   // Mobile: fechar sidebar ao mudar de rota
   useEffect(() => {
@@ -88,13 +95,12 @@ export function Sidebar({ userRole, userName }: SidebarProps) {
           { label: 'Feed', href: '/dashboard/organization/feed', icon: MessageSquare },
           { label: 'Usuários', href: '/dashboard/organization/users', icon: Users },
           { label: 'Configurações', href: '/dashboard/organization/settings', icon: Settings },
-          { label: 'Segurança', href: '/dashboard/organization/password', icon: Lock },
         ]
 
       case 'END_USER':
         return [
           { label: 'Dashboard', href: '/dashboard/user', icon: LayoutDashboard },
-          { label: 'Histórico', href: '/dashboard/user/history', icon: History },
+          { label: 'Meu Histórico', href: '/dashboard/user/history', icon: History },
           { label: 'Buscar Eventos', href: '/events/search', icon: Search },
           { label: 'Escanear QR', href: '/scan', icon: QrCode },
           { label: 'Meu Perfil', href: '/dashboard/user/profile', icon: User },
@@ -121,7 +127,7 @@ export function Sidebar({ userRole, userName }: SidebarProps) {
       {/* Mobile: Botão para abrir sidebar */}
       <button
         onClick={() => setIsMobileOpen(!isMobileOpen)}
-        className="lg:hidden fixed top-4 left-4 z-50 p-2 rounded-lg bg-white/90 backdrop-blur-sm shadow-lg hover:bg-white transition"
+        className="lg:hidden fixed top-4 left-4 z-50 p-2 rounded-lg bg-white shadow-lg hover:bg-gray-50 transition"
         aria-label="Abrir menu"
       >
         {isMobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -138,14 +144,14 @@ export function Sidebar({ userRole, userName }: SidebarProps) {
       {/* Sidebar */}
       <aside
         className={`
-          fixed lg:sticky top-0 left-0 h-screen z-40
-          bg-white/95 backdrop-blur-sm border-r border-gray-200
+          fixed top-0 left-0 h-screen z-40
+          bg-white border-r border-gray-200
           transition-all duration-300 ease-in-out
           ${isMobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
           w-80
           lg:w-24
           ${isExpanded ? 'lg:w-80' : ''}
-          shadow-xl lg:shadow-none
+          shadow-md lg:shadow-none
           flex-shrink-0
         `}
         onMouseEnter={() => {
@@ -163,22 +169,42 @@ export function Sidebar({ userRole, userName }: SidebarProps) {
           {/* User Info */}
           {(userName || userRole) && (
             <div
-              className={`px-5 border-b border-gray-200 transition-all duration-300 ${isMobileOpen || isExpanded
-                ? 'opacity-100 py-5'
-                : 'opacity-0 h-0 py-0 overflow-hidden'
-                }`}
+              className={`border-b border-gray-200 transition-all duration-300 ${
+                isMobileOpen || isExpanded
+                  ? 'px-5 py-5'
+                  : 'px-0 py-4 flex justify-center'
+              }`}
             >
-              {userName && (
-                <p className="text-base font-semibold text-gray-900 truncate mb-2">{userName}</p>
-              )}
-              {userRole && (
-                <span className="inline-block px-3 py-1.5 rounded-full bg-slate-100 text-slate-700 text-sm font-semibold border border-slate-200">
-                  {userRole === 'SUPER_ADMIN'
-                    ? 'SUPER ADMIN'
-                    : userRole === 'ORG_ADMIN'
-                      ? 'ADMIN'
-                      : 'USUÁRIO'}
-                </span>
+              {isMobileOpen || isExpanded ? (
+                <div className="flex items-center gap-3">
+                  <Avatar className="h-10 w-10 flex-shrink-0">
+                    {userPhotoUrl && <AvatarImage src={userPhotoUrl} alt={userName || ''} />}
+                    <AvatarFallback className="bg-mustard/20 text-mustard font-semibold text-sm">
+                      {getInitials(userName)}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="min-w-0 flex-1">
+                    {userName && (
+                      <p className="text-sm font-semibold text-gray-900 truncate">{userName}</p>
+                    )}
+                    {userRole && (
+                      <span className="text-xs text-slate-500 font-medium">
+                        {userRole === 'SUPER_ADMIN'
+                          ? 'Super Admin'
+                          : userRole === 'ORG_ADMIN'
+                            ? 'Admin'
+                            : 'Usuário'}
+                      </span>
+                    )}
+                  </div>
+                </div>
+              ) : (
+                <Avatar className="h-9 w-9">
+                  {userPhotoUrl && <AvatarImage src={userPhotoUrl} alt={userName || ''} />}
+                  <AvatarFallback className="bg-mustard/20 text-mustard font-semibold text-xs">
+                    {getInitials(userName)}
+                  </AvatarFallback>
+                </Avatar>
               )}
             </div>
           )}
@@ -218,7 +244,7 @@ export function Sidebar({ userRole, userName }: SidebarProps) {
                           className={`
                             ml-auto px-3 py-1 rounded-full text-sm font-semibold
                             ${active
-                              ? 'bg-white/20 text-white'
+                              ? 'bg-slate-200 text-slate-900'
                               : 'bg-primary/10 text-primary'
                             }
                             ${isMobileOpen || isExpanded

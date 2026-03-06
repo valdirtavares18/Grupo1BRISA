@@ -88,15 +88,15 @@ export default async function EventPage({ params }: PageProps) {
   }
 
   return (
-    <div className="min-h-screen p-4">
+    <div className="min-h-screen p-4 bg-navy">
       <div className="max-w-2xl mx-auto py-8 lg:py-16">
         {/* Status Messages */}
         {isBeforeEvent && (
-          <div className="mb-6 p-4 rounded-xl bg-yellow-500/20 backdrop-blur-sm border border-yellow-500/30 flex items-start gap-3">
-            <Clock className="w-6 h-6 text-yellow-400 flex-shrink-0 mt-0.5" />
+          <div className="mb-6 p-4 rounded-xl bg-navy-light border border-mustard/20 flex items-start gap-3">
+            <Clock className="w-6 h-6 text-mustard flex-shrink-0 mt-0.5" />
             <div className="text-white">
               <p className="font-semibold">Evento ainda não começou</p>
-              <p className="text-sm text-white/80 mt-1">
+              <p className="text-sm text-[#C8CDD5] mt-1">
                 Volte no horário programado para registrar sua presença.
               </p>
             </div>
@@ -104,11 +104,11 @@ export default async function EventPage({ params }: PageProps) {
         )}
 
         {isPastEvent && (
-          <div className="mb-6 p-4 rounded-xl bg-red-500/20 backdrop-blur-sm border border-red-500/30 flex items-start gap-3">
+          <div className="mb-6 p-4 rounded-xl bg-navy-light border border-navy-border flex items-start gap-3">
             <AlertCircle className="w-6 h-6 text-red-400 flex-shrink-0 mt-0.5" />
             <div className="text-white">
               <p className="font-semibold">Evento encerrado</p>
-              <p className="text-sm text-white/80 mt-1">
+              <p className="text-sm text-[#C8CDD5] mt-1">
                 O registro de presença não está mais disponível.
               </p>
             </div>
@@ -116,11 +116,11 @@ export default async function EventPage({ params }: PageProps) {
         )}
 
         {isActiveEvent && presenceResult.success && (
-          <div className="mb-6 p-4 rounded-xl bg-green-500/20 backdrop-blur-sm border border-green-500/30 flex items-start gap-3">
+          <div className="mb-6 p-4 rounded-xl bg-navy-light border border-navy-border flex items-start gap-3">
             <CheckCircle2 className="w-6 h-6 text-green-400 flex-shrink-0 mt-0.5" />
             <div className="text-white">
               <p className="font-semibold">Presença registrada!</p>
-              <p className="text-sm text-white/80 mt-1">
+              <p className="text-sm text-[#C8CDD5] mt-1">
                 {isLoggedIn
                   ? 'Sua presença foi vinculada ao seu CPF.'
                   : 'Sua presença foi capturada. Faça login para vincular ao seu CPF.'}
@@ -130,11 +130,11 @@ export default async function EventPage({ params }: PageProps) {
         )}
 
         {isActiveEvent && !presenceResult.success && presenceResult.alreadyRegistered && (
-          <div className="mb-6 p-4 rounded-xl bg-blue-500/20 backdrop-blur-sm border border-blue-500/30 flex items-start gap-3">
-            <Info className="w-6 h-6 text-blue-400 flex-shrink-0 mt-0.5" />
+          <div className="mb-6 p-4 rounded-xl bg-navy-light border border-navy-border flex items-start gap-3">
+            <Info className="w-6 h-6 text-mustard flex-shrink-0 mt-0.5" />
             <div className="text-white">
               <p className="font-semibold">Você já está cadastrado!</p>
-              <p className="text-sm text-white/80 mt-1">
+              <p className="text-sm text-[#C8CDD5] mt-1">
                 Sua presença neste evento já foi registrada anteriormente.
               </p>
             </div>
@@ -142,20 +142,20 @@ export default async function EventPage({ params }: PageProps) {
         )}
 
         {isActiveEvent && !presenceResult.success && !presenceResult.alreadyRegistered && presenceResult.message && (
-          <div className="mb-6 p-4 rounded-xl bg-red-500/20 backdrop-blur-sm border border-red-500/30 flex items-start gap-3">
+          <div className="mb-6 p-4 rounded-xl bg-navy-light border border-navy-border flex items-start gap-3">
             <AlertCircle className="w-6 h-6 text-red-400 flex-shrink-0 mt-0.5" />
             <div className="text-white">
               <p className="font-semibold">Erro ao registrar presença</p>
-              <p className="text-sm text-white/80 mt-1">
+              <p className="text-sm text-[#C8CDD5] mt-1">
                 {presenceResult.message}
               </p>
             </div>
           </div>
         )}
 
-        <Card className="shadow-2xl border-0 overflow-hidden">
-          {/* Event Header with gradient */}
-          <div className="h-2 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500" />
+        <Card className="shadow-md border-0 overflow-hidden bg-navy-light border-navy-border">
+          {/* Event Header */}
+          <div className="h-2 bg-mustard" />
 
           <CardHeader className="pb-6">
             <div className="space-y-4">
@@ -182,37 +182,37 @@ export default async function EventPage({ params }: PageProps) {
           <CardContent className="space-y-6">
             {/* Event Details */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="p-4 rounded-xl bg-blue-50 border border-blue-200">
+              <div className="p-4 rounded-xl bg-navy border border-navy-border">
                 <div className="flex items-start gap-3">
-                  <Calendar className="w-5 h-5 text-blue-600 mt-0.5" />
+                  <Calendar className="w-5 h-5 text-mustard mt-0.5" />
                   <div>
-                    <p className="text-sm font-semibold text-blue-900">Início</p>
-                    <p className="text-blue-700 mt-1">
+                    <p className="text-sm font-semibold text-white">Início</p>
+                    <p className="text-[#C8CDD5] mt-1">
                       {startDate.toLocaleDateString('pt-BR', {
                         day: '2-digit',
                         month: 'long',
                         year: 'numeric'
                       })}
                     </p>
-                    <p className="text-sm text-blue-600">
+                    <p className="text-sm text-mustard">
                       {startDate.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
                     </p>
                   </div>
                 </div>
               </div>
 
-              <div className="p-4 rounded-xl bg-purple-50 border border-purple-200">
+              <div className="p-4 rounded-xl bg-navy border border-navy-border">
                 <div className="flex items-start gap-3">
-                  <Clock className="w-5 h-5 text-purple-600 mt-0.5" />
+                  <Clock className="w-5 h-5 text-mustard mt-0.5" />
                   <div>
-                    <p className="text-sm font-semibold text-purple-900">Término</p>
-                    <p className="text-purple-700 mt-1">
+                    <p className="text-sm font-semibold text-white">Término</p>
+                    <p className="text-[#C8CDD5] mt-1">
                       {endDate.toLocaleDateString('pt-BR', {
                         day: '2-digit',
                         month: 'long'
                       })}
                     </p>
-                    <p className="text-sm text-purple-600">
+                    <p className="text-sm text-mustard">
                       {endDate.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
                     </p>
                   </div>
@@ -222,15 +222,15 @@ export default async function EventPage({ params }: PageProps) {
 
             {/* Reward Box */}
             {event.reward && (
-              <div className="p-4 rounded-xl bg-gradient-to-r from-yellow-50 to-orange-50 border-2 border-yellow-300 shadow-lg">
+              <div className="p-4 rounded-xl bg-navy-light border-2 border-mustard/20 shadow-md">
                 <div className="flex items-start gap-3">
-                  <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center flex-shrink-0 shadow-md">
-                    <span className="text-white font-bold text-2xl">🎁</span>
+                  <div className="w-12 h-12 rounded-lg bg-mustard flex items-center justify-center flex-shrink-0">
+                    <span className="text-ink font-bold text-2xl">🎁</span>
                   </div>
                   <div className="flex-1">
-                    <p className="text-base font-bold text-yellow-900 mb-1">Sua Recompensa</p>
-                    <p className="text-yellow-800 text-lg">{event.reward}</p>
-                    <p className="text-xs text-yellow-700 mt-2 opacity-80">
+                    <p className="text-base font-bold text-mustard mb-1">Sua Recompensa</p>
+                    <p className="text-white text-lg">{event.reward}</p>
+                    <p className="text-xs text-[#8B92A0] mt-2">
                       Escaneie o QR Code e registre sua presença para garantir sua recompensa!
                     </p>
                   </div>
@@ -239,9 +239,9 @@ export default async function EventPage({ params }: PageProps) {
             )}
 
             {/* Info Box - mensagem conforme estado de login */}
-            <div className="p-4 rounded-xl bg-blue-50 border border-blue-200 flex items-start gap-3">
-              <Info className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
-              <div className="text-sm text-blue-900">
+            <div className="p-4 rounded-xl bg-navy border border-navy-border flex items-start gap-3">
+              <Info className="w-5 h-5 text-mustard flex-shrink-0 mt-0.5" />
+              <div className="text-sm text-white">
                 {hasValidSession ? (
                   isLoggedIn ? (
                     <>
@@ -305,12 +305,12 @@ export default async function EventPage({ params }: PageProps) {
             )}
 
             {!isPastEvent && isLoggedIn && presenceResult.success && !presenceResult.presenceLogId && (
-              <div className="p-4 rounded-xl bg-green-50 border border-green-200">
+              <div className="p-4 rounded-xl bg-navy border border-navy-border">
                 <div className="flex items-center gap-3">
-                  <CheckCircle2 className="w-6 h-6 text-green-600 flex-shrink-0" />
+                  <CheckCircle2 className="w-6 h-6 text-green-500 flex-shrink-0" />
                   <div>
-                    <p className="font-semibold text-green-900">Presença registrada!</p>
-                    <p className="text-sm text-green-700 mt-1">
+                    <p className="font-semibold text-white">Presença registrada!</p>
+                    <p className="text-sm text-[#C8CDD5] mt-1">
                       Sua presença foi registrada e vinculada ao seu CPF.
                     </p>
                   </div>

@@ -58,7 +58,7 @@ export function EditOrganizationForm({ organization }: EditOrganizationFormProps
   }
 
   return (
-    <Card className="border-0 shadow-2xl">
+    <Card className="border-0 shadow-md">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Building2 className="w-5 h-5" />
@@ -188,7 +188,7 @@ export function EditOrganizationForm({ organization }: EditOrganizationFormProps
             >
               {loading ? (
                 <>
-                  <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin mr-2" />
+                  <div className="w-4 h-4 border-2 border-navy-border border-t-white rounded-full animate-spin mr-2" />
                   Salvando...
                 </>
               ) : (

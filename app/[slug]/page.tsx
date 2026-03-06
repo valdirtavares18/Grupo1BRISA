@@ -41,7 +41,7 @@ export default async function OrganizationPage({ params }: PageProps) {
   const themeStyle = backgroundStyle
     ? { background: backgroundStyle }
     : {
-      background: `linear-gradient(to-br, ${primaryColor}, ${primaryColor}dd, ${primaryColor})`,
+      backgroundColor: primaryColor,
     }
 
   return (
@@ -54,7 +54,7 @@ export default async function OrganizationPage({ params }: PageProps) {
               <img
                 src={logoUrl}
                 alt={organization.name}
-                className="h-20 sm:h-24 mx-auto object-contain drop-shadow-lg"
+                className="h-20 sm:h-24 mx-auto object-contain"
               />
             </div>
           ) : (
@@ -62,10 +62,10 @@ export default async function OrganizationPage({ params }: PageProps) {
               <Logo className="scale-150 opacity-90" />
             </div>
           )}
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-4 drop-shadow-lg">
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-4">
             {organization.name}
           </h1>
-          <p className="text-white/90 text-lg sm:text-xl max-w-2xl mx-auto">
+          <p className="text-[#C8CDD5] text-lg sm:text-xl max-w-2xl mx-auto">
             Bem-vindo à nossa página oficial. Acompanhe nossos eventos e novidades.
           </p>
         </div>
@@ -74,14 +74,14 @@ export default async function OrganizationPage({ params }: PageProps) {
         <div className="flex flex-wrap justify-center gap-4 mb-12">
           <Link
             href={`/${params.slug}/events`}
-            className="px-6 py-3 rounded-xl bg-white/20 backdrop-blur-sm text-white hover:bg-white/30 transition shadow-lg flex items-center gap-2 font-semibold"
+            className="px-6 py-3 rounded-xl bg-navy-light border border-navy-border text-white hover:bg-navy-border transition shadow-sm flex items-center gap-2 font-semibold"
           >
             <Calendar className="w-5 h-5" />
             Eventos
           </Link>
           <Link
             href={`/${params.slug}/feed`}
-            className="px-6 py-3 rounded-xl bg-white/20 backdrop-blur-sm text-white hover:bg-white/30 transition shadow-lg flex items-center gap-2 font-semibold"
+            className="px-6 py-3 rounded-xl bg-navy-light border border-navy-border text-white hover:bg-navy-border transition shadow-sm flex items-center gap-2 font-semibold"
           >
             <MessageSquare className="w-5 h-5" />
             Feed
@@ -100,9 +100,9 @@ export default async function OrganizationPage({ params }: PageProps) {
                 return (
                   <Card
                     key={event.id}
-                    className="border-0 shadow-2xl bg-white/95 backdrop-blur-sm overflow-hidden hover:shadow-3xl transition"
+                    className="border border-slate-200 shadow-md bg-white overflow-hidden hover:shadow-lg transition"
                   >
-                    <div className="h-2 bg-gradient-to-r from-green-500 to-emerald-500" />
+                    <div className="h-2 bg-green-500" />
                     <CardHeader>
                       <div className="flex items-start justify-between gap-2 mb-2">
                         <CardTitle className="text-lg line-clamp-2 flex-1">{event.title}</CardTitle>
@@ -174,9 +174,9 @@ export default async function OrganizationPage({ params }: PageProps) {
                 return (
                   <Card
                     key={event.id}
-                    className="border-0 shadow-2xl bg-white/95 backdrop-blur-sm overflow-hidden hover:shadow-3xl transition"
+                    className="border border-slate-200 shadow-md bg-white overflow-hidden hover:shadow-lg transition"
                   >
-                    <div className="h-2 bg-gradient-to-r from-blue-500 to-cyan-500" />
+                    <div className="h-2 bg-mustard" />
                     <CardHeader>
                       <div className="flex items-start justify-between gap-2 mb-2">
                         <CardTitle className="text-lg line-clamp-2 flex-1">{event.title}</CardTitle>
@@ -231,7 +231,7 @@ export default async function OrganizationPage({ params }: PageProps) {
             {upcomingEvents.length > 6 && (
               <div className="text-center mt-6">
                 <Link href={`/${params.slug}/events`}>
-                  <Button variant="outline" size="lg" className="bg-white/20 backdrop-blur-sm text-white hover:bg-white/30 border-white/30">
+                  <Button variant="outline" size="lg" className="bg-navy-light text-white hover:bg-navy-border border-navy-border">
                     Ver Todos os Eventos
                     <ArrowRight className="w-5 h-5 ml-2" />
                   </Button>
@@ -248,7 +248,7 @@ export default async function OrganizationPage({ params }: PageProps) {
               <h2 className="text-2xl sm:text-3xl font-bold text-white">Últimas Publicações</h2>
               <Link
                 href={`/${params.slug}/feed`}
-                className="px-4 py-2 rounded-lg bg-white/20 backdrop-blur-sm text-white hover:bg-white/30 transition text-sm font-semibold flex items-center gap-2"
+                className="px-4 py-2 rounded-lg bg-navy-light border border-navy-border text-white hover:bg-navy-border transition text-sm font-semibold flex items-center gap-2"
               >
                 Ver Todos
                 <ArrowRight className="w-4 h-4" />
@@ -258,7 +258,7 @@ export default async function OrganizationPage({ params }: PageProps) {
               {feeds.slice(0, 4).map((feed: any) => (
                 <Card
                   key={feed.id}
-                  className="border-0 shadow-2xl bg-white/95 backdrop-blur-sm overflow-hidden hover:shadow-3xl transition"
+                  className="border border-slate-200 shadow-md bg-white overflow-hidden hover:shadow-lg transition"
                 >
                   <CardHeader>
                     <CardTitle className="text-lg line-clamp-2">{feed.title}</CardTitle>
@@ -293,7 +293,7 @@ export default async function OrganizationPage({ params }: PageProps) {
 
         {/* No Events Message */}
         {events.length === 0 && feeds.length === 0 && (
-          <Card className="border-0 shadow-2xl bg-white/95 backdrop-blur-sm">
+          <Card className="border border-slate-200 shadow-md bg-white">
             <CardContent className="p-12 text-center">
               <Calendar className="w-16 h-16 text-muted-foreground mx-auto mb-4 opacity-50" />
               <h3 className="text-lg font-semibold mb-2">Nenhum conteúdo disponível</h3>
@@ -306,12 +306,12 @@ export default async function OrganizationPage({ params }: PageProps) {
 
         {/* Footer */}
         <div className="mt-12 text-center">
-          <p className="text-white/80 text-sm mb-4">
+          <p className="text-[#C8CDD5] text-sm mb-4">
             © 2025 {organization.name}. Todos os direitos reservados.
           </p>
           <Link
             href="/events/search"
-            className="inline-block px-6 py-3 rounded-xl bg-white/20 backdrop-blur-sm text-white hover:bg-white/30 transition text-sm font-semibold"
+            className="inline-block px-6 py-3 rounded-xl bg-navy-light border border-navy-border text-white hover:bg-navy-border transition text-sm font-semibold"
           >
             Buscar Eventos
           </Link>

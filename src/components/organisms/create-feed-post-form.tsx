@@ -104,7 +104,7 @@ export function CreateFeedPostForm({
   }
 
   return (
-    <Card className="bg-white/10 border-white/20 backdrop-blur-sm shadow-xl">
+    <Card className="bg-navy-light border-navy-border shadow-md">
       <CardContent className="p-6">
         <form onSubmit={handleSubmit} className="space-y-6">
           {error && (
@@ -130,7 +130,7 @@ export function CreateFeedPostForm({
               placeholder="Título do post"
               required
               disabled={loading}
-              className="bg-white/10 border-white/30 text-white placeholder:text-white/50 focus:border-yellow-500 focus:ring-yellow-500"
+              className="bg-navy border-navy-border text-white placeholder:text-[#8B92A0] focus:border-mustard/50"
             />
           </FormField>
 
@@ -141,9 +141,9 @@ export function CreateFeedPostForm({
               placeholder="Escreva o conteúdo do post..."
               required
               disabled={loading}
-              className="w-full min-h-[200px] px-4 py-3 rounded-lg border border-white/30 bg-white/10 text-white placeholder:text-white/50 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
+              className="w-full min-h-[200px] px-4 py-3 rounded-lg border border-navy-border bg-navy text-white placeholder:text-[#8B92A0] text-sm resize-none focus:outline-none focus:ring-2 focus:ring-mustard focus:border-mustard"
             />
-            <p className="text-xs text-white/60 mt-1">
+            <p className="text-xs text-[#8B92A0] mt-1">
               {formData.content.length} caracteres
             </p>
           </FormField>
@@ -168,23 +168,23 @@ export function CreateFeedPostForm({
                 className="hidden"
                 disabled={loading || uploadingImage}
               />
-              <div className="flex items-center justify-center gap-2 p-4 border-2 border-dashed border-white/30 rounded-lg hover:border-white/50 transition">
+              <div className="flex items-center justify-center gap-2 p-4 border-2 border-dashed border-navy-border rounded-lg hover:border-mustard/20 transition">
                 {uploadingImage ? (
                   <>
-                    <Loader2 className="w-5 h-5 animate-spin text-white/70" />
-                    <span className="text-sm text-white/70">Enviando imagem...</span>
+                    <Loader2 className="w-5 h-5 animate-spin text-[#C8CDD5]" />
+                    <span className="text-sm text-[#C8CDD5]">Enviando imagem...</span>
                   </>
                 ) : (
                   <>
-                    <ImageIcon className="w-5 h-5 text-white/70" />
-                    <span className="text-sm text-white/70">
+                    <ImageIcon className="w-5 h-5 text-[#C8CDD5]" />
+                    <span className="text-sm text-[#C8CDD5]">
                       {formData.imageUrl ? 'Alterar Imagem' : 'Adicionar Imagem'}
                     </span>
                   </>
                 )}
               </div>
             </label>
-            <p className="text-xs text-white/60 mt-1">
+            <p className="text-xs text-[#8B92A0] mt-1">
               Máximo 5MB. Formatos: JPG, PNG
             </p>
           </FormField>
@@ -206,7 +206,7 @@ export function CreateFeedPostForm({
           <Button type="submit" className="w-full" size="lg" disabled={loading || uploadingImage}>
             {loading ? (
               <>
-                <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin mr-2" />
+                <div className="w-5 h-5 border-2 border-navy-border border-t-white rounded-full animate-spin mr-2" />
                 Salvando...
               </>
             ) : (

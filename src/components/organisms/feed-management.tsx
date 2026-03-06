@@ -93,7 +93,7 @@ export function FeedManagement({ organizationId }: FeedManagementProps) {
 
   if (error) {
     return (
-      <Card className="bg-white/10 border-white/20 backdrop-blur-sm">
+      <Card className="bg-navy-light border-navy-border">
         <CardContent className="p-6 text-center text-red-200">
           {error}
         </CardContent>
@@ -103,11 +103,11 @@ export function FeedManagement({ organizationId }: FeedManagementProps) {
 
   if (feeds.length === 0) {
     return (
-      <Card className="bg-white/10 border-white/20 backdrop-blur-sm">
+      <Card className="bg-navy-light border-navy-border">
         <CardContent className="p-12 text-center">
-          <MessageSquare className="w-16 h-16 text-white/40 mx-auto mb-4 opacity-50" />
+          <MessageSquare className="w-16 h-16 text-[#8B92A0] mx-auto mb-4 opacity-50" />
           <h3 className="text-lg font-semibold mb-2 text-white">Nenhum post no feed</h3>
-          <p className="text-white/80 mb-6">
+          <p className="text-[#C8CDD5] mb-6">
             Crie seu primeiro post para começar a divulgar sua organização
           </p>
         </CardContent>
@@ -118,7 +118,7 @@ export function FeedManagement({ organizationId }: FeedManagementProps) {
   return (
     <div className="space-y-4">
       {feeds.map((feed) => (
-        <Card key={feed.id} className="bg-white/10 border-white/20 backdrop-blur-sm hover:bg-white/15 hover:shadow-xl transition-all">
+        <Card key={feed.id} className="bg-navy-light border-navy-border hover:bg-navy-light hover:shadow-md transition-all">
           <CardHeader>
             <div className="flex items-start justify-between">
               <div className="flex-1">
@@ -141,7 +141,7 @@ export function FeedManagement({ organizationId }: FeedManagementProps) {
                     )}
                   </Badge>
                 </div>
-                <div className="flex items-center gap-2 text-sm text-white/70">
+                <div className="flex items-center gap-2 text-sm text-[#C8CDD5]">
                   <Calendar className="w-4 h-4" />
                   <span>
                     {formatDistanceToNow(new Date(feed.createdAt), {
@@ -165,11 +165,11 @@ export function FeedManagement({ organizationId }: FeedManagementProps) {
                 </div>
               )}
 
-              <p className="text-sm text-white/80 whitespace-pre-wrap line-clamp-3">
+              <p className="text-sm text-[#C8CDD5] whitespace-pre-wrap line-clamp-3">
                 {feed.content}
               </p>
 
-              <div className="flex flex-wrap gap-2 pt-4 border-t border-white/20">
+              <div className="flex flex-wrap gap-2 pt-4 border-t border-navy-border">
                 <Button
                   variant="outline"
                   size="sm"

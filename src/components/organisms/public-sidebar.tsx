@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { usePathname, useRouter } from 'next/navigation'
+import { usePathname } from 'next/navigation'
 import Link from 'next/link'
 import {
   Home,
@@ -11,7 +11,6 @@ import {
   Menu,
   X,
   ChevronRight,
-  ArrowLeft,
 } from 'lucide-react'
 import { Logo } from '@/components/atoms'
 
@@ -20,7 +19,6 @@ export function PublicSidebar() {
   const [isExpanded, setIsExpanded] = useState(false)
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const pathname = usePathname()
-  const router = useRouter()
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -70,15 +68,11 @@ export function PublicSidebar() {
     return pathname.startsWith(href)
   }
 
-  const handleBack = () => {
-    router.back()
-  }
-
   return (
     <>
       <button
         onClick={() => setIsMobileOpen(!isMobileOpen)}
-        className="lg:hidden fixed top-4 left-4 z-50 p-3 rounded-xl bg-white/10 backdrop-blur-md border border-white/20 shadow-xl hover:bg-white/20 transition text-white"
+        className="lg:hidden fixed top-4 left-4 z-50 p-3 rounded-xl bg-navy-light border border-navy-border shadow-md hover:bg-navy-border transition text-white"
         aria-label="Abrir menu"
       >
         {isMobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -86,7 +80,7 @@ export function PublicSidebar() {
 
       {isMobileOpen && (
         <div
-          className="lg:hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-40"
+          className="lg:hidden fixed inset-0 bg-black/60 z-40"
           onClick={() => setIsMobileOpen(false)}
         />
       )}
@@ -113,26 +107,12 @@ export function PublicSidebar() {
         }}
       >
         <div className="flex flex-col h-full">
-          <div className={`p-6 border-b border-white/10 transition-all duration-300 ${
+          <div className={`p-6 border-b border-navy-border transition-all duration-300 ${
             isMobileOpen || isExpanded 
               ? 'opacity-100' 
               : 'opacity-0 h-0 p-0 overflow-hidden'
           }`}>
             <Logo className="scale-110" />
-          </div>
-
-          <div className={`p-4 border-b border-white/10 transition-all duration-300 ${
-            isMobileOpen || isExpanded 
-              ? 'opacity-100' 
-              : 'opacity-0 h-0 p-0 overflow-hidden'
-          }`}>
-            <button
-              onClick={handleBack}
-              className="w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-white/10 hover:bg-white/20 text-white transition-colors"
-            >
-              <ArrowLeft className="w-5 h-5" />
-              <span className="font-medium">Voltar</span>
-            </button>
           </div>
 
           <nav className="flex-1 overflow-y-auto py-6">
@@ -151,14 +131,14 @@ export function PublicSidebar() {
                         ${(isMobileOpen || isExpanded) ? 'gap-4' : 'gap-0 justify-center'}
                         ${
                           active
-                            ? 'bg-gradient-to-r from-yellow-500/20 to-orange-600/20 text-yellow-300 border border-orange-400/30 shadow-lg'
-                            : 'text-white/70 hover:bg-white/10 hover:text-white border border-transparent'
+                            ? 'bg-mustard/10 text-mustard border border-mustard/20'
+                            : 'text-[#8B92A0] hover:bg-navy-light hover:text-white border border-transparent'
                         }
                       `}
                     >
                       <Icon
                         className={`flex-shrink-0 w-5 h-5 ${
-                          active ? 'text-yellow-300' : 'text-white/60'
+                          active ? 'text-mustard' : 'text-[#8B92A0]'
                         }`}
                       />
                       {(isMobileOpen || isExpanded) && (
@@ -168,7 +148,7 @@ export function PublicSidebar() {
                       )}
                       {active && (isMobileOpen || isExpanded) && (
                         <ChevronRight
-                          className="ml-auto w-4 h-4 text-yellow-300"
+                          className="ml-auto w-4 h-4 text-mustard"
                         />
                       )}
                     </Link>

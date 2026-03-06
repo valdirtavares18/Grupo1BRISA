@@ -41,9 +41,9 @@ export function QuickStatusToggle({ organizationId, initialStatus }: QuickStatus
     }
 
     return (
-        <div className="flex items-center justify-between p-4 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-colors">
+        <div className="flex items-center justify-between p-4 rounded-xl bg-navy-light border border-navy-border hover:bg-navy-light transition-colors">
             <div className="flex flex-col">
-                <span className="text-sm font-semibold text-white/70">Status da Organização</span>
+                <span className="text-sm font-semibold text-[#C8CDD5]">Status da Organização</span>
                 <div className="flex items-center gap-2 mt-1">
                     {isActive ? (
                         <Badge className="bg-emerald-500/20 text-emerald-400 border-emerald-500/30">

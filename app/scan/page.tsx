@@ -39,7 +39,7 @@ export default function ScanPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary via-blue-800 to-primary p-4">
+    <div className="min-h-screen bg-navy p-4">
       <div className="max-w-2xl mx-auto py-8 lg:py-12">
         {/* Header */}
         <div className="text-center mb-8">
@@ -49,13 +49,13 @@ export default function ScanPage() {
           <h1 className="text-3xl sm:text-4xl font-bold text-white mb-2">
             Escanear QR Code
           </h1>
-          <p className="text-white/80 text-base">
+          <p className="text-[#C8CDD5] text-base">
             Aponte a câmera para o QR code do evento
           </p>
         </div>
 
         {/* Scanner Card */}
-        <Card className="shadow-2xl border-0">
+        <Card className="shadow-md border-0">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Scan className="w-5 h-5" />
@@ -72,12 +72,12 @@ export default function ScanPage() {
         </Card>
 
         {/* Instructions */}
-        <Card className="mt-6 border-0 shadow-lg bg-white/50 backdrop-blur-sm">
+        <Card className="mt-6 border-0 shadow-md bg-navy-light">
           <CardContent className="p-6">
             <div className="space-y-3">
               <div className="flex items-start gap-3">
-                <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
-                  <QrCode className="w-4 h-4 text-primary" />
+                <div className="w-8 h-8 rounded-full bg-mustard/10 flex items-center justify-center flex-shrink-0">
+                  <QrCode className="w-4 h-4 text-mustard" />
                 </div>
                 <div>
                   <p className="font-semibold text-sm mb-1">Como usar</p>

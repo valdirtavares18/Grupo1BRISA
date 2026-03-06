@@ -178,7 +178,7 @@ export function RegisterWithPhoneForm({
 
   if (step === 'verify') {
     return (
-      <Card className="shadow-2xl border-0">
+      <Card className="shadow-md border-0">
         <CardContent className="p-6">
           <div className="space-y-4">
             <div className="text-center">
@@ -224,7 +224,7 @@ export function RegisterWithPhoneForm({
               <Button type="submit" className="w-full" size="lg" disabled={loading}>
                 {loading ? (
                   <>
-                    <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin mr-2" />
+                    <div className="w-5 h-5 border-2 border-navy-border border-t-white rounded-full animate-spin mr-2" />
                     Verificando...
                   </>
                 ) : (
@@ -252,11 +252,11 @@ export function RegisterWithPhoneForm({
   }
 
   return (
-    <Card className="shadow-2xl border-0">
+    <Card className="shadow-md border-0">
       <CardContent className="p-6">
         <div className="space-y-4">
           <div className="text-center mb-4">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center mx-auto mb-3">
+            <div className="w-12 h-12 rounded-xl bg-navy flex items-center justify-center mx-auto mb-3">
               <UserPlus className="w-6 h-6 text-white" />
             </div>
             <h2 className="text-xl font-bold">Criar Conta</h2>
@@ -406,7 +406,7 @@ export function RegisterWithPhoneForm({
             <Button type="submit" className="w-full" size="lg" disabled={loading}>
               {loading ? (
                 <>
-                  <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin mr-2" />
+                  <div className="w-5 h-5 border-2 border-navy-border border-t-white rounded-full animate-spin mr-2" />
                   Enviando código...
                 </>
               ) : (

@@ -154,9 +154,9 @@ export function RegisterForm() {
   }
 
   return (
-    <Card className="shadow-2xl border-0">
+    <Card className="shadow-md border border-slate-200">
       <CardHeader className="space-y-2 pb-8 p-8">
-        <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center mb-6">
+        <div className="w-16 h-16 rounded-xl bg-navy flex items-center justify-center mb-6">
           {step === 'cpf' ? <UserPlus className="w-8 h-8 text-white" /> : <Shield className="w-8 h-8 text-white" />}
         </div>
         <CardTitle className="text-3xl sm:text-4xl lg:text-5xl text-gray-900 dark:text-gray-100">

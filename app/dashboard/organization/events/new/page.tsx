@@ -8,7 +8,7 @@ export default function NewEventPage() {
     <div className="p-4 lg:p-6 lg:py-8 max-w-4xl mx-auto">
         <Link 
           href="/dashboard/organization"
-          className="inline-flex items-center gap-2 text-white/80 hover:text-white transition mb-6"
+          className="inline-flex items-center gap-2 text-[#C8CDD5] hover:text-white transition mb-6"
         >
           <ArrowLeft className="w-4 h-4" />
           <span>Voltar para eventos</span>

@@ -34,7 +34,7 @@ export function RegisterClient({
 
   if (registrationSuccess) {
     return (
-      <Card className="shadow-2xl border-0 border-green-200 bg-green-50">
+      <Card className="shadow-md border-0 border-green-200 bg-green-50">
         <CardContent className="p-6">
           <div className="text-center space-y-4">
             <div className="w-16 h-16 rounded-full bg-green-500 flex items-center justify-center mx-auto">

@@ -35,11 +35,11 @@ export default async function OrganizationUsersPage() {
 
         {/* Stats Grid */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-6 mb-8">
-          <Card className="bg-white/10 border-white/20 backdrop-blur-sm hover:bg-white/15 hover:scale-[1.02] hover:shadow-xl transition-all">
+          <Card className="bg-navy-light border-navy-border hover:bg-navy-light hover:scale-[1.02] hover:shadow-md transition-all">
             <CardContent className="p-4 lg:p-6">
               <div className="flex flex-col">
                 <div className="flex items-center justify-between mb-2">
-                  <p className="text-xs lg:text-sm font-medium text-white/70">Total</p>
+                  <p className="text-xs lg:text-sm font-medium text-[#C8CDD5]">Total</p>
                   <Users className="w-4 h-4 lg:w-5 lg:h-5 text-white" />
                 </div>
                 <p className="text-2xl lg:text-3xl font-bold text-white">{stats.total}</p>
@@ -47,45 +47,45 @@ export default async function OrganizationUsersPage() {
             </CardContent>
           </Card>
 
-          <Card className="bg-white/10 border-white/20 backdrop-blur-sm hover:bg-white/15 hover:scale-[1.02] hover:shadow-xl transition-all">
+          <Card className="bg-navy-light border-navy-border hover:bg-navy-light hover:scale-[1.02] hover:shadow-md transition-all">
             <CardContent className="p-4 lg:p-6">
               <div className="flex flex-col">
                 <div className="flex items-center justify-between mb-2">
-                  <p className="text-xs lg:text-sm font-medium text-white/70">Com Nome</p>
-                  <UserCheck className="w-4 h-4 lg:w-5 lg:h-5 text-white/80" />
+                  <p className="text-xs lg:text-sm font-medium text-[#C8CDD5]">Com Nome</p>
+                  <UserCheck className="w-4 h-4 lg:w-5 lg:h-5 text-[#C8CDD5]" />
                 </div>
                 <p className="text-2xl lg:text-3xl font-bold text-white">{stats.withName}</p>
               </div>
             </CardContent>
           </Card>
 
-          <Card className="bg-white/10 border-white/20 backdrop-blur-sm hover:bg-white/15 hover:scale-[1.02] hover:shadow-xl transition-all">
+          <Card className="bg-navy-light border-navy-border hover:bg-navy-light hover:scale-[1.02] hover:shadow-md transition-all">
             <CardContent className="p-4 lg:p-6">
               <div className="flex flex-col">
                 <div className="flex items-center justify-between mb-2">
-                  <p className="text-xs lg:text-sm font-medium text-white/70">Com Email</p>
-                  <Mail className="w-4 h-4 lg:w-5 lg:h-5 text-blue-300" />
+                  <p className="text-xs lg:text-sm font-medium text-[#C8CDD5]">Com Email</p>
+                  <Mail className="w-4 h-4 lg:w-5 lg:h-5 text-mustard" />
                 </div>
-                <p className="text-2xl lg:text-3xl font-bold text-blue-200">{stats.withEmail}</p>
+                <p className="text-2xl lg:text-3xl font-bold text-mustard">{stats.withEmail}</p>
               </div>
             </CardContent>
           </Card>
 
-          <Card className="bg-white/10 border-white/20 backdrop-blur-sm hover:bg-white/15 hover:scale-[1.02] hover:shadow-xl transition-all">
+          <Card className="bg-navy-light border-navy-border hover:bg-navy-light hover:scale-[1.02] hover:shadow-md transition-all">
             <CardContent className="p-4 lg:p-6">
               <div className="flex flex-col">
                 <div className="flex items-center justify-between mb-2">
-                  <p className="text-xs lg:text-sm font-medium text-white/70">Com Telefone</p>
-                  <Phone className="w-4 h-4 lg:w-5 lg:h-5 text-purple-300" />
+                  <p className="text-xs lg:text-sm font-medium text-[#C8CDD5]">Com Telefone</p>
+                  <Phone className="w-4 h-4 lg:w-5 lg:h-5 text-mustard" />
                 </div>
-                <p className="text-2xl lg:text-3xl font-bold text-purple-200">{stats.withPhone}</p>
+                <p className="text-2xl lg:text-3xl font-bold text-mustard">{stats.withPhone}</p>
               </div>
             </CardContent>
           </Card>
         </div>
 
         {/* Users List */}
-        <Card className="bg-white/10 border-white/20 backdrop-blur-sm hover:bg-white/15 hover:shadow-xl transition-all">
+        <Card className="bg-navy-light border-navy-border hover:bg-navy-light hover:shadow-md transition-all">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-white">
               <Users className="w-5 h-5" />
@@ -95,8 +95,8 @@ export default async function OrganizationUsersPage() {
           <CardContent>
             {endUsers.length === 0 ? (
               <div className="text-center py-12">
-                <Users className="w-16 h-16 text-white/40 mx-auto mb-4 opacity-50" />
-                <p className="text-white/80">
+                <Users className="w-16 h-16 text-[#8B92A0] mx-auto mb-4 opacity-50" />
+                <p className="text-[#C8CDD5]">
                   Nenhum usuário final registrou presença ainda
                 </p>
               </div>
@@ -105,7 +105,7 @@ export default async function OrganizationUsersPage() {
                 {endUsers.map((user) => (
                   <div
                     key={user.id}
-                    className="p-4 rounded-xl border-2 border-white/20 hover:border-white/40 hover:bg-white/10 transition-all"
+                    className="p-4 rounded-xl border-2 border-navy-border hover:border-navy-border hover:bg-navy-light transition-all"
                   >
                     <div className="flex flex-col sm:flex-row sm:items-center gap-4">
                       {/* Avatar e Info Principal */}
@@ -125,13 +125,13 @@ export default async function OrganizationUsersPage() {
                               {user.fullName || 'Sem nome cadastrado'}
                             </p>
                             {!user.fullName && (
-                              <Badge variant="secondary" className="text-xs bg-white/20 text-white/90 border-white/30">
+                              <Badge variant="secondary" className="text-xs bg-navy-light text-white border-navy-border">
                                 Sem nome
                               </Badge>
                             )}
                           </div>
                           
-                          <div className="flex flex-wrap items-center gap-3 text-sm text-white/70">
+                          <div className="flex flex-wrap items-center gap-3 text-sm text-[#C8CDD5]">
                             <span className="font-mono">CPF: {formatCPF(user.cpf)}</span>
                             
                             {user.email && (
@@ -154,14 +154,14 @@ export default async function OrganizationUsersPage() {
                       {/* Estatísticas */}
                       <div className="flex flex-col sm:items-end gap-2">
                         <div className="flex items-center gap-2">
-                          <TrendingUp className="w-4 h-4 text-yellow-400" />
+                          <TrendingUp className="w-4 h-4 text-mustard" />
                           <span className="text-sm font-semibold text-white">
                             {user.totalPresences} {user.totalPresences === 1 ? 'presença' : 'presenças'}
                           </span>
                         </div>
                         
                         {user.lastPresence && (
-                          <div className="flex items-center gap-1 text-xs text-white/60">
+                          <div className="flex items-center gap-1 text-xs text-[#8B92A0]">
                             <Calendar className="w-3 h-3" />
                             Última: {new Date(user.lastPresence).toLocaleDateString('pt-BR')}
                           </div>

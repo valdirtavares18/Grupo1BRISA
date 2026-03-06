@@ -4,25 +4,25 @@
 
 @layer base {
   :root {
-    --background: 222 47% 11%;
-    --foreground: 210 40% 98%;
+    --background: 0 0% 100%;
+    --foreground: 220 14% 10%;
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 220 14% 10%;
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-    --primary: 217 100% 12%;
+    --popover-foreground: 220 14% 10%;
+    --primary: 222 80% 10%;
     --primary-foreground: 0 0% 100%;
     --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary-foreground: 220 14% 10%;
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
     --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent-foreground: 220 14% 10%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 217 100% 12%;
+    --ring: 43 82% 58%;
     --radius: 0.5rem;
   }
 
@@ -56,4 +56,240 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+/* ============================================================
+   Dark-Context Contrast Overrides
+   Ensures WCAG 2.1 contrast for elements inside dark containers
+   (bg-navy, bg-navy-light) used by dashboard and public layouts.
+   White-card reset prevents these from leaking into light Cards.
+   ============================================================ */
+
+/* --- Default text color for dark containers --- */
+.bg-navy,
+.bg-navy-light {
+  color: #F8F9FA;
+}
+
+/* --- Labels & dark text forced to light --- */
+.bg-navy label,
+.bg-navy-light label,
+.bg-navy .text-gray-900,
+.bg-navy-light .text-gray-900,
+.bg-navy .text-gray-700,
+.bg-navy-light .text-gray-700,
+.bg-navy .text-gray-600,
+.bg-navy-light .text-gray-600,
+.bg-navy .text-slate-900,
+.bg-navy-light .text-slate-900,
+.bg-navy .text-ink,
+.bg-navy-light .text-ink {
+  color: #F8F9FA !important;
+}
+
+/* --- Secondary dark text forced to readable light --- */
+.bg-navy .text-slate-700,
+.bg-navy-light .text-slate-700,
+.bg-navy .text-slate-600,
+.bg-navy-light .text-slate-600,
+.bg-navy .text-slate-500,
+.bg-navy-light .text-slate-500,
+.bg-navy .text-gray-500,
+.bg-navy-light .text-gray-500 {
+  color: #CBD5E0 !important;
+}
+
+/* --- Muted/helper text inside dark containers --- */
+.bg-navy .text-muted-foreground,
+.bg-navy-light .text-muted-foreground {
+  color: #CBD5E0 !important;
+}
+
+/* --- Primary accent on dark containers (too dark navy otherwise) --- */
+.bg-navy .text-primary,
+.bg-navy-light .text-primary {
+  color: #EBC03F !important;
+}
+
+.bg-navy .border-primary,
+.bg-navy-light .border-primary {
+  border-color: #EBC03F !important;
+}
+
+/* --- Inputs, selects, textareas inside dark containers --- */
+.bg-navy input:not([type="checkbox"]):not([type="radio"]),
+.bg-navy-light input:not([type="checkbox"]):not([type="radio"]),
+.bg-navy select,
+.bg-navy-light select,
+.bg-navy textarea,
+.bg-navy-light textarea {
+  background-color: #1E293B !important;
+  border-color: #334155 !important;
+  color: #F8F9FA !important;
+}
+
+.bg-navy input::placeholder,
+.bg-navy-light input::placeholder,
+.bg-navy textarea::placeholder,
+.bg-navy-light textarea::placeholder {
+  color: #A0AEC0 !important;
+}
+
+/* --- Focus ring offset on dark containers --- */
+.bg-navy input:focus-visible,
+.bg-navy-light input:focus-visible,
+.bg-navy select:focus-visible,
+.bg-navy-light select:focus-visible,
+.bg-navy textarea:focus-visible,
+.bg-navy-light textarea:focus-visible {
+  --tw-ring-offset-color: #0F172A !important;
+}
+
+/* --- Dividers/borders inside dark containers --- */
+.bg-navy hr,
+.bg-navy-light hr {
+  border-color: #1E293B !important;
+}
+
+/* ============================================================
+   Light-bg Reset
+   Any element with a light background class resets its inherited
+   text color to dark, preventing light-on-light from dark parents.
+   This handles both the element itself AND its descendants.
+   ============================================================ */
+
+/* --- Base color reset on light-bg elements (overrides inherited color) --- */
+.bg-white,
+.bg-slate-50,
+.bg-gray-50,
+.bg-slate-100,
+.bg-gray-100 {
+  color: #1a1c1e;
+}
+
+/* --- Descendant selectors: children inside light-bg elements --- */
+.bg-white label,
+.bg-slate-50 label,
+.bg-slate-100 label,
+.bg-gray-50 label,
+.bg-gray-100 label,
+.bg-white .text-gray-900,
+.bg-white .text-slate-900,
+.bg-white .text-ink {
+  color: #1a1c1e !important;
+}
+
+.bg-white .text-gray-700,
+.bg-white .text-slate-700,
+.bg-slate-100 .text-slate-700,
+.bg-slate-50 .text-slate-700,
+.bg-gray-50 .text-slate-700,
+.bg-gray-100 .text-gray-700 {
+  color: #334155 !important;
+}
+
+.bg-white .text-gray-600,
+.bg-white .text-slate-600,
+.bg-white .text-gray-500,
+.bg-white .text-slate-500,
+.bg-slate-100 .text-slate-600,
+.bg-slate-50 .text-slate-600,
+.bg-slate-100 .text-slate-500,
+.bg-slate-50 .text-slate-500,
+.bg-gray-50 .text-slate-600,
+.bg-gray-100 .text-gray-600 {
+  color: #475569 !important;
+}
+
+.bg-white .text-muted-foreground,
+.bg-slate-50 .text-muted-foreground,
+.bg-gray-50 .text-muted-foreground,
+.bg-slate-100 .text-muted-foreground,
+.bg-gray-100 .text-muted-foreground {
+  color: hsl(215.4 16.3% 46.9%) !important;
+}
+
+.bg-slate-100 .text-slate-900,
+.bg-slate-50 .text-slate-900,
+.bg-gray-50 .text-slate-900,
+.bg-gray-50 .text-gray-900,
+.bg-gray-100 .text-gray-900 {
+  color: #1a1c1e !important;
+}
+
+.bg-white input:not([type="checkbox"]):not([type="radio"]),
+.bg-white select,
+.bg-white textarea,
+.bg-slate-50 input:not([type="checkbox"]):not([type="radio"]),
+.bg-slate-100 input:not([type="checkbox"]):not([type="radio"]),
+.bg-gray-50 input:not([type="checkbox"]):not([type="radio"]) {
+  background-color: #ffffff !important;
+  border-color: #e2e8f0 !important;
+  color: #1a1c1e !important;
+}
+
+.bg-white input::placeholder,
+.bg-white textarea::placeholder {
+  color: #94a3b8 !important;
+}
+
+/* ============================================================
+   Same-element compound selectors (no space = same element)
+   Fixes outline buttons and badges that have BOTH a light bg
+   AND a dark text class on the same DOM element. Descendant
+   selectors above can't match these -- compound selectors can.
+   These MUST come last to override dark-context rules.
+   ============================================================ */
+
+.bg-white.text-slate-700,
+.bg-white.text-gray-700 {
+  color: #334155 !important;
+}
+
+.bg-white.text-slate-900,
+.bg-white.text-gray-900,
+.bg-white.text-ink {
+  color: #1a1c1e !important;
+}
+
+.bg-white.text-slate-600,
+.bg-white.text-gray-600,
+.bg-white.text-slate-500,
+.bg-white.text-gray-500 {
+  color: #475569 !important;
+}
+
+.bg-white.text-muted-foreground {
+  color: hsl(215.4 16.3% 46.9%) !important;
+}
+
+/* Primary color resets for light contexts */
+.bg-white .text-primary {
+  color: #001F3F !important;
+}
+
+.bg-white .border-primary {
+  border-color: #001F3F !important;
+}
+
+.bg-slate-50.text-muted-foreground,
+.bg-gray-50.text-muted-foreground,
+.bg-slate-100.text-muted-foreground,
+.bg-gray-100.text-muted-foreground {
+  color: hsl(215.4 16.3% 46.9%) !important;
+}
+
+.bg-slate-100.text-slate-700,
+.bg-slate-50.text-slate-700,
+.bg-gray-50.text-slate-700,
+.bg-gray-100.text-gray-700,
+.bg-gray-100.text-gray-600 {
+  color: #334155 !important;
+}
+
+.bg-slate-100.text-slate-900,
+.bg-slate-50.text-slate-900,
+.bg-gray-50.text-gray-900,
+.bg-gray-100.text-gray-900 {
+  color: #1a1c1e !important;
 }

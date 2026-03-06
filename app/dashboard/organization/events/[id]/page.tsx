@@ -53,7 +53,7 @@ export default async function EventDetailsPage({ params }: PageProps) {
     <div className="p-4 lg:p-6 lg:py-8">
       <Link
         href="/dashboard/organization"
-        className="inline-flex items-center gap-2 text-white/80 hover:text-white transition mb-6"
+        className="inline-flex items-center gap-2 text-[#C8CDD5] hover:text-white transition mb-6"
       >
         <ArrowLeft className="w-4 h-4" />
         <span>Voltar para eventos</span>
@@ -79,14 +79,14 @@ export default async function EventDetailsPage({ params }: PageProps) {
           )}
         </div>
         {event.description && (
-          <p className="text-white/80">{event.description}</p>
+          <p className="text-[#C8CDD5]">{event.description}</p>
         )}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
         {/* Event Info */}
         <div className="space-y-6">
-          <Card className="bg-white/10 border-white/20 backdrop-blur-sm hover:bg-white/15 hover:scale-[1.01] hover:shadow-xl transition-all">
+          <Card className="bg-navy-light border-navy-border hover:bg-navy-light hover:scale-[1.01] hover:shadow-md transition-all">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-white">
                 <Calendar className="w-5 h-5" />
@@ -94,12 +94,12 @@ export default async function EventDetailsPage({ params }: PageProps) {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="p-4 rounded-lg bg-white/10 border border-white/20">
+              <div className="p-4 rounded-lg bg-navy-light border border-navy-border">
                 <div className="flex items-start gap-3">
-                  <Calendar className="w-5 h-5 text-white/60 mt-0.5" />
+                  <Calendar className="w-5 h-5 text-[#8B92A0] mt-0.5" />
                   <div>
                     <p className="text-sm font-semibold text-white">Data de Início</p>
-                    <p className="text-white/90 mt-1">
+                    <p className="text-white mt-1">
                       {startDate.toLocaleDateString('pt-BR', {
                         weekday: 'long',
                         year: 'numeric',
@@ -107,19 +107,19 @@ export default async function EventDetailsPage({ params }: PageProps) {
                         day: 'numeric'
                       })}
                     </p>
-                    <p className="text-sm text-white/80 mt-1">
+                    <p className="text-sm text-[#C8CDD5] mt-1">
                       {startDate.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
                     </p>
                   </div>
                 </div>
               </div>
 
-              <div className="p-4 rounded-lg bg-white/10 border border-white/20">
+              <div className="p-4 rounded-lg bg-navy-light border border-navy-border">
                 <div className="flex items-start gap-3">
-                  <Clock className="w-5 h-5 text-white/60 mt-0.5" />
+                  <Clock className="w-5 h-5 text-[#8B92A0] mt-0.5" />
                   <div>
                     <p className="text-sm font-semibold text-white">Data de Término</p>
-                    <p className="text-white/90 mt-1">
+                    <p className="text-white mt-1">
                       {endDate.toLocaleDateString('pt-BR', {
                         weekday: 'long',
                         year: 'numeric',
@@ -127,17 +127,17 @@ export default async function EventDetailsPage({ params }: PageProps) {
                         day: 'numeric'
                       })}
                     </p>
-                    <p className="text-sm text-white/80 mt-1">
+                    <p className="text-sm text-[#C8CDD5] mt-1">
                       {endDate.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
                     </p>
                   </div>
                 </div>
               </div>
 
-              <div className="p-4 rounded-lg bg-white/10 border border-white/20">
+              <div className="p-4 rounded-lg bg-navy-light border border-navy-border">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <Users className="w-5 h-5 text-white/60" />
+                    <Users className="w-5 h-5 text-[#8B92A0]" />
                     <div>
                       <p className="text-sm font-semibold text-white">Presenças Registradas</p>
                       <p className="text-2xl font-bold text-white mt-1">
@@ -147,7 +147,7 @@ export default async function EventDetailsPage({ params }: PageProps) {
                   </div>
                   <div className="flex gap-2">
                     <Link href={`/dashboard/organization/events/${event.id}/presences`}>
-                      <div className="px-3 py-2 rounded-lg bg-gradient-to-r from-yellow-500 to-orange-600 text-white hover:from-yellow-600 hover:to-orange-700 transition flex items-center gap-2 text-sm font-semibold">
+                      <div className="px-3 py-2 rounded-lg bg-mustard text-ink hover:bg-mustard transition flex items-center gap-2 text-sm font-semibold">
                         <Eye className="w-4 h-4" />
                         <span className="hidden sm:inline">Ver Presenças</span>
                       </div>
@@ -158,14 +158,14 @@ export default async function EventDetailsPage({ params }: PageProps) {
               </div>
 
               {event.reward && (
-                <div className="p-4 rounded-lg bg-white/10 border border-white/20">
+                <div className="p-4 rounded-lg bg-navy-light border border-navy-border">
                   <div className="flex items-start gap-3">
-                    <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center flex-shrink-0">
-                      <Gift className="w-5 h-5 text-white" />
+                    <div className="w-10 h-10 rounded-lg bg-mustard/10 border border-mustard/20 flex items-center justify-center flex-shrink-0">
+                      <Gift className="w-5 h-5 text-mustard" />
                     </div>
                     <div>
                       <p className="text-sm font-semibold text-white mb-1">Recompensa</p>
-                      <p className="text-white/90">{event.reward}</p>
+                      <p className="text-white">{event.reward}</p>
                     </div>
                   </div>
                 </div>
@@ -203,7 +203,7 @@ export default async function EventDetailsPage({ params }: PageProps) {
 
         {/* QR Code */}
         <div className="space-y-6">
-          <Card className="bg-white/10 border-white/20 backdrop-blur-sm hover:bg-white/15 hover:scale-[1.01] hover:shadow-xl transition-all">
+          <Card className="bg-navy-light border-navy-border hover:bg-navy-light hover:scale-[1.01] hover:shadow-md transition-all">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-white">
                 <QrCode className="w-5 h-5" />
@@ -212,8 +212,8 @@ export default async function EventDetailsPage({ params }: PageProps) {
             </CardHeader>
             <CardContent>
               <QRCodeViewer url={qrCodeUrl} eventTitle={event.title} />
-              <div className="mt-4 p-3 rounded-lg bg-white/10 border border-white/20">
-                <p className="text-xs text-white/90">
+              <div className="mt-4 p-3 rounded-lg bg-navy-light border border-navy-border">
+                <p className="text-xs text-white">
                   <strong>Dica:</strong> Baixe e imprima este QR Code para distribuir no evento.
                   Ao escanear, os participantes registram presença automaticamente.
                 </p>

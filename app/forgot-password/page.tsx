@@ -78,11 +78,11 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-br from-primary via-blue-800 to-primary">
+    <div className="min-h-screen flex flex-col bg-navy">
       <div className="container mx-auto px-4 py-6">
         <Link 
           href="/login"
-          className="inline-flex items-center gap-2 text-white/80 hover:text-white transition"
+          className="inline-flex items-center gap-2 text-[#C8CDD5] hover:text-white transition"
         >
           <ArrowLeft className="w-4 h-4" />
           <span>Voltar ao login</span>
@@ -91,9 +91,9 @@ export default function ForgotPasswordPage() {
       
       <div className="flex-1 flex items-center justify-center px-4 pb-16">
         <div className="w-full max-w-md">
-          <Card className="shadow-2xl border-0">
+          <Card className="shadow-md bg-white border border-slate-200">
             <CardHeader className="space-y-1 pb-6">
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center mb-4">
+              <div className="w-12 h-12 rounded-xl bg-navy flex items-center justify-center mb-4">
                 <KeyRound className="w-6 h-6 text-white" />
               </div>
               <CardTitle className="text-2xl sm:text-3xl">
@@ -134,7 +134,7 @@ export default function ForgotPasswordPage() {
                   <Button type="submit" className="w-full" size="lg" disabled={loading}>
                     {loading ? (
                       <>
-                        <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin mr-2" />
+                        <div className="w-5 h-5 border-2 border-navy-border border-t-white rounded-full animate-spin mr-2" />
                         Processando...
                       </>
                     ) : (
@@ -183,7 +183,7 @@ export default function ForgotPasswordPage() {
                   <Button type="submit" className="w-full" size="lg" disabled={loading}>
                     {loading ? (
                       <>
-                        <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin mr-2" />
+                        <div className="w-5 h-5 border-2 border-navy-border border-t-white rounded-full animate-spin mr-2" />
                         Salvando...
                       </>
                     ) : (

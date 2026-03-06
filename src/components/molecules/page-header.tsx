@@ -12,7 +12,7 @@ export function PageHeader({ title, description, action }: PageHeaderProps) {
       <div>
         <h1 className="text-3xl lg:text-4xl font-bold tracking-tight text-white mb-2">{title}</h1>
         {description && (
-          <p className="text-white/90 text-base lg:text-lg">{description}</p>
+          <p className="text-white text-base lg:text-lg">{description}</p>
         )}
       </div>
       {action && <div>{action}</div>}
