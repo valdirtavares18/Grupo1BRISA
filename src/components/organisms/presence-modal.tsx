@@ -1,8 +1,8 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Card, CardContent, CardHeader, CardTitle, Badge, Button } from '@/components/atoms'
-import { X, Users, UserCheck, UserX, Clock } from 'lucide-react'
+import { Card, CardContent, Badge, Button } from '@/components/atoms'
+import { X, Users, UserCheck, Gift } from 'lucide-react'
 import * as Dialog from '@radix-ui/react-dialog'
 
 interface PresenceModalProps {
@@ -19,14 +19,20 @@ interface PresenceUser {
   email: string
   profile: string
   accessTimestamp: string
+  prizeDrawnAt?: string | null
 }
 
 export function PresenceModal({ eventId, isOpen, onClose }: PresenceModalProps) {
   const [presences, setPresences] = useState<PresenceUser[]>([])
   const [loading, setLoading] = useState(false)
+  const [drawing, setDrawing] = useState(false)
+  const [lastDrawn, setLastDrawn] = useState<PresenceUser | null>(null)
+  const [drawError, setDrawError] = useState('')
 
   useEffect(() => {
     if (isOpen && eventId) {
+      setLastDrawn(null)
+      setDrawError('')
       fetchPresences()
     }
   }, [isOpen, eventId])
@@ -43,6 +49,31 @@ export function PresenceModal({ eventId, isOpen, onClose }: PresenceModalProps) 
       console.error('Erro ao buscar presenças:', err)
     } finally {
       setLoading(false)
+    }
+  }
+
+  const eligibleCount = presences.filter((p) => !p.prizeDrawnAt).length
+
+  const handleDraw = async () => {
+    if (eligibleCount === 0) return
+    setDrawing(true)
+    setDrawError('')
+    try {
+      const res = await fetch(`/api/presence/event/${eventId}/draw`, {
+        method: 'POST',
+        credentials: 'include',
+      })
+      const data = await res.json()
+      if (res.ok) {
+        setLastDrawn(data)
+        await fetchPresences()
+      } else {
+        setDrawError(data.error || 'Erro ao sortear')
+      }
+    } catch (err) {
+      setDrawError('Erro ao sortear. Tente novamente.')
+    } finally {
+      setDrawing(false)
     }
   }
 
@@ -74,35 +105,96 @@ export function PresenceModal({ eventId, isOpen, onClose }: PresenceModalProps) 
               <p className="text-muted-foreground">Nenhuma presença confirmada ainda</p>
             </div>
           ) : (
-            <div className="space-y-3">
-              {presences.map((presence) => (
-                <Card key={presence.id} className="border-0 shadow-sm">
-                  <CardContent className="p-4">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3 flex-1">
-                        <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-                          <UserCheck className="w-5 h-5 text-primary" />
-                        </div>
-                        <div className="flex-1">
-                          <p className="font-semibold">{presence.fullName || 'Sem nome'}</p>
-                          <div className="flex flex-wrap gap-2 text-xs text-muted-foreground mt-1">
-                            <span>CPF: {presence.cpf}</span>
-                            {presence.phone && <span>• Tel: {presence.phone}</span>}
-                            {presence.email && <span>• Email: {presence.email}</span>}
-                            <span>• {new Date(presence.accessTimestamp).toLocaleString('pt-BR')}</span>
+            <>
+              {/* Sorteador */}
+              <div className="mb-6 p-4 rounded-xl bg-primary/5 border border-primary/20">
+                <div className="flex flex-wrap items-center justify-between gap-4">
+                  <div>
+                    <p className="font-semibold text-base">Sortear brinde</p>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      {eligibleCount} {eligibleCount === 1 ? 'participante elegível' : 'participantes elegíveis'}
+                    </p>
+                  </div>
+                  <Button
+                    onClick={handleDraw}
+                    disabled={drawing || eligibleCount === 0}
+                    className="gap-2"
+                  >
+                    {drawing ? (
+                      <>
+                        <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                        Sorteando...
+                      </>
+                    ) : (
+                      <>
+                        <Gift className="w-4 h-4" />
+                        Sortear
+                      </>
+                    )}
+                  </Button>
+                </div>
+                {drawError && (
+                  <p className="text-sm text-red-600 mt-2">{drawError}</p>
+                )}
+                {lastDrawn && (
+                  <div className="mt-4 p-4 rounded-lg bg-green-50 border border-green-200">
+                    <p className="text-sm font-medium text-green-800 mb-1">Ganhador sorteado:</p>
+                    <p className="font-bold text-lg text-green-900">{lastDrawn.fullName}</p>
+                    <div className="text-sm text-green-700 mt-1">
+                      {lastDrawn.cpf && <span>CPF: {lastDrawn.cpf}</span>}
+                      {lastDrawn.email && <span className="ml-2">• {lastDrawn.email}</span>}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Lista de usuários */}
+              <div className="space-y-3">
+                {presences.map((presence) => {
+                  const isDrawn = !!presence.prizeDrawnAt
+                  return (
+                    <Card
+                      key={presence.id}
+                      className={`border-0 shadow-sm ${isDrawn ? 'opacity-60' : ''}`}
+                    >
+                      <CardContent className="p-4">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-3 flex-1">
+                            <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                              <UserCheck className="w-5 h-5 text-primary" />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <p className="font-semibold">{presence.fullName || 'Sem nome'}</p>
+                              <div className="flex flex-wrap gap-2 text-xs text-muted-foreground mt-1">
+                                <span>CPF: {presence.cpf}</span>
+                                {presence.phone && <span>• Tel: {presence.phone}</span>}
+                                {presence.email && <span>• Email: {presence.email}</span>}
+                                <span>• {new Date(presence.accessTimestamp).toLocaleString('pt-BR')}</span>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-2 ml-2 flex-shrink-0">
+                            {isDrawn && (
+                              <Badge variant="secondary" className="bg-green-100 text-green-800 border-green-200">
+                                Sorteado
+                              </Badge>
+                            )}
+                            {presence.profile && !isDrawn && (
+                              <Badge variant="default">
+                                {presence.profile}
+                              </Badge>
+                            )}
+                            {presence.profile && isDrawn && (
+                              <Badge variant="outline">{presence.profile}</Badge>
+                            )}
                           </div>
                         </div>
-                      </div>
-                      {presence.profile && (
-                        <Badge variant="default" className="ml-2">
-                          {presence.profile}
-                        </Badge>
-                      )}
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
+                      </CardContent>
+                    </Card>
+                  )
+                })}
+              </div>
+            </>
           )}
 
           <div className="mt-6 flex justify-end">

@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, Button, Input, Logo } from '@/components/atoms'
 import { FormField } from '@/components/molecules'
 import Link from 'next/link'
-import { LogIn, Mail, Lock, AlertCircle, Smartphone, Shield } from 'lucide-react'
+import { LogIn, Mail, Lock, AlertCircle, Shield } from 'lucide-react'
 
 type LoginStep = 'cpf' | 'code' | 'admin'
 type UserType = 'end_user' | 'admin'
@@ -14,7 +14,7 @@ export function LoginForm() {
   const [userType, setUserType] = useState<UserType>('end_user')
   const [step, setStep] = useState<LoginStep>('cpf')
   const [cpf, setCpf] = useState('')
-  const [phone, setPhone] = useState('')
+  const [contactEmail, setContactEmail] = useState('')
   const [code, setCode] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -22,7 +22,6 @@ export function LoginForm() {
   const [loading, setLoading] = useState(false)
   const [sendingCode, setSendingCode] = useState(false)
   const [codeSent, setCodeSent] = useState(false)
-  const [channel, setChannel] = useState<'sms' | 'whatsapp'>('sms')
   const router = useRouter()
 
   const formatCPF = (value: string) => {
@@ -33,67 +32,51 @@ export function LoginForm() {
     return value
   }
 
-  const formatPhone = (value: string) => {
-    const numbers = value.replace(/\D/g, '')
-    if (numbers.length <= 11) {
-      return numbers.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3')
-    }
-    return value
-  }
-
   const handleCpfSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
 
-    if (!cpf || !phone) {
-      setError('CPF e telefone são obrigatórios')
+    const email = contactEmail.trim().toLowerCase()
+    if (!cpf || !email) {
+      setError('CPF e email são obrigatórios')
       return
     }
 
     setSendingCode(true)
 
     try {
-      // Verificar se CPF existe e se telefone corresponde
-      const phoneRes = await fetch('/api/auth/get-phone', {
+      const contactRes = await fetch('/api/auth/get-phone', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ cpf }),
       })
 
-      const phoneData = await parseJson(phoneRes)
+      const contactData = await parseJson(contactRes)
 
-      if (!phoneRes.ok) {
-        throw new Error(phoneData.error || 'CPF não encontrado ou telefone não cadastrado')
+      if (!contactRes.ok) {
+        throw new Error(contactData.error || 'CPF não encontrado ou email não cadastrado')
       }
 
-      // Verificar se o telefone informado corresponde ao cadastrado
-      const cleanPhoneInput = phone.replace(/\D/g, '')
-      const cleanPhoneStored = (phoneData.phone || '').replace(/\D/g, '')
-
-      if (cleanPhoneInput !== cleanPhoneStored) {
-        throw new Error('Telefone não corresponde ao CPF cadastrado')
+      const storedEmail = (contactData.email || '').trim().toLowerCase()
+      if (email !== storedEmail) {
+        throw new Error('Email não corresponde ao CPF cadastrado')
       }
 
-      // Enviar código SMS para o telefone informado
-      const smsRes = await fetch('/api/sms/send-code', {
+      const emailRes = await fetch('/api/email/send-code', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ phone: cleanPhoneInput, channel }),
+        body: JSON.stringify({ email }),
       })
 
-      const smsData = await parseJson(smsRes)
-
-      if (!smsRes.ok) {
-        throw new Error(smsData.error || 'Erro ao enviar código')
-      }
+      const emailData = await parseJson(emailRes)
+      if (!emailRes.ok) throw new Error(emailData.error || 'Erro ao enviar código')
 
       setCodeSent(true)
       setStep('code')
 
-      // Mostrar código em desenvolvimento
-      if (process.env.NODE_ENV === 'development' && smsData.code) {
-        console.log(`📱 [DEV] Código de verificação para ${cleanPhoneInput}: ${smsData.code}`)
-        alert(`Código de verificação (DEV): ${smsData.code}`)
+      if (process.env.NODE_ENV === 'development' && emailData.code) {
+        console.log(`📧 [DEV] Código para ${email}: ${emailData.code}`)
+        alert(`Código de verificação (DEV): ${emailData.code}`)
       }
     } catch (err) {
       setErrorFriendly(err)
@@ -112,7 +95,7 @@ export function LoginForm() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
-        body: JSON.stringify({ cpf, phone, code }),
+        body: JSON.stringify({ cpf, email: contactEmail.trim().toLowerCase(), code }),
       })
 
       const data = await parseJson(res)
@@ -198,8 +181,8 @@ export function LoginForm() {
           {userType === 'admin'
             ? 'Entre com seu email e senha de administrador'
             : step === 'cpf'
-              ? 'Entre com seu CPF e telefone para receber o código de verificação'
-              : `Enviamos um código para ${phone ? formatPhone(phone) : 'seu telefone'}`}
+              ? 'Entre com seu CPF e email para receber o código'
+              : `Enviamos um código para ${contactEmail || 'seu email'}`}
         </CardDescription>
       </CardHeader>
       <CardContent className="p-6 pt-0">
@@ -302,7 +285,7 @@ export function LoginForm() {
               }}
               className="w-full text-center text-sm text-muted-foreground hover:text-foreground transition"
             >
-              Sou usuário final (CPF + Telefone)
+              Sou participante (CPF + Email)
             </button>
           </form>
         ) : (
@@ -335,61 +318,25 @@ export function LoginForm() {
                   </div>
                 </FormField>
 
-                <FormField label="Telefone" required>
+                <FormField label="Email" required>
                   <div className="relative">
-                    <Smartphone className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                     <Input
-                      type="text"
-                      placeholder="(00) 00000-0000"
-                      value={phone}
-                      onChange={(e) => {
-                        const formatted = formatPhone(e.target.value)
-                        setPhone(formatted)
-                      }}
+                      type="email"
+                      placeholder="seu@email.com"
+                      value={contactEmail}
+                      onChange={(e) => setContactEmail(e.target.value)}
                       required
                       disabled={sendingCode}
                       className="pl-10 h-11 text-base"
-                      maxLength={15}
                     />
                   </div>
                   <p className="text-sm text-gray-600 dark:text-gray-400 mt-1.5">
-                    Informe o telefone cadastrado no seu CPF
+                    Informe o email cadastrado no seu CPF
                   </p>
                 </FormField>
 
-                <div className="space-y-2">
-                  <label className="text-sm font-medium leading-none text-gray-900 dark:text-gray-100 peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                    Receber código via
-                  </label>
-                  <div className="flex gap-4">
-                    <label className={`flex-1 flex items-center justify-center gap-2 p-3 rounded-lg border cursor-pointer transition-all ${channel === 'sms' ? 'border-primary bg-primary/5 text-primary' : 'border-input hover:bg-muted text-gray-700 dark:text-gray-300'}`}>
-                      <input
-                        type="radio"
-                        name="channel"
-                        value="sms"
-                        checked={channel === 'sms'}
-                        onChange={() => setChannel('sms')}
-                        className="sr-only"
-                      />
-                      <Smartphone className="w-4 h-4" />
-                      <span>SMS</span>
-                    </label>
-                    <label className={`flex-1 flex items-center justify-center gap-2 p-3 rounded-lg border cursor-pointer transition-all ${channel === 'whatsapp' ? 'border-green-500 bg-green-50 text-green-700 dark:bg-green-950/30 dark:text-green-400' : 'border-input hover:bg-muted text-gray-700 dark:text-gray-300'}`}>
-                      <input
-                        type="radio"
-                        name="channel"
-                        value="whatsapp"
-                        checked={channel === 'whatsapp'}
-                        onChange={() => setChannel('whatsapp')}
-                        className="sr-only"
-                      />
-                      <Shield className="w-4 h-4" />
-                      <span>WhatsApp</span>
-                    </label>
-                  </div>
-                </div>
-
-                <Button type="submit" className="w-full h-11 text-base" size="lg" disabled={sendingCode || !cpf || !phone}>
+                <Button type="submit" className="w-full h-11 text-base" size="lg" disabled={sendingCode || !cpf || !contactEmail}>
                   {sendingCode ? (
                     <>
                       <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin mr-2" />
@@ -397,8 +344,8 @@ export function LoginForm() {
                     </>
                   ) : (
                     <>
-                      <Smartphone className="mr-2 h-5 w-5" />
-                      Enviar código SMS
+                      <Mail className="mr-2 h-5 w-5" />
+                      Enviar código por email
                     </>
                   )}
                 </Button>
@@ -422,7 +369,7 @@ export function LoginForm() {
                 {codeSent && (
                   <div className="p-3 rounded-lg bg-green-50 border border-green-200 flex items-start gap-2">
                     <Shield className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
-                    <p className="text-sm text-green-900">Código enviado com sucesso! Verifique seu telefone.</p>
+                    <p className="text-sm text-green-900">Código enviado com sucesso! Verifique seu email.</p>
                   </div>
                 )}
 
@@ -441,7 +388,7 @@ export function LoginForm() {
                     />
                   </div>
                   <p className="text-sm text-muted-foreground mt-1.5">
-                    Digite o código de 6 dígitos enviado para seu telefone
+                    Digite o código de 6 dígitos enviado para seu email
                   </p>
                 </FormField>
 

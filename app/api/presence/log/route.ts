@@ -43,9 +43,10 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(log, { status: 201 })
   } catch (error: any) {
+    const isAlreadyRegistered = error.message?.includes('já registrou')
     return NextResponse.json(
       { error: error.message },
-      { status: 500 }
+      { status: isAlreadyRegistered ? 409 : 500 }
     )
   }
 }

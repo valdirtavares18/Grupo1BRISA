@@ -119,16 +119,11 @@ export function CreateEventForm({ organizationId: propOrganizationId }: CreateEv
 
     try {
       const now = new Date()
-      now.setHours(0, 0, 0, 0)
-
       const startDate = new Date(`${formData.startDate}T${formData.startTime}`)
       const endDate = new Date(`${formData.endDate}T${formData.endTime}`)
 
-      const eventDate = new Date(formData.startDate)
-      eventDate.setHours(0, 0, 0, 0)
-
-      if (eventDate < now) {
-        throw new Error('A data do evento deve ser igual ou posterior à data atual')
+      if (startDate < now) {
+        throw new Error('A data e hora de início do evento deve ser posterior ao momento atual')
       }
 
       if (endDate <= startDate) {

@@ -81,6 +81,7 @@ CREATE TABLE IF NOT EXISTS "presence_logs" (
   "userAgent" TEXT,
   "initialScanToken" TEXT,
   "profile" TEXT,
+  "prizeDrawnAt" TIMESTAMP,
   FOREIGN KEY ("eventId") REFERENCES "Event"(id) ON DELETE CASCADE,
   FOREIGN KEY ("endUserId") REFERENCES "end_users"(id) ON DELETE SET NULL
 );
@@ -115,6 +116,15 @@ CREATE TABLE IF NOT EXISTS "phone_verifications" (
   "expiresAt" TIMESTAMP NOT NULL,
   "createdAt" TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE TABLE IF NOT EXISTS "email_verifications" (
+  id TEXT PRIMARY KEY,
+  email TEXT NOT NULL,
+  code TEXT NOT NULL,
+  verified INTEGER DEFAULT 0,
+  "expiresAt" TIMESTAMP NOT NULL,
+  "createdAt" TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
 `)
 
 db.exec(`
@@ -124,6 +134,7 @@ CREATE INDEX IF NOT EXISTS "Event_eventType_idx" ON "Event"("eventType");
 CREATE INDEX IF NOT EXISTS "organization_feeds_organizationId_idx" ON "organization_feeds"("organizationId");
 CREATE INDEX IF NOT EXISTS "organization_feeds_published_idx" ON "organization_feeds"("published");
 CREATE INDEX IF NOT EXISTS "phone_verifications_phone_idx" ON "phone_verifications"("phone");
+CREATE INDEX IF NOT EXISTS "email_verifications_email_idx" ON "email_verifications"("email");
 `)
 
 console.log('Inserindo usuário admin...')

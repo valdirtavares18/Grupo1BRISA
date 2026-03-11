@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { ProfileSelector, ProfileType } from '@/components/organisms/profile-selector'
 import { Button } from '@/components/atoms'
 import { CheckCircle2, Loader2 } from 'lucide-react'
@@ -8,10 +9,10 @@ import { CheckCircle2, Loader2 } from 'lucide-react'
 interface ProfileSelectorClientProps {
   presenceLogId: string
   eventId: string
-  onSuccess: () => void
 }
 
-export function ProfileSelectorClient({ presenceLogId, eventId, onSuccess }: ProfileSelectorClientProps) {
+export function ProfileSelectorClient({ presenceLogId, eventId }: ProfileSelectorClientProps) {
+  const router = useRouter()
   const [selectedProfile, setSelectedProfile] = useState<ProfileType | undefined>()
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState(false)
@@ -37,7 +38,7 @@ export function ProfileSelectorClient({ presenceLogId, eventId, onSuccess }: Pro
 
       setSuccess(true)
       setTimeout(() => {
-        onSuccess()
+        router.refresh()
       }, 1500)
     } catch (error: any) {
       alert(error.message || 'Erro ao salvar perfil')

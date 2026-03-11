@@ -22,11 +22,11 @@ export async function POST(request: NextRequest) {
         )
       }
 
-      const phone = await authService.getPhoneByCpf(cpf)
+      const contact = await authService.getContactByCpf(cpf)
 
       return NextResponse.json({
         success: true,
-        phone,
+        email: contact.email,
       })
     } catch (err) {
       const msg = getErrorMessage(err)

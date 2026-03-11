@@ -71,7 +71,8 @@ CREATE TABLE IF NOT EXISTS "presence_logs" (
     "ipAddress" TEXT,
     "userAgent" TEXT,
     "initialScanToken" TEXT,
-    "profile" TEXT
+    "profile" TEXT,
+    "prizeDrawnAt" TIMESTAMP(3)
 );
 
 CREATE TABLE IF NOT EXISTS "user_consents" (
@@ -102,6 +103,15 @@ CREATE TABLE IF NOT EXISTS "phone_verifications" (
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE IF NOT EXISTS "email_verifications" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "email" TEXT NOT NULL,
+    "code" TEXT NOT NULL,
+    "verified" INTEGER NOT NULL DEFAULT 0,
+    "expiresAt" TEXT NOT NULL,
+    "createdAt" TEXT DEFAULT CURRENT_TIMESTAMP
+);
+
 -- Indexes
 CREATE INDEX IF NOT EXISTS "Organization_slug_idx" ON "Organization"("slug");
 CREATE INDEX IF NOT EXISTS "platform_users_organizationId_idx" ON "platform_users"("organizationId");
@@ -118,6 +128,7 @@ CREATE UNIQUE INDEX IF NOT EXISTS "user_consents_endUserId_dataType_key" ON "use
 CREATE INDEX IF NOT EXISTS "organization_feeds_organizationId_idx" ON "organization_feeds"("organizationId");
 CREATE INDEX IF NOT EXISTS "organization_feeds_published_idx" ON "organization_feeds"("published");
 CREATE INDEX IF NOT EXISTS "phone_verifications_phone_idx" ON "phone_verifications"("phone");
+CREATE INDEX IF NOT EXISTS "email_verifications_email_idx" ON "email_verifications"("email");
 
 -- Foreign Keys
 ALTER TABLE "organization_themes" ADD CONSTRAINT "organization_themes_organizationId_fkey" FOREIGN KEY ("organizationId") REFERENCES "Organization"("id") ON DELETE CASCADE ON UPDATE CASCADE;

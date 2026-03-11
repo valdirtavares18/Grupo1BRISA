@@ -9,6 +9,7 @@ import Link from 'next/link'
 
 interface Event {
   id: string
+  qrCodeToken: string
   title: string
   description?: string
   startDate: string
@@ -364,7 +365,12 @@ export default function EventSearchPage() {
                       <div className="flex items-center justify-between pt-4 border-t border-navy-border">
                         <div className="flex items-center gap-2 text-sm text-[#8B92A0]">
                           <Building2 className="w-4 h-4" />
-                          <span className="truncate max-w-[150px]">{event.organizationName}</span>
+                          <Link
+                            href={`/${event.organizationSlug}`}
+                            className="truncate max-w-[150px] hover:text-mustard transition-colors"
+                          >
+                            {event.organizationName}
+                          </Link>
                         </div>
                         <div className="flex items-center gap-2 text-sm text-[#8B92A0]">
                           <Users className="w-4 h-4" />
@@ -372,7 +378,7 @@ export default function EventSearchPage() {
                         </div>
                       </div>
 
-                      <Link href={`/${event.organizationSlug}/events`} className="block pt-2">
+                      <Link href={`/event/${event.qrCodeToken}`} className="block pt-2">
                         <Button
                           variant="outline"
                           className="w-full border-navy-border bg-transparent text-white hover:bg-mustard/10 hover:border-mustard/20 hover:text-mustard"

@@ -150,35 +150,48 @@ export class AuthService {
     }
   }
 
-  async loginEndUserWithPhone(cpf: string, phone: string, code: string) {
+  async getContactByCpf(cpf: string): Promise<{ email: string }> {
     const cleanCpf = cpf.replace(/[^\d]/g, '')
-    const cleanPhone = phone.replace(/\D/g, '')
+    const result = await query('SELECT email FROM end_users WHERE cpf = ?', [cleanCpf])
 
-    // Verificar se usuário existe
+    if (result.rows.length === 0) {
+      throw new Error('CPF não encontrado')
+    }
+
+    const email = (result.rows[0] as { email?: string }).email?.trim().toLowerCase()
+
+    if (!email) {
+      throw new Error('Email não cadastrado para este CPF')
+    }
+
+    return { email }
+  }
+
+  async loginEndUserWithEmail(cpf: string, email: string, code: string) {
+    const cleanCpf = cpf.replace(/[^\d]/g, '')
+    const normalizedEmail = email.trim().toLowerCase()
+
     const userResult = await query('SELECT * FROM end_users WHERE cpf = ?', [cleanCpf])
-    const user = userResult.rows[0]
+    const user = userResult.rows[0] as { id: string; cpf: string; fullName?: string; email?: string } | undefined
 
     if (!user) {
       throw new Error('CPF não encontrado')
     }
 
-    // Verificar se telefone corresponde ao usuário
-    if (user.phone !== cleanPhone) {
-      throw new Error('Telefone não corresponde ao CPF cadastrado')
+    if (user.email !== normalizedEmail) {
+      throw new Error('Email não corresponde ao CPF cadastrado')
     }
 
-    // Verificar código SMS
-    const smsService = (await import('@/services/sms.service')).smsService
-    const verifyResult = await smsService.verifyCode(cleanPhone, code)
+    const emailService = (await import('@/services/email.service')).emailService
+    const verifyResult = await emailService.verifyCode(normalizedEmail, code)
 
     if (!verifyResult.success) {
       throw new Error(verifyResult.message || 'Código inválido')
     }
 
-    // Gerar token
     const token = generateToken({
       userId: user.id,
-      email: user.cpf,
+      email: normalizedEmail,
       role: 'END_USER',
     })
 
@@ -188,25 +201,96 @@ export class AuthService {
         id: user.id,
         cpf: user.cpf,
         fullName: user.fullName,
-        phone: user.phone,
+        email: user.email,
       },
     }
   }
 
-  async getPhoneByCpf(cpf: string) {
+  async registerEndUserWithEmail(
+    cpf: string,
+    email: string,
+    fullName?: string,
+    opts?: { eventId?: string; initialScanToken?: string; organizationId?: string }
+  ) {
     const cleanCpf = cpf.replace(/[^\d]/g, '')
-    const result = await query('SELECT phone FROM end_users WHERE cpf = ?', [cleanCpf])
 
-    if (result.rows.length === 0) {
-      throw new Error('CPF não encontrado')
+    if (cleanCpf.length !== 11) {
+      throw new Error('CPF deve ter exatamente 11 dígitos')
     }
 
-    const phone = result.rows[0].phone
-    if (!phone) {
-      throw new Error('Telefone não cadastrado para este CPF')
+    if (!validateCPF(cleanCpf)) {
+      throw new Error('CPF inválido. Verifique os dígitos e tente novamente')
     }
 
-    return phone
+    const normalizedEmail = email.trim().toLowerCase()
+    if (!normalizedEmail || !normalizedEmail.includes('@')) {
+      throw new Error('Email inválido')
+    }
+
+    // Verificar se CPF já existe
+    const existing = await query('SELECT * FROM end_users WHERE cpf = ?', [cleanCpf])
+
+    if (existing.rows[0]) {
+      throw new Error('Este CPF já está cadastrado')
+    }
+
+    // Verificar se email já está em uso
+    const existingEmail = await query('SELECT * FROM end_users WHERE email = ?', [normalizedEmail])
+
+    if (existingEmail.rows[0]) {
+      throw new Error('Este email já está cadastrado')
+    }
+
+    // Criar usuário com email verificado (sem senha - autenticação via código)
+    const id = randomUUID()
+    const passwordHash = await hashPassword(randomUUID())
+    const now = new Date().toISOString()
+
+    const updates = ['id', 'cpf', '"passwordHash"', 'email', '"createdAt"', '"updatedAt"']
+    const values = [id, cleanCpf, passwordHash, normalizedEmail, now, now]
+
+    if (fullName) {
+      updates.push('"fullName"')
+      values.push(fullName)
+    }
+
+    const placeholders = values.map(() => '?').join(', ')
+    await query(
+      `INSERT INTO end_users (${updates.join(', ')}) VALUES (${placeholders})`,
+      values
+    )
+
+    // Associar presença ao evento se fornecido
+    if (opts?.initialScanToken && opts?.eventId) {
+      try {
+        const presenceResult = await query(
+          'SELECT id FROM presence_logs WHERE "initialScanToken" = ? AND "eventId" = ? LIMIT 1',
+          [opts.initialScanToken, opts.eventId]
+        )
+        if (presenceResult.rows.length > 0) {
+          const presenceService = (await import('@/services/presence.service')).presenceService
+          await presenceService.updatePresenceWithUser(presenceResult.rows[0].id, id)
+        }
+      } catch (error) {
+        console.error('Erro ao associar presença:', error)
+      }
+    }
+
+    const token = generateToken({
+      userId: id,
+      email: normalizedEmail,
+      role: 'END_USER',
+    })
+
+    return {
+      token,
+      user: {
+        id,
+        cpf: cleanCpf,
+        email: normalizedEmail,
+        fullName,
+      },
+    }
   }
 
   async registerEndUser2FA(cpf: string, phone: string, fullName?: string) {

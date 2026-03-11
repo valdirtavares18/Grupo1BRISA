@@ -4,8 +4,8 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Card, CardContent, Button, Input } from '@/components/atoms'
 import { FormField } from '@/components/molecules'
-import { UserPlus, CreditCard, Phone, Lock, AlertCircle, CheckCircle2, Check } from 'lucide-react'
-import { formatCPF } from '@/lib/utils'
+import { UserPlus, CreditCard, Mail, Lock, AlertCircle, CheckCircle2 } from 'lucide-react'
+import { formatCPF, validateCPF, validateEmail } from '@/lib/utils'
 
 interface RegisterWithPhoneFormProps {
   eventId?: string
@@ -26,38 +26,28 @@ export function RegisterWithPhoneForm({
   const [error, setError] = useState('')
   const [formData, setFormData] = useState({
     cpf: '',
-    phone: '',
-    password: '',
-    confirmPassword: '',
-    acceptTerms: false,
-    acceptNotifications: false,
+    fullName: '',
+    email: '',
   })
   const [verificationCode, setVerificationCode] = useState('')
-  const [phoneToVerify, setPhoneToVerify] = useState('')
-  const [channel, setChannel] = useState<'sms' | 'whatsapp'>('sms')
+  const [emailToVerify, setEmailToVerify] = useState('')
 
   const handleSendCode = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
 
-    // Validações
-    if (!formData.cpf || !formData.phone || !formData.password) {
+    if (!formData.cpf || !formData.fullName || !formData.email) {
       setError('Todos os campos são obrigatórios')
       return
     }
 
-    if (formData.password !== formData.confirmPassword) {
-      setError('As senhas não coincidem')
+    if (!validateCPF(formData.cpf)) {
+      setError('CPF inválido')
       return
     }
 
-    if (formData.password.length < 6) {
-      setError('A senha deve ter no mínimo 6 caracteres')
-      return
-    }
-
-    if (!formData.acceptTerms) {
-      setError('Você deve aceitar os termos de uso')
+    if (!validateEmail(formData.email)) {
+      setError('Email inválido')
       return
     }
 
@@ -70,11 +60,10 @@ export function RegisterWithPhoneForm({
     setLoading(true)
 
     try {
-      // Enviar código SMS
-      const res = await fetch('/api/sms/send-code', {
+      const res = await fetch('/api/email/send-code', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ phone: formData.phone, channel }),
+        body: JSON.stringify({ email: formData.email.trim().toLowerCase() }),
       })
 
       const data = await res.json()
@@ -83,12 +72,12 @@ export function RegisterWithPhoneForm({
         throw new Error(data.error || 'Erro ao enviar código')
       }
 
-      setPhoneToVerify(formData.phone)
+      setEmailToVerify(formData.email.trim().toLowerCase())
       setStep('verify')
 
-      // Em desenvolvimento, mostrar código no console
-      if (data.code) {
-        console.log('📱 Código de verificação:', data.code)
+      if (process.env.NODE_ENV === 'development' && data.code) {
+        console.log('📧 Código de verificação:', data.code)
+        alert(`Código (DEV): ${data.code}`)
       }
     } catch (err: any) {
       setError(err.message || 'Erro ao enviar código de verificação')
@@ -109,34 +98,17 @@ export function RegisterWithPhoneForm({
     setLoading(true)
 
     try {
-      // Verificar código
-      const verifyRes = await fetch('/api/sms/verify-code', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          phone: phoneToVerify,
-          code: verificationCode,
-        }),
-      })
-
-      const verifyData = await verifyRes.json()
-
-      if (!verifyRes.ok) {
-        throw new Error(verifyData.error || 'Código inválido')
-      }
-
-      // Registrar usuário
       const cleanCpf = formData.cpf.replace(/\D/g, '')
 
-      const registerRes = await fetch('/api/auth/register-with-phone', {
+      const registerRes = await fetch('/api/auth/register-2fa', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({
           cpf: cleanCpf,
-          phone: phoneToVerify,
-          password: formData.password,
-          acceptTerms: formData.acceptTerms,
-          acceptNotifications: formData.acceptNotifications,
+          email: emailToVerify,
+          code: verificationCode,
+          fullName: formData.fullName,
           eventId,
           initialScanToken,
           organizationId,
@@ -149,12 +121,10 @@ export function RegisterWithPhoneForm({
         throw new Error(registerData.error || 'Erro ao criar conta')
       }
 
-      // Login automático
       if (registerData.token) {
         document.cookie = `token=${registerData.token}; path=/; max-age=${60 * 60 * 24 * 7}`
       }
 
-      // Chamar callback ou redirecionar
       if (onSuccess) {
         onSuccess()
       } else {
@@ -168,14 +138,6 @@ export function RegisterWithPhoneForm({
     }
   }
 
-  const formatPhone = (value: string) => {
-    const numbers = value.replace(/\D/g, '')
-    if (numbers.length <= 10) {
-      return numbers.replace(/(\d{2})(\d{4})(\d{4})/, '($1) $2-$3')
-    }
-    return numbers.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3')
-  }
-
   if (step === 'verify') {
     return (
       <Card className="shadow-md border-0">
@@ -183,15 +145,11 @@ export function RegisterWithPhoneForm({
           <div className="space-y-4">
             <div className="text-center">
               <div className="w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center mx-auto mb-4">
-                <Phone className="w-8 h-8 text-primary" />
+                <Mail className="w-8 h-8 text-primary" />
               </div>
-              <h2 className="text-2xl font-bold mb-2">Verificar Telefone</h2>
-              <p className="text-muted-foreground">
-                Digite o código de 6 dígitos enviado para
-              </p>
-              <p className="font-semibold text-primary mt-1">
-                {formatPhone(phoneToVerify)}
-              </p>
+              <h2 className="text-2xl font-bold mb-2">Verificar Email</h2>
+              <p className="text-muted-foreground">Digite o código de 6 dígitos enviado para</p>
+              <p className="font-semibold text-primary mt-1">{emailToVerify}</p>
             </div>
 
             {error && (
@@ -204,7 +162,7 @@ export function RegisterWithPhoneForm({
             <form onSubmit={handleVerifyAndRegister} className="space-y-4">
               <FormField label="Código de Verificação" required>
                 <div className="relative">
-                  <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                   <Input
                     type="text"
                     placeholder="000000"
@@ -216,9 +174,7 @@ export function RegisterWithPhoneForm({
                     maxLength={6}
                   />
                 </div>
-                <p className="text-xs text-muted-foreground mt-1">
-                  Verifique sua mensagem SMS e digite o código recebido
-                </p>
+                <p className="text-xs text-muted-foreground mt-1">Verifique seu email e digite o código recebido</p>
               </FormField>
 
               <Button type="submit" className="w-full" size="lg" disabled={loading}>
@@ -260,9 +216,7 @@ export function RegisterWithPhoneForm({
               <UserPlus className="w-6 h-6 text-white" />
             </div>
             <h2 className="text-xl font-bold">Criar Conta</h2>
-            <p className="text-sm text-muted-foreground mt-1">
-              Registre-se para vincular sua presença
-            </p>
+            <p className="text-sm text-muted-foreground mt-1">Registre-se para vincular sua presença</p>
           </div>
 
           {error && (
@@ -280,128 +234,45 @@ export function RegisterWithPhoneForm({
                   type="text"
                   placeholder="000.000.000-00"
                   value={formatCPF(formData.cpf)}
-                  onChange={(e) => setFormData({ ...formData, cpf: e.target.value })}
+                  onChange={(e) => setFormData({ ...formData, cpf: e.target.value.replace(/\D/g, '') })}
                   required
                   disabled={loading}
                   className="pl-10"
+                  maxLength={14}
                 />
               </div>
             </FormField>
 
-            <FormField label="Telefone" required>
+            <FormField label="Nome Completo" required>
               <div className="relative">
-                <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                <UserPlus className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                 <Input
-                  type="tel"
-                  placeholder="(00) 00000-0000"
-                  value={formatPhone(formData.phone)}
-                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                  type="text"
+                  placeholder="Seu nome completo"
+                  value={formData.fullName}
+                  onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
                   required
                   disabled={loading}
                   className="pl-10"
                 />
               </div>
-              <p className="text-xs text-muted-foreground mt-1">
-                Você receberá um código de verificação
-              </p>
             </FormField>
 
-            <div className="space-y-2">
-              <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                Receber código via
-              </label>
-              <div className="flex gap-4">
-                <label className={`flex-1 flex items-center justify-center gap-2 p-3 rounded-lg border cursor-pointer transition-all ${channel === 'sms' ? 'border-primary bg-primary/5 text-primary' : 'border-input hover:bg-muted'}`}>
-                  <input
-                    type="radio"
-                    name="channel"
-                    value="sms"
-                    checked={channel === 'sms'}
-                    onChange={() => setChannel('sms')}
-                    className="sr-only"
-                  />
-                  <Phone className="w-4 h-4" />
-                  <span>SMS</span>
-                </label>
-                <label className={`flex-1 flex items-center justify-center gap-2 p-3 rounded-lg border cursor-pointer transition-all ${channel === 'whatsapp' ? 'border-green-500 bg-green-50 text-green-700' : 'border-input hover:bg-muted'}`}>
-                  <input
-                    type="radio"
-                    name="channel"
-                    value="whatsapp"
-                    checked={channel === 'whatsapp'}
-                    onChange={() => setChannel('whatsapp')}
-                    className="sr-only"
-                  />
-                  {/* Using standard Shield icon as replacement for generic WhatsApp icon */}
-                  <div className="w-4 h-4 flex items-center justify-center font-bold text-xs bg-green-600 text-white rounded-full">W</div>
-                  <span>WhatsApp</span>
-                </label>
-              </div>
-            </div>
-
-            <FormField label="Senha" required>
+            <FormField label="Email" required>
               <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                 <Input
-                  type="password"
-                  placeholder="Mínimo 6 caracteres"
-                  value={formData.password}
-                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                  type="email"
+                  placeholder="seu@email.com"
+                  value={formData.email}
+                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                   required
                   disabled={loading}
                   className="pl-10"
                 />
               </div>
+              <p className="text-xs text-muted-foreground mt-1">Você receberá um código de verificação por email</p>
             </FormField>
-
-            <FormField label="Confirmar Senha" required>
-              <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                <Input
-                  type="password"
-                  placeholder="Digite a senha novamente"
-                  value={formData.confirmPassword}
-                  onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-                  required
-                  disabled={loading}
-                  className="pl-10"
-                />
-              </div>
-            </FormField>
-
-            <div className="space-y-3 pt-2">
-              <label className="flex items-start gap-3 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={formData.acceptTerms}
-                  onChange={(e) => setFormData({ ...formData, acceptTerms: e.target.checked })}
-                  className="mt-1 w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary"
-                  required
-                />
-                <span className="text-sm text-muted-foreground">
-                  Aceito os{' '}
-                  <a href="/termos" target="_blank" className="text-primary hover:underline font-semibold">
-                    termos de uso
-                  </a>{' '}
-                  e{' '}
-                  <a href="/privacidade" target="_blank" className="text-primary hover:underline font-semibold">
-                    política de privacidade
-                  </a>
-                </span>
-              </label>
-
-              <label className="flex items-start gap-3 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={formData.acceptNotifications}
-                  onChange={(e) => setFormData({ ...formData, acceptNotifications: e.target.checked })}
-                  className="mt-1 w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary"
-                />
-                <span className="text-sm text-muted-foreground">
-                  Desejo receber notificações sobre eventos e promoções desta organização
-                </span>
-              </label>
-            </div>
 
             <Button type="submit" className="w-full" size="lg" disabled={loading}>
               {loading ? (
@@ -411,8 +282,8 @@ export function RegisterWithPhoneForm({
                 </>
               ) : (
                 <>
-                  <Phone className="w-5 h-5 mr-2" />
-                  Enviar Código SMS
+                  <Mail className="w-5 h-5 mr-2" />
+                  Enviar código por email
                 </>
               )}
             </Button>
@@ -422,4 +293,3 @@ export function RegisterWithPhoneForm({
     </Card>
   )
 }
-

@@ -4,7 +4,7 @@ import { notFound } from 'next/navigation'
 import { Card, CardContent, CardHeader, CardTitle, Badge, Button } from '@/components/atoms'
 import { Logo } from '@/components/atoms'
 import Link from 'next/link'
-import { Calendar, MapPin, Clock, ArrowLeft, Eye, Users, QrCode } from 'lucide-react'
+import { Calendar, MapPin, Clock, Eye, Users, QrCode } from 'lucide-react'
 
 export const dynamic = 'force-dynamic'
 
@@ -64,14 +64,6 @@ export default async function OrganizationEventsPage({ params }: PageProps) {
             Confira todos os nossos eventos
           </p>
         </div>
-
-        <Link
-          href={`/${params.slug}`}
-          className="inline-flex items-center gap-2 text-[#C8CDD5] hover:text-white transition mb-8"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          <span>Voltar para página principal</span>
-        </Link>
 
         {/* Active Events */}
         {activeEvents.length > 0 && (
@@ -284,15 +276,6 @@ export default async function OrganizationEventsPage({ params }: PageProps) {
           </Card>
         )}
 
-        {/* Footer */}
-        <div className="mt-12 text-center">
-          <Link
-            href={`/${params.slug}`}
-            className="inline-block px-6 py-3 rounded-xl bg-navy-light text-white hover:bg-navy-light transition text-sm font-semibold border border-navy-border"
-          >
-            ← Voltar para página principal
-          </Link>
-        </div>
       </div>
     </div>
   )

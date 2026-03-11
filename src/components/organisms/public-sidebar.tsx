@@ -46,8 +46,16 @@ export function PublicSidebar() {
     return () => window.removeEventListener('resize', handleResize)
   }, [])
 
+  // Se estiver em /[slug]/events ou /[slug]/feed, adicionar link para página da organização
+  const pathSegments = pathname.split('/').filter(Boolean)
+  const slug = pathSegments[0]
+  const isOrgSubpage = slug && pathSegments.length > 1 && ['events', 'feed'].includes(pathSegments[1])
+
   const navItems = [
-    { label: 'Início', href: '/', icon: Home },
+    ...(isOrgSubpage
+      ? [{ label: 'Página Principal', href: `/${slug}`, icon: Home }]
+      : [{ label: 'Início', href: '/', icon: Home }]
+    ),
     { label: 'Buscar Eventos', href: '/events/search', icon: Search },
   ]
 

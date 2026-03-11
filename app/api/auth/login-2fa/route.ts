@@ -4,16 +4,16 @@ import { authService } from '@/services/auth.service'
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { cpf, phone, code } = body
+    const { cpf, email, code } = body
 
-    if (!cpf || !phone || !code) {
+    if (!cpf || !email || !code) {
       return NextResponse.json(
-        { error: 'CPF, telefone e código são obrigatórios' },
+        { error: 'CPF, email e código são obrigatórios' },
         { status: 400 }
       )
     }
 
-    const result = await authService.loginEndUserWithPhone(cpf, phone, code)
+    const result = await authService.loginEndUserWithEmail(cpf, email, code)
 
     const response = NextResponse.json(result)
     

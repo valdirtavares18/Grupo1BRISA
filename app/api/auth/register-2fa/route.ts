@@ -1,24 +1,27 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { authService } from '@/services/auth.service'
-import { smsService } from '@/services/sms.service'
+import { emailService } from '@/services/email.service'
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { cpf, phone, code } = body
+    const { cpf, email, code } = body
 
-    if (!cpf || !phone) {
+    if (!cpf || !email) {
       return NextResponse.json(
-        { error: 'CPF e telefone são obrigatórios' },
+        { error: 'CPF e email são obrigatórios' },
         { status: 400 }
       )
     }
 
-    // Se não tiver código, é o primeiro passo (enviar SMS)
+    const normalizedEmail = email.trim().toLowerCase()
+
+    // Se não tiver código, é o primeiro passo (enviar email)
     if (!code) {
-      // Verificar se CPF já existe
       const { query } = await import('@/lib/db-sqlite')
       const cleanCpf = cpf.replace(/[^\d]/g, '')
+
+      // Verificar se CPF já existe
       const existing = await query('SELECT * FROM end_users WHERE cpf = ?', [cleanCpf])
 
       if (existing.rows[0]) {
@@ -28,24 +31,22 @@ export async function POST(request: NextRequest) {
         )
       }
 
-      // Verificar se telefone já está em uso
-      const cleanPhone = phone.replace(/\D/g, '')
-      const existingPhone = await query('SELECT * FROM end_users WHERE phone = ?', [cleanPhone])
+      // Verificar se email já está em uso
+      const existingEmail = await query('SELECT * FROM end_users WHERE email = ?', [normalizedEmail])
 
-      if (existingPhone.rows[0]) {
+      if (existingEmail.rows[0]) {
         return NextResponse.json(
-          { error: 'Este telefone já está cadastrado' },
+          { error: 'Este email já está cadastrado' },
           { status: 400 }
         )
       }
 
-      // Enviar código SMS
-      const channel = body.channel === 'whatsapp' ? 'whatsapp' : 'sms'
-      const smsRes = await smsService.sendVerificationCode(cleanPhone, channel)
+      // Enviar código por email
+      const emailRes = await emailService.sendVerificationCode(normalizedEmail)
 
-      if (!smsRes.success) {
+      if (!emailRes.success) {
         return NextResponse.json(
-          { error: smsRes.message || 'Erro ao enviar código SMS' },
+          { error: emailRes.message || 'Erro ao enviar código por email' },
           { status: 500 }
         )
       }
@@ -53,16 +54,14 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({
         success: true,
         message: 'Código enviado com sucesso',
-        code: process.env.NODE_ENV === 'development' ? smsRes.code : undefined // Mostrar código em dev
+        code: process.env.NODE_ENV === 'development' ? emailRes.code : undefined,
       })
     }
 
     // Se tiver código, é o segundo passo (verificar e criar conta)
 
-    const cleanPhone = phone.replace(/\D/g, '')
-
-    // Verificar código SMS
-    const verificationResult = await smsService.verifyCode(cleanPhone, code)
+    // Verificar código por email
+    const verificationResult = await emailService.verifyCode(normalizedEmail, code)
 
     if (!verificationResult.success) {
       return NextResponse.json(
@@ -71,8 +70,17 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Criar conta sem senha (2FA)
-    const result = await authService.registerEndUser2FA(cpf, cleanPhone, body.fullName)
+    // Criar conta com verificação por email
+    const result = await authService.registerEndUserWithEmail(
+      cpf.replace(/[^\d]/g, ''),
+      normalizedEmail,
+      body.fullName,
+      {
+        eventId: body.eventId,
+        initialScanToken: body.initialScanToken,
+        organizationId: body.organizationId,
+      }
+    )
 
     const response = NextResponse.json(result)
     response.cookies.set('token', result.token, {
@@ -91,4 +99,3 @@ export async function POST(request: NextRequest) {
     )
   }
 }
-

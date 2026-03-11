@@ -1,12 +1,10 @@
 import { eventService } from '@/services/event.service'
-import { presenceService } from '@/services/presence.service'
 import { notFound } from 'next/navigation'
-import { headers, cookies } from 'next/headers'
+import { cookies } from 'next/headers'
 import { Card, CardContent, CardHeader, CardTitle, Button } from '@/components/atoms'
-import { RegisterClient } from './register-client'
-import { ProfileSelectorClient } from './profile-selector-client'
+import { EventRegisterClient } from './event-register-client'
 import Link from 'next/link'
-import { Calendar, Clock, MapPin, Building2, UserPlus, CheckCircle2, Info, AlertCircle } from 'lucide-react'
+import { Calendar, Clock, Building2, Info, AlertCircle } from 'lucide-react'
 import { verifyToken } from '@/lib/auth'
 
 interface PageProps {
@@ -32,12 +30,6 @@ export default async function EventPage({ params }: PageProps) {
   const isBeforeEvent = startDateWithGrace > now
   const isActiveEvent = startDateWithGrace <= now && endDate >= now
 
-  const headersList = headers()
-  const ipAddress = headersList.get('x-forwarded-for') ||
-    headersList.get('x-real-ip') ||
-    'unknown'
-  const userAgent = headersList.get('user-agent') || 'unknown'
-
   // Verificar se usuário está logado
   const cookieStore = cookies()
   const token = cookieStore.get('token')?.value
@@ -52,37 +44,6 @@ export default async function EventPage({ params }: PageProps) {
       if (payload.role === 'END_USER') {
         isLoggedIn = true
         loggedInUserId = payload.userId
-      }
-    }
-  }
-
-  let presenceResult = { success: false, message: '', alreadyRegistered: false, presenceLogId: null as string | null }
-  let initialScanToken: string | undefined = undefined
-
-  // Registrar presença se o evento estiver ativo
-  if (isActiveEvent) {
-    try {
-      initialScanToken = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
-
-      const presenceLog = await presenceService.logPresence({
-        eventId: event.id,
-        endUserId: loggedInUserId, // Se logado, vincula ao CPF automaticamente
-        ipAddress,
-        userAgent,
-        initialScanToken,
-      })
-
-      presenceResult = {
-        success: true,
-        message: 'Presença registrada! Escolha seu perfil no evento.',
-        alreadyRegistered: false,
-        presenceLogId: presenceLog.id
-      }
-    } catch (error: any) {
-      if (error.message.includes('já registrou presença')) {
-        presenceResult = { success: false, message: 'Você já está cadastrado neste evento', alreadyRegistered: true, presenceLogId: null }
-      } else {
-        presenceResult = { success: false, message: error.message, alreadyRegistered: false, presenceLogId: null }
       }
     }
   }
@@ -110,44 +71,6 @@ export default async function EventPage({ params }: PageProps) {
               <p className="font-semibold">Evento encerrado</p>
               <p className="text-sm text-[#C8CDD5] mt-1">
                 O registro de presença não está mais disponível.
-              </p>
-            </div>
-          </div>
-        )}
-
-        {isActiveEvent && presenceResult.success && (
-          <div className="mb-6 p-4 rounded-xl bg-navy-light border border-navy-border flex items-start gap-3">
-            <CheckCircle2 className="w-6 h-6 text-green-400 flex-shrink-0 mt-0.5" />
-            <div className="text-white">
-              <p className="font-semibold">Presença registrada!</p>
-              <p className="text-sm text-[#C8CDD5] mt-1">
-                {isLoggedIn
-                  ? 'Sua presença foi vinculada ao seu CPF.'
-                  : 'Sua presença foi capturada. Faça login para vincular ao seu CPF.'}
-              </p>
-            </div>
-          </div>
-        )}
-
-        {isActiveEvent && !presenceResult.success && presenceResult.alreadyRegistered && (
-          <div className="mb-6 p-4 rounded-xl bg-navy-light border border-navy-border flex items-start gap-3">
-            <Info className="w-6 h-6 text-mustard flex-shrink-0 mt-0.5" />
-            <div className="text-white">
-              <p className="font-semibold">Você já está cadastrado!</p>
-              <p className="text-sm text-[#C8CDD5] mt-1">
-                Sua presença neste evento já foi registrada anteriormente.
-              </p>
-            </div>
-          </div>
-        )}
-
-        {isActiveEvent && !presenceResult.success && !presenceResult.alreadyRegistered && presenceResult.message && (
-          <div className="mb-6 p-4 rounded-xl bg-navy-light border border-navy-border flex items-start gap-3">
-            <AlertCircle className="w-6 h-6 text-red-400 flex-shrink-0 mt-0.5" />
-            <div className="text-white">
-              <p className="font-semibold">Erro ao registrar presença</p>
-              <p className="text-sm text-[#C8CDD5] mt-1">
-                {presenceResult.message}
               </p>
             </div>
           </div>
@@ -231,7 +154,7 @@ export default async function EventPage({ params }: PageProps) {
                     <p className="text-base font-bold text-mustard mb-1">Sua Recompensa</p>
                     <p className="text-white text-lg">{event.reward}</p>
                     <p className="text-xs text-[#8B92A0] mt-2">
-                      Escaneie o QR Code e registre sua presença para garantir sua recompensa!
+                      Registre sua presença para garantir sua recompensa!
                     </p>
                   </div>
                 </div>
@@ -247,7 +170,7 @@ export default async function EventPage({ params }: PageProps) {
                     <>
                       <p className="font-semibold mb-1">Você está logado</p>
                       <p>
-                        Quando o evento estiver no horário, sua presença será vinculada ao seu CPF automaticamente.
+                        Clique em "Registrar minha presença" para vincular sua presença ao seu CPF.
                       </p>
                     </>
                   ) : (
@@ -270,68 +193,46 @@ export default async function EventPage({ params }: PageProps) {
               </div>
             </div>
 
-            {/* Actions - só mostrar login/cadastro se não tiver sessão válida */}
-            {!isPastEvent && !hasValidSession && !presenceResult.success && (
-              <div className="space-y-3">
-                <Link href="/login" className="block">
-                  <Button className="w-full" size="lg">
-                    <UserPlus className="mr-2 h-5 w-5" />
-                    Fazer Login para Registro Completo
-                  </Button>
-                </Link>
-
-                <Link href="/register" className="block">
-                  <Button variant="outline" className="w-full" size="lg">
-                    Criar Nova Conta
-                  </Button>
-                </Link>
-              </div>
-            )}
-
-            {/* Profile Selector - Mostrar após scan bem-sucedido */}
-            {!isPastEvent && presenceResult.success && presenceResult.presenceLogId && (
-              <div className="mt-6">
-                <ProfileSelectorClient
-                  presenceLogId={presenceResult.presenceLogId}
-                  eventId={event.id}
-                  onSuccess={() => {
-                    // Recarregar página após sucesso
-                    if (typeof window !== 'undefined') {
-                      window.location.reload()
-                    }
-                  }}
-                />
-              </div>
-            )}
-
-            {!isPastEvent && isLoggedIn && presenceResult.success && !presenceResult.presenceLogId && (
-              <div className="p-4 rounded-xl bg-navy border border-navy-border">
-                <div className="flex items-center gap-3">
-                  <CheckCircle2 className="w-6 h-6 text-green-500 flex-shrink-0" />
-                  <div>
-                    <p className="font-semibold text-white">Presença registrada!</p>
-                    <p className="text-sm text-[#C8CDD5] mt-1">
-                      Sua presença foi registrada e vinculada ao seu CPF.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Register Form */}
-            {!isPastEvent && !isLoggedIn && presenceResult.success && initialScanToken && !presenceResult.presenceLogId && (
-              <RegisterClient
+            {/* Registrar presença - só quando o evento está ativo */}
+            {isActiveEvent && (
+              <EventRegisterClient
                 eventId={event.id}
                 organizationId={event.organizationId}
-                initialScanToken={initialScanToken}
                 isLoggedIn={isLoggedIn}
               />
+            )}
+
+            {/* Login/Cadastro - opcional para vincular presença ao CPF */}
+            {!isPastEvent && !hasValidSession && (
+              <div className="space-y-3 pt-2">
+                <p className="text-sm text-[#C8CDD5]">Já tem conta? Faça login para vincular sua presença ao CPF.</p>
+                <div className="flex gap-3">
+                  <Link href="/login" className="flex-1">
+                    <Button variant="outline" className="w-full" size="sm">
+                      Fazer Login
+                    </Button>
+                  </Link>
+                  <Link href="/register" className="flex-1">
+                    <Button variant="outline" className="w-full" size="sm">
+                      Criar Conta
+                    </Button>
+                  </Link>
+                </div>
+              </div>
             )}
 
             {/* Organization */}
             <div className="pt-6 border-t flex items-center justify-center gap-2 text-sm text-muted-foreground">
               <Building2 className="w-4 h-4" />
-              <span>Organizado por <strong>{event.organization.name}</strong></span>
+              <span>
+                Organizado por{' '}
+                <Link
+                  href={`/${event.organization.slug}`}
+                  className="font-semibold text-mustard hover:underline"
+                >
+                  {event.organization.name}
+                </Link>
+              </span>
             </div>
           </CardContent>
         </Card>

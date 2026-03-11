@@ -116,20 +116,20 @@ export class PresenceService {
   }
 
   async getPresenceStatsByEvent(eventId: string) {
-    const total = await query(
-      'SELECT COUNT(*) as count FROM "presence_logs" WHERE "eventId" = ?',
-      [eventId]
-    )
+    const [total, withUser, anonymous] = await Promise.all([
+      query('SELECT COUNT(*) as count FROM presence_logs WHERE "eventId" = ?', [eventId]),
+      query('SELECT COUNT(*) as count FROM presence_logs WHERE "eventId" = ? AND "endUserId" IS NOT NULL', [eventId]),
+      query('SELECT COUNT(*) as count FROM presence_logs WHERE "eventId" = ? AND "endUserId" IS NULL', [eventId]),
+    ])
 
-    const withUser = await query(
-      'SELECT COUNT(*) as count FROM "presence_logs" WHERE "eventId" = ? AND "endUserId" IS NOT NULL',
-      [eventId]
-    )
+    const totalCount = Number(total.rows[0]?.count ?? 0)
+    const identifiedCount = Number(withUser.rows[0]?.count ?? 0)
+    const anonymousCount = Number(anonymous.rows[0]?.count ?? 0)
 
     return {
-      total: total.rows[0].count || 0,
-      identified: withUser.rows[0].count || 0,
-      anonymous: (total.rows[0].count || 0) - (withUser.rows[0].count || 0)
+      total: totalCount,
+      identified: identifiedCount,
+      anonymous: anonymousCount
     }
   }
 

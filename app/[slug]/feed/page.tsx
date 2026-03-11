@@ -115,15 +115,6 @@ export default async function OrganizationFeedPage({ params }: PageProps) {
           </div>
         )}
 
-        {/* Footer */}
-        <div className="mt-12 text-center">
-          <a
-            href={`/${params.slug}`}
-            className="inline-block px-6 py-3 rounded-xl bg-navy-light text-white hover:bg-navy-light transition text-sm font-semibold border border-navy-border"
-          >
-            ← Voltar para página da organização
-          </a>
-        </div>
       </div>
     </div>
   )
