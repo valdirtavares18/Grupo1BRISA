@@ -41,6 +41,12 @@
 - **Solução**: Cookie de autenticação agora usa `secure: process.env.NODE_ENV === 'production'` em todos os endpoints de auth (login principal estava com `secure: false`); adicionado `path: '/'` em register e register-with-phone para consistência
 - **Arquivos**: `app/api/auth/login/route.ts`, `app/api/auth/logout/route.ts`, `app/api/auth/register/route.ts`, `app/api/auth/register-with-phone/route.ts`
 
+### 8. **Divergência de horário: busca 11h vs detalhes 16h** ✅
+- **Problema**: Na busca de eventos o horário aparecia 11h, mas ao clicar em "Ver Detalhes" o mesmo evento mostrava 16h.
+- **Causa**: Timestamp/timezone - a página de detalhes (`/event/[token]`) é um Server Component que roda no servidor (geralmente UTC). O `toLocaleTimeString` usava o fuso do servidor em vez do Brasil.
+- **Solução**: Adicionado `timeZone: 'America/Sao_Paulo'` em todas as chamadas de `toLocaleTimeString` e `toLocaleDateString` que exibem horários de eventos.
+- **Arquivos**: `app/event/[token]/page.tsx`, `app/events/search/page.tsx`, `app/dashboard/organization/events/[id]/page.tsx`, `app/[slug]/page.tsx`, `app/[slug]/events/page.tsx`, `app/dashboard/admin/organizations/[id]/page.tsx`
+
 ## ✅ Funcionalidades Testadas e Funcionando
 
 ### 1. **Login do Admin de Organização** ✅

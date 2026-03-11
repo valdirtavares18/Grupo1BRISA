@@ -96,16 +96,16 @@ export default async function OrganizationEventsPage({ params }: PageProps) {
                       <div className="flex items-center gap-2 text-sm text-muted-foreground">
                         <Calendar className="w-4 h-4 flex-shrink-0" />
                         <span>
-                          {startDate.toLocaleDateString('pt-BR')} às{' '}
-                          {startDate.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+                          {startDate.toLocaleDateString('pt-BR', { timeZone: 'America/Sao_Paulo' })} às{' '}
+                          {startDate.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', timeZone: 'America/Sao_Paulo' })}
                         </span>
                       </div>
 
                       <div className="flex items-center gap-2 text-sm text-muted-foreground">
                         <Clock className="w-4 h-4 flex-shrink-0" />
                         <span>
-                          Até {endDate.toLocaleDateString('pt-BR')} às{' '}
-                          {endDate.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+                          Até {endDate.toLocaleDateString('pt-BR', { timeZone: 'America/Sao_Paulo' })} às{' '}
+                          {endDate.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', timeZone: 'America/Sao_Paulo' })}
                         </span>
                       </div>
 
@@ -176,8 +176,8 @@ export default async function OrganizationEventsPage({ params }: PageProps) {
                       <div className="flex items-center gap-2 text-sm text-muted-foreground">
                         <Calendar className="w-4 h-4 flex-shrink-0" />
                         <span>
-                          {startDate.toLocaleDateString('pt-BR')} às{' '}
-                          {startDate.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+                          {startDate.toLocaleDateString('pt-BR', { timeZone: 'America/Sao_Paulo' })} às{' '}
+                          {startDate.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', timeZone: 'America/Sao_Paulo' })}
                         </span>
                       </div>
 
@@ -241,7 +241,7 @@ export default async function OrganizationEventsPage({ params }: PageProps) {
                     <CardContent className="space-y-3">
                       <div className="flex items-center gap-2 text-sm text-muted-foreground">
                         <Calendar className="w-4 h-4 flex-shrink-0" />
-                        <span>{startDate.toLocaleDateString('pt-BR')}</span>
+                        <span>{startDate.toLocaleDateString('pt-BR', { timeZone: 'America/Sao_Paulo' })}</span>
                       </div>
 
                       <div className="flex items-center justify-between pt-2 border-t">

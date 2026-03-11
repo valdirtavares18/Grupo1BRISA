@@ -289,7 +289,7 @@ export default async function OrganizationDetailsPage({ params, searchParams }: 
                     <div className="flex-1 min-w-0">
                       <h4 className="font-bold text-lg text-white mb-1">{event.title}</h4>
                       <p className="text-sm text-white">
-                        {startDate.toLocaleDateString('pt-BR')} • {startDate.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+                        {startDate.toLocaleDateString('pt-BR', { timeZone: 'America/Sao_Paulo' })} • {startDate.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', timeZone: 'America/Sao_Paulo' })}
                       </p>
                     </div>
 

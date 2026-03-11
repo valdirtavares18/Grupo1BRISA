@@ -326,10 +326,10 @@ export default function EventSearchPage() {
                         </div>
                         <div>
                           <div className="font-medium">
-                            {startDate.toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' })}
+                            {startDate.toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric', timeZone: 'America/Sao_Paulo' })}
                           </div>
                           <div className="text-sm text-[#8B92A0]">
-                            às {startDate.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+                            às {startDate.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', timeZone: 'America/Sao_Paulo' })}
                           </div>
                         </div>
                       </div>

@@ -114,11 +114,12 @@ export default async function EventPage({ params }: PageProps) {
                       {startDate.toLocaleDateString('pt-BR', {
                         day: '2-digit',
                         month: 'long',
-                        year: 'numeric'
+                        year: 'numeric',
+                        timeZone: 'America/Sao_Paulo'
                       })}
                     </p>
                     <p className="text-sm text-mustard">
-                      {startDate.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+                      {startDate.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', timeZone: 'America/Sao_Paulo' })}
                     </p>
                   </div>
                 </div>
@@ -132,11 +133,12 @@ export default async function EventPage({ params }: PageProps) {
                     <p className="text-[#C8CDD5] mt-1">
                       {endDate.toLocaleDateString('pt-BR', {
                         day: '2-digit',
-                        month: 'long'
+                        month: 'long',
+                        timeZone: 'America/Sao_Paulo'
                       })}
                     </p>
                     <p className="text-sm text-mustard">
-                      {endDate.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+                      {endDate.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', timeZone: 'America/Sao_Paulo' })}
                     </p>
                   </div>
                 </div>
