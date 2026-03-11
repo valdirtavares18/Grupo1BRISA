@@ -1,6 +1,5 @@
 import { query } from '@/lib/db-sqlite'
 import { randomUUID } from 'crypto'
-import { Resend } from 'resend'
 import nodemailer from 'nodemailer'
 
 // Criar tabela de verificação por email se não existir
@@ -21,15 +20,6 @@ const ensureTable = async () => {
 }
 
 export class EmailService {
-  private resend: Resend | null = null
-
-  constructor() {
-    const apiKey = process.env.RESEND_API_KEY
-    if (apiKey) {
-      this.resend = new Resend(apiKey)
-    }
-  }
-
   /**
    * Gera código de verificação de 6 dígitos
    */
@@ -38,9 +28,8 @@ export class EmailService {
   }
 
   /**
-   * Envia código de verificação por email
-   * Em desenvolvimento sem RESEND_API_KEY: retorna código para teste (mock)
-   * Em produção: usa Resend (3.000 emails/mês grátis)
+   * Envia código de verificação por email via Gmail SMTP.
+   * Configure GMAIL_USER e GMAIL_APP_PASSWORD no ambiente.
    */
   async sendVerificationCode(email: string): Promise<{ success: boolean; code?: string; message: string }> {
     await ensureTable()
@@ -80,7 +69,6 @@ export class EmailService {
         </div>
       `
 
-      // Opção 1: Gmail SMTP (sem verificação de domínio, funciona com qualquer destinatário)
       const gmailUser = process.env.GMAIL_USER
       const gmailAppPassword = process.env.GMAIL_APP_PASSWORD
       if (gmailUser && gmailAppPassword) {
@@ -98,7 +86,6 @@ export class EmailService {
           return { success: true, message: 'Código enviado com sucesso para seu email' }
         } catch (err: any) {
           console.error('Erro ao enviar email via Gmail:', err)
-          // Em dev, retornar o código mesmo quando falha pra poder testar
           if (process.env.NODE_ENV === 'development') {
             console.log(`📧 [DEV] Gmail falhou, mas use o código: ${code}`)
             return {
@@ -114,50 +101,19 @@ export class EmailService {
         }
       }
 
-      // Opção 2: Resend (exige domínio verificado para enviar a qualquer destinatário)
-      if (this.resend && process.env.RESEND_FROM_EMAIL) {
-        try {
-          const { error } = await this.resend.emails.send({
-            from: process.env.RESEND_FROM_EMAIL,
-            to: normalizedEmail,
-            subject: 'Código de verificação - BRISA',
-            html: htmlContent,
-          })
-
-          if (error) {
-            console.error('Erro ao enviar email via Resend:', error)
-            return {
-              success: false,
-              message: error.message || 'Erro ao enviar email',
-            }
-          }
-
-          return {
-            success: true,
-            message: 'Código enviado com sucesso para seu email',
-          }
-        } catch (err: any) {
-          console.error('Erro ao enviar email:', err)
-          return {
-            success: false,
-            message: err.message || 'Erro ao enviar email',
-          }
-        }
-      }
-
       // Modo desenvolvimento: mostrar código no console
       if (process.env.NODE_ENV === 'development') {
         console.log(`📧 [EMAIL DEV] Código de verificação para ${normalizedEmail}: ${code}`)
         return {
           success: true,
           code,
-          message: 'Código enviado (modo desenvolvimento - configure RESEND_API_KEY e RESEND_FROM_EMAIL para envio real)',
+          message: 'Código enviado (modo desenvolvimento)',
         }
       }
 
       return {
         success: false,
-        message: 'Serviço de email não configurado. Configure RESEND_API_KEY e RESEND_FROM_EMAIL no ambiente.',
+        message: 'Serviço de email não configurado. Configure GMAIL_USER e GMAIL_APP_PASSWORD no ambiente (em prod: variáveis do Vercel).',
       }
     } catch (error: any) {
       console.error('Erro ao enviar código por email:', error)
