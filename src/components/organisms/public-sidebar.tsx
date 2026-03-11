@@ -88,14 +88,14 @@ export function PublicSidebar() {
 
       {isMobileOpen && (
         <div
-          className="lg:hidden fixed inset-0 bg-black/60 z-40"
+          className="lg:hidden fixed inset-0 bg-black/60 z-[100]"
           onClick={() => setIsMobileOpen(false)}
         />
       )}
 
       <aside
         className={`
-          fixed lg:sticky top-0 left-0 h-screen z-40
+          fixed lg:sticky top-0 left-0 h-screen z-[110] lg:z-40
           transition-all duration-300 ease-in-out
           ${isMobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
           w-72

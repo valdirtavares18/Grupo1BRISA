@@ -26,6 +26,16 @@
 - **Solução**: Mantido import como named export `{ QRCodeSVG }`
 - **Arquivo**: `src/components/organisms/qr-code-viewer.tsx`
 
+### 5. **Overlap do menu hambúrguer no mobile** ✅
+- **Problema**: Ao abrir o menu no celular, o conteúdo da página (evento) sobrepunha o menu (Início, Buscar Eventos)
+- **Solução**: Aumentado z-index do overlay (z-[100]) e do aside (z-[110]) no mobile; main com z-0 para garantir hierarquia correta
+- **Arquivos**: `src/components/organisms/public-sidebar.tsx`, `src/components/organisms/public-layout.tsx`
+
+### 6. **Perda de sessão / deslogar no celular** ✅
+- **Problema**: Usuário era deslogado após escanear QR e abrir menu (cookie não persistia em produção)
+- **Solução**: Cookie de autenticação agora usa `secure: process.env.NODE_ENV === 'production'` em todos os endpoints de auth (login principal estava com `secure: false`); adicionado `path: '/'` em register e register-with-phone para consistência
+- **Arquivos**: `app/api/auth/login/route.ts`, `app/api/auth/logout/route.ts`, `app/api/auth/register/route.ts`, `app/api/auth/register-with-phone/route.ts`
+
 ## ✅ Funcionalidades Testadas e Funcionando
 
 ### 1. **Login do Admin de Organização** ✅
