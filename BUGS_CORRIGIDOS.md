@@ -28,10 +28,15 @@
 
 ### 5. **Overlap do menu hambúrguer no mobile** ✅
 - **Problema**: Ao abrir o menu no celular, o conteúdo da página (evento) sobrepunha o menu (Início, Buscar Eventos)
-- **Solução**: Aumentado z-index do overlay (z-[100]) e do aside (z-[110]) no mobile; main com z-0 para garantir hierarquia correta
-- **Arquivos**: `src/components/organisms/public-sidebar.tsx`, `src/components/organisms/public-layout.tsx`
+- **Solução**: Menu mobile agora renderiza via `createPortal` em `document.body` (igual ao `Dialog` do sistema), com z-[9999]; sidebar desktop separada (hidden em mobile); fundo sólido `bg-navy` no drawer
+- **Arquivos**: `src/components/organisms/public-sidebar.tsx`
 
-### 6. **Perda de sessão / deslogar no celular** ✅
+### 6. **Remoção do botão Início no menu** ✅
+- **Problema**: Ao clicar em "Início" estando desconectado, redirecionava para landing e provocava comportamento de logout
+- **Solução**: Removido o botão "Início" do menu lateral (mantido apenas "Página Principal" quando em subpáginas de organização)
+- **Arquivo**: `src/components/organisms/public-sidebar.tsx`
+
+### 7. **Perda de sessão / deslogar no celular** ✅
 - **Problema**: Usuário era deslogado após escanear QR e abrir menu (cookie não persistia em produção)
 - **Solução**: Cookie de autenticação agora usa `secure: process.env.NODE_ENV === 'production'` em todos os endpoints de auth (login principal estava com `secure: false`); adicionado `path: '/'` em register e register-with-phone para consistência
 - **Arquivos**: `app/api/auth/login/route.ts`, `app/api/auth/logout/route.ts`, `app/api/auth/register/route.ts`, `app/api/auth/register-with-phone/route.ts`

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import { usePathname } from 'next/navigation'
 import Link from 'next/link'
 import {
@@ -52,10 +53,7 @@ export function PublicSidebar() {
   const isOrgSubpage = slug && pathSegments.length > 1 && ['events', 'feed'].includes(pathSegments[1])
 
   const navItems = [
-    ...(isOrgSubpage
-      ? [{ label: 'Página Principal', href: `/${slug}`, icon: Home }]
-      : [{ label: 'Início', href: '/', icon: Home }]
-    ),
+    ...(isOrgSubpage ? [{ label: 'Página Principal', href: `/${slug}`, icon: Home }] : []),
     { label: 'Buscar Eventos', href: '/events/search', icon: Search },
   ]
 
@@ -76,6 +74,71 @@ export function PublicSidebar() {
     return pathname.startsWith(href)
   }
 
+  const renderNavContent = (expanded: boolean, onLinkClick?: () => void) => (
+    <div className="flex flex-col h-full bg-navy">
+      <div className={`p-6 border-b border-navy-border transition-all duration-300 ${
+        expanded ? 'opacity-100' : 'opacity-0 h-0 p-0 overflow-hidden'
+      }`}>
+        <Logo className="scale-110" />
+      </div>
+      <nav className="flex-1 overflow-y-auto py-6">
+        <ul className="space-y-2 px-3">
+          {navItems.map((item) => {
+            const active = isActive(item.href)
+            const Icon = item.icon
+            return (
+              <li key={item.href}>
+                <Link
+                  href={item.href}
+                  onClick={onLinkClick}
+                  className={`
+                    flex items-center px-4 py-3 rounded-xl
+                    transition-all duration-200
+                    ${expanded ? 'gap-4' : 'gap-0 justify-center'}
+                    ${
+                      active
+                        ? 'bg-mustard/10 text-mustard border border-mustard/20'
+                        : 'text-[#8B92A0] hover:bg-navy-light hover:text-white border border-transparent'
+                    }
+                  `}
+                >
+                  <Icon className={`flex-shrink-0 w-5 h-5 ${active ? 'text-mustard' : 'text-[#8B92A0]'}`} />
+                  {expanded && (
+                    <>
+                      <span className="font-medium whitespace-nowrap">{item.label}</span>
+                      {active && <ChevronRight className="ml-auto w-4 h-4 text-mustard" />}
+                    </>
+                  )}
+                </Link>
+              </li>
+            )
+          })}
+        </ul>
+      </nav>
+    </div>
+  )
+
+  const mobileDrawer = isMobileOpen && typeof document !== 'undefined' && createPortal(
+    <div className="lg:hidden fixed inset-0 z-[9999]">
+      <div
+        className="absolute inset-0 bg-black/60"
+        onClick={() => setIsMobileOpen(false)}
+        aria-hidden
+      />
+      <aside className="absolute top-0 left-0 h-full w-72 bg-navy border-r border-navy-border shadow-xl transition-transform duration-300">
+        {renderNavContent(true, () => setIsMobileOpen(false))}
+      </aside>
+      <button
+        onClick={() => setIsMobileOpen(false)}
+        className="absolute top-4 left-4 z-10 p-3 rounded-xl bg-navy-light border border-navy-border shadow-md hover:bg-navy-border transition text-white"
+        aria-label="Fechar menu"
+      >
+        <X className="w-6 h-6" />
+      </button>
+    </div>,
+    document.body
+  )
+
   return (
     <>
       <button
@@ -83,89 +146,25 @@ export function PublicSidebar() {
         className="lg:hidden fixed top-4 left-4 z-50 p-3 rounded-xl bg-navy-light border border-navy-border shadow-md hover:bg-navy-border transition text-white"
         aria-label="Abrir menu"
       >
-        {isMobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+        <Menu className="w-6 h-6" />
       </button>
 
-      {isMobileOpen && (
-        <div
-          className="lg:hidden fixed inset-0 bg-black/60 z-[100]"
-          onClick={() => setIsMobileOpen(false)}
-        />
-      )}
+      {mobileDrawer}
 
+      {/* Sidebar desktop */}
       <aside
         className={`
-          fixed lg:sticky top-0 left-0 h-screen z-[110] lg:z-40
+          hidden lg:flex lg:sticky top-0 left-0 h-screen z-40
           transition-all duration-300 ease-in-out
-          ${isMobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
-          w-72
-          lg:w-20
+          w-20
           ${isExpanded ? 'lg:w-72' : ''}
-          flex-shrink-0
+          flex-shrink-0 flex-col
+          bg-navy border-r border-navy-border
         `}
-        onMouseEnter={() => {
-          if (window.innerWidth >= 1024) {
-            setIsExpanded(true)
-          }
-        }}
-        onMouseLeave={() => {
-          if (window.innerWidth >= 1024) {
-            setIsExpanded(false)
-          }
-        }}
+        onMouseEnter={() => setIsExpanded(true)}
+        onMouseLeave={() => setIsExpanded(false)}
       >
-        <div className="flex flex-col h-full">
-          <div className={`p-6 border-b border-navy-border transition-all duration-300 ${
-            isMobileOpen || isExpanded 
-              ? 'opacity-100' 
-              : 'opacity-0 h-0 p-0 overflow-hidden'
-          }`}>
-            <Logo className="scale-110" />
-          </div>
-
-          <nav className="flex-1 overflow-y-auto py-6">
-            <ul className="space-y-2 px-3">
-              {navItems.map((item) => {
-                const active = isActive(item.href)
-                const Icon = item.icon
-
-                return (
-                  <li key={item.href}>
-                    <Link
-                      href={item.href}
-                      className={`
-                        flex items-center px-4 py-3 rounded-xl
-                        transition-all duration-200
-                        ${(isMobileOpen || isExpanded) ? 'gap-4' : 'gap-0 justify-center'}
-                        ${
-                          active
-                            ? 'bg-mustard/10 text-mustard border border-mustard/20'
-                            : 'text-[#8B92A0] hover:bg-navy-light hover:text-white border border-transparent'
-                        }
-                      `}
-                    >
-                      <Icon
-                        className={`flex-shrink-0 w-5 h-5 ${
-                          active ? 'text-mustard' : 'text-[#8B92A0]'
-                        }`}
-                      />
-                      {(isMobileOpen || isExpanded) && (
-                        <span className="font-medium whitespace-nowrap">
-                          {item.label}
-                        </span>
-                      )}
-                      {active && (isMobileOpen || isExpanded) && (
-                        <ChevronRight
-                          className="ml-auto w-4 h-4 text-mustard"
-                        />
-                      )}
-                    </Link>
-                  </li>
-                )
-              })}
-            </ul>
-          </nav>
-        </div>
+        {renderNavContent(isExpanded)}
       </aside>
     </>
   )
